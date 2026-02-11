@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FussyEaterClub.Api/FussyEaterClub.Api.csproj" />
+    <Project Path="src/FussyEaterClub.Application/FussyEaterClub.Application.csproj" />
+    <Project Path="src/FussyEaterClub.Domain/FussyEaterClub.Domain.csproj" />
+    <Project Path="src/FussyEaterClub.Infrastructure/FussyEaterClub.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FussyEaterClub.Api.Tests/FussyEaterClub.Api.Tests.csproj" />
+    <Project Path="tests/FussyEaterClub.Application.Tests/FussyEaterClub.Application.Tests.csproj" />
+    <Project Path="tests/FussyEaterClub.Domain.Tests/FussyEaterClub.Domain.Tests.csproj" />
+  </Folder>
+</Solution>

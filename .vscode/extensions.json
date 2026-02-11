@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "ms-dotnettools.csdevkit",
+    "ms-azuretools.vscode-bicep",
+    "svelte.svelte-vscode",
+    "ms-azuretools.vscode-azurestaticwebapps",
+    "ms-azuretools.vscode-azurecontainerapps",
+    "ms-azuretools.vscode-cosmosdb",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "editorconfig.editorconfig",
+    "github.copilot"
+  ]
+}

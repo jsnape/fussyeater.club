@@ -5,8 +5,8 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
 WORKDIR /repo
 
-# Copy solution and project files for restore
-COPY Directory.Build.props Directory.Packages.props nuget.config ./
+# Copy build infrastructure and project files for restore
+COPY src/Directory.Build.props src/Directory.Packages.props src/nuget.config src/
 COPY src/FussyEaterClub.Domain/FussyEaterClub.Domain.csproj src/FussyEaterClub.Domain/
 COPY src/FussyEaterClub.Application/FussyEaterClub.Application.csproj src/FussyEaterClub.Application/
 COPY src/FussyEaterClub.Infrastructure/FussyEaterClub.Infrastructure.csproj src/FussyEaterClub.Infrastructure/

@@ -5,7 +5,7 @@
       "label": "build",
       "command": "dotnet",
       "type": "process",
-      "args": ["build", "${workspaceFolder}/FussyEaterClub.sln"],
+      "args": ["build", "${workspaceFolder}/src/FussyEaterClub.slnx"],
       "problemMatcher": "$msCompile",
       "group": {
         "kind": "build",
@@ -16,7 +16,7 @@
       "label": "test",
       "command": "dotnet",
       "type": "process",
-      "args": ["test", "${workspaceFolder}/FussyEaterClub.sln"],
+      "args": ["test", "${workspaceFolder}/src/FussyEaterClub.slnx"],
       "problemMatcher": "$msCompile",
       "group": "test"
     },

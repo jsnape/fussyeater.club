@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="FussyEaterClub.Api/FussyEaterClub.Api.csproj" />
+  <Project Path="FussyEaterClub.Api.Tests/FussyEaterClub.Api.Tests.csproj" />
+  <Project Path="FussyEaterClub.Application/FussyEaterClub.Application.csproj" />
+  <Project Path="FussyEaterClub.Application.Tests/FussyEaterClub.Application.Tests.csproj" />
+  <Project Path="FussyEaterClub.Domain/FussyEaterClub.Domain.csproj" />
+  <Project Path="FussyEaterClub.Domain.Tests/FussyEaterClub.Domain.Tests.csproj" />
+  <Project Path="FussyEaterClub.Infrastructure/FussyEaterClub.Infrastructure.csproj" />
+</Solution>

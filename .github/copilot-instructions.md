@@ -21,16 +21,20 @@ A recipe website for families with fussy eaters. Users create/browse recipes, bu
 
 ```
 src/
-  FussyEaterClub.Domain/       # Entities, value objects, enums, repository interfaces
-  FussyEaterClub.Application/  # CQRS commands/queries, handlers, validators, DTOs
-  FussyEaterClub.Infrastructure/ # Cosmos DB repos, Entra ID identity services
-  FussyEaterClub.Api/          # Minimal API endpoints, DI composition root, Dockerfile
-  web/                         # SvelteKit frontend
-tests/
-  FussyEaterClub.Domain.Tests/
+  FussyEaterClub.slnx            # .NET solution file
+  Directory.Build.props           # Shared MSBuild properties
+  Directory.Packages.props        # Central NuGet package management
+  nuget.config                    # NuGet source configuration
+  FussyEaterClub.Domain/          # Entities, value objects, enums, repository interfaces
+  FussyEaterClub.Application/     # CQRS commands/queries, handlers, validators, DTOs
+  FussyEaterClub.Infrastructure/  # Cosmos DB repos, Entra ID identity services
+  FussyEaterClub.Api/             # Minimal API endpoints, DI composition root, Dockerfile
+  FussyEaterClub.Domain.Tests/    # Unit tests (xUnit + FluentAssertions + NSubstitute)
   FussyEaterClub.Application.Tests/
   FussyEaterClub.Api.Tests/
-infra/                         # Bicep modules (cosmosdb, container-app, static-web-app)
+  web/                            # SvelteKit frontend
+tests/                            # Integration and end-to-end tests
+infra/                            # Bicep modules (cosmosdb, container-app, static-web-app)
 ```
 
 ### Architecture Rules
@@ -71,7 +75,7 @@ Core entities: `Household`, `Member`, `Recipe`, `MealPlan`, `ShoppingList`, `Sto
 - **Null handling**: Use null-coalescing (`??`), null propagation (`?.`), and `is null` checks
 - **Pattern matching**: Prefer switch expressions and pattern matching over traditional switch/if-else
 - **Collection expressions**: Use `[1, 2, 3]` syntax when types match
-- **Central package management**: NuGet versions are pinned in `Directory.Packages.props` — never add `Version` attributes in `.csproj` files
+- **Central package management**: NuGet versions are pinned in `src/Directory.Packages.props` — never add `Version` attributes in `.csproj` files
 
 ### File-Specific Rules
 
@@ -98,13 +102,13 @@ Core entities: `Household`, `Member`, `Recipe`, `MealPlan`, `ShoppingList`, `Sto
 
 ```powershell
 # Build .NET solution
-dotnet build
+dotnet build src/FussyEaterClub.slnx
 
 # Run tests
-dotnet test
+dotnet test src/FussyEaterClub.slnx
 
 # Format C# code
-dotnet format
+dotnet format src/FussyEaterClub.slnx
 
 # Run API locally
 dotnet run --project src/FussyEaterClub.Api

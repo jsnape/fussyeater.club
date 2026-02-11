@@ -21,9 +21,9 @@
     "**/node_modules": true,
     "**/.vs": true
   },
-"dotnet.defaultSolution": "FussyEaterClub.sln",
-"chat.tools.terminal.autoApprove": {
+  "dotnet.defaultSolution": "src/FussyEaterClub.slnx",
+  "chat.tools.terminal.autoApprove": {
     "dotnet build": true,
     "dotnet test": true
-}
+  }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>FussyEaterClub.Application.Tests</RootNamespace>
+    <RootNamespace>FussyEaterClub.Domain.Tests</RootNamespace>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FussyEaterClub.Application\FussyEaterClub.Application.csproj" />
+    <ProjectReference Include="..\FussyEaterClub.Domain\FussyEaterClub.Domain.csproj" />
   </ItemGroup>
 
 </Project>

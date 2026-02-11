@@ -19,16 +19,16 @@ jobs:
           global-json-file: global.json
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore src/FussyEaterClub.slnx
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build src/FussyEaterClub.slnx --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
+        run: dotnet test src/FussyEaterClub.slnx --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
 
       - name: Format check
-        run: dotnet format --verify-no-changes --verbosity diagnostic
+        run: dotnet format src/FussyEaterClub.slnx --verify-no-changes --verbosity diagnostic
 
   frontend:
     name: SvelteKit Build

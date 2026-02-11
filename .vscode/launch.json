@@ -5,7 +5,7 @@
       "name": "API: Launch",
       "type": "dotnet",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/src/FussyEaterClub.Api/FussyEaterClub.Api.csproj"
+      "projectPath": "${workspaceFolder}/api/FussyEaterClub.Api/FussyEaterClub.Api.csproj"
     }
   ],
   "compounds": []

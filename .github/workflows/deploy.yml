@@ -56,7 +56,7 @@ jobs:
       - name: Build and push container image
         run: |
           az acr login --name ${{ env.ACR_NAME }}
-          docker build -f src/FussyEaterClub.Api/Dockerfile -t ${{ env.ACR_NAME }}.azurecr.io/fussy-eater-club-api:${{ github.sha }} .
+          docker build -f api/FussyEaterClub.Api/Dockerfile -t ${{ env.ACR_NAME }}.azurecr.io/fussy-eater-club-api:${{ github.sha }} .
           docker push ${{ env.ACR_NAME }}.azurecr.io/fussy-eater-club-api:${{ github.sha }}
 
       - name: Deploy to Container Apps
@@ -79,7 +79,7 @@ jobs:
           node-version: 22
 
       - name: Install and build
-        working-directory: src/web
+        working-directory: web
         run: |
           npm ci
           npm run build
@@ -89,5 +89,5 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.SWA_DEPLOYMENT_TOKEN }}
           action: upload
-          app_location: src/web
+          app_location: web
           output_location: build

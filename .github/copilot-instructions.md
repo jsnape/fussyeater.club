@@ -20,7 +20,7 @@ A recipe website for families with fussy eaters. Users create/browse recipes, bu
 ### Directory Structure
 
 ```
-src/
+api/
   FussyEaterClub.slnx            # .NET solution file
   Directory.Build.props           # Shared MSBuild properties
   Directory.Packages.props        # Central NuGet package management
@@ -32,10 +32,16 @@ src/
   FussyEaterClub.Domain.Tests/    # Unit tests (xUnit + FluentAssertions + NSubstitute)
   FussyEaterClub.Application.Tests/
   FussyEaterClub.Api.Tests/
-  web/                            # SvelteKit frontend
+web/                              # SvelteKit frontend
 tests/                            # Integration and end-to-end tests
 infra/                            # Bicep modules (cosmosdb, container-app, static-web-app)
+docs/                             # Documentation
+tools/                            # Developer tooling and scripts
 ```
+
+### Root Folder Policy
+
+Keep the repository root clean. Only repo-wide configuration files belong here (e.g., `global.json`, `.editorconfig`, `.gitignore`, `.gitattributes`, `.dockerignore`, `LICENSE`, `README.md`). All .NET code and build infrastructure must go in `api/`. Frontend code goes in `web/`. Do not add new files to the root unless they genuinely apply to the entire repository.
 
 ### Architecture Rules
 
@@ -75,7 +81,7 @@ Core entities: `Household`, `Member`, `Recipe`, `MealPlan`, `ShoppingList`, `Sto
 - **Null handling**: Use null-coalescing (`??`), null propagation (`?.`), and `is null` checks
 - **Pattern matching**: Prefer switch expressions and pattern matching over traditional switch/if-else
 - **Collection expressions**: Use `[1, 2, 3]` syntax when types match
-- **Central package management**: NuGet versions are pinned in `src/Directory.Packages.props` — never add `Version` attributes in `.csproj` files
+- **Central package management**: NuGet versions are pinned in `api/Directory.Packages.props` — never add `Version` attributes in `.csproj` files
 
 ### File-Specific Rules
 
@@ -94,7 +100,7 @@ Core entities: `Household`, `Member`, `Recipe`, `MealPlan`, `ShoppingList`, `Sto
 ## Frontend Conventions (SvelteKit)
 
 - TypeScript strict mode enabled
-- API client in `src/web/src/lib/api.ts` — all backend calls go through typed `apiFetch<T>()` wrapper
+- API client in `web/src/lib/api.ts` — all backend calls go through typed `apiFetch<T>()` wrapper
 - Routes mirror domain: `/recipes`, `/meal-plan`, `/shopping-list`, `/household`
 - Dev proxy in `vite.config.ts` forwards `/api` to the .NET backend
 
@@ -102,20 +108,20 @@ Core entities: `Household`, `Member`, `Recipe`, `MealPlan`, `ShoppingList`, `Sto
 
 ```powershell
 # Build .NET solution
-dotnet build src/FussyEaterClub.slnx
+dotnet build api/FussyEaterClub.slnx
 
 # Run tests
-dotnet test src/FussyEaterClub.slnx
+dotnet test api/FussyEaterClub.slnx
 
 # Format C# code
-dotnet format src/FussyEaterClub.slnx
+dotnet format api/FussyEaterClub.slnx
 
 # Run API locally
-dotnet run --project src/FussyEaterClub.Api
+dotnet run --project api/FussyEaterClub.Api
 
-# Run frontend dev server (from src/web/)
+# Run frontend dev server (from web/)
 npm run dev
 
-# Install frontend dependencies (from src/web/)
+# Install frontend dependencies (from web/)
 npm install
 ```

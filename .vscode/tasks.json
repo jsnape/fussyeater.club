@@ -5,7 +5,7 @@
       "label": "build",
       "command": "dotnet",
       "type": "process",
-      "args": ["build", "${workspaceFolder}/src/FussyEaterClub.slnx"],
+      "args": ["build", "${workspaceFolder}/api/FussyEaterClub.slnx"],
       "problemMatcher": "$msCompile",
       "group": {
         "kind": "build",
@@ -16,7 +16,7 @@
       "label": "test",
       "command": "dotnet",
       "type": "process",
-      "args": ["test", "${workspaceFolder}/src/FussyEaterClub.slnx"],
+      "args": ["test", "${workspaceFolder}/api/FussyEaterClub.slnx"],
       "problemMatcher": "$msCompile",
       "group": "test"
     },
@@ -25,7 +25,7 @@
       "type": "shell",
       "command": "npm run dev",
       "options": {
-        "cwd": "${workspaceFolder}/src/web"
+        "cwd": "${workspaceFolder}/web"
       },
       "isBackground": true,
       "problemMatcher": []

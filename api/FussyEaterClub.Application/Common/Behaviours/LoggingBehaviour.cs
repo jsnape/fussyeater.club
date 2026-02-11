@@ -21,7 +21,7 @@ public sealed class LoggingBehaviour<TRequest, TResponse>(
         string requestName = typeof(TRequest).Name;
         logger.LogInformation("Handling {RequestName}", requestName);
 
-        TResponse response = await next();
+        TResponse response = await next(cancellationToken);
 
         logger.LogInformation("Handled {RequestName}", requestName);
 

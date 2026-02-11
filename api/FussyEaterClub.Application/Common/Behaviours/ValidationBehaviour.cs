@@ -36,6 +36,6 @@ public sealed class ValidationBehaviour<TRequest, TResponse>(
             }
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

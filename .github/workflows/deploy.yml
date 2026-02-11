@@ -1,9 +1,13 @@
 name: Deploy
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+  workflow_dispatch
+# TODO: Re-enable automatic triggers when ready for CI
+#   pull_request:
+#     branches: [main]
+#   push:
+#     branches: [main]
+
 
 permissions:
   id-token: write

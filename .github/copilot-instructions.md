@@ -91,11 +91,28 @@ Core entities: `Household`, `Member`, `Recipe`, `MealPlan`, `ShoppingList`, `Sto
 
 ## Testing Conventions
 
+This project follows **Test-Driven Development (TDD)**. When modifying or adding code:
+
+1. **Write a failing test first** that describes the expected behaviour
+2. **Implement the minimum code** to make the test pass
+3. **Refactor** while keeping all tests green
+4. **All tests must pass** before the work is considered complete — run both `dotnet test api/FussyEaterClub.slnx` and `npm test` (from `web/`) as appropriate
+
+### Backend (.NET)
+
 - **Framework**: xUnit + FluentAssertions + NSubstitute
 - Test classes follow `{ClassName}Tests` naming pattern
 - Test methods can use underscores in names (CA1707 disabled for test files)
 - Use block-bodied methods (not expression-bodied) for test methods
 - Validator tests use `FluentValidation.TestHelper` (`TestValidate()` / `ShouldHaveValidationErrorFor()`)
+
+### Frontend (SvelteKit)
+
+- **Framework**: Vitest with jsdom environment
+- Test files co-located with source: `*.test.ts` next to the module under test
+- Use `vi.fn()` and `vi.stubGlobal()` for mocking (Vitest built-ins)
+- Test names use descriptive strings: `it('should return data on success', ...)`
+- Arrange-Act-Assert pattern for test structure
 
 ## Frontend Conventions (SvelteKit)
 
@@ -121,6 +138,12 @@ dotnet run --project api/FussyEaterClub.Api
 
 # Run frontend dev server (from web/)
 npm run dev
+
+# Run frontend tests (from web/)
+npm test
+
+# Run frontend tests in watch mode (from web/)
+npm run test:watch
 
 # Install frontend dependencies (from web/)
 npm install

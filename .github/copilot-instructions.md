@@ -40,6 +40,7 @@ specs/
     models/                       # Enums, value objects, DTOs
     routes/                       # API endpoint definitions
     tspconfig.yaml                # TypeSpec compiler config
+scripts/                          # Workflow scripts (build, deploy)
 tests/                            # Integration and end-to-end tests
 infra/                            # Bicep modules (cosmosdb, container-app, static-web-app)
 docs/                             # Documentation
@@ -191,4 +192,13 @@ npm run test:watch
 
 # Install frontend dependencies (from web/)
 npm install
+
+# Run full CI build locally (from repo root)
+pwsh scripts/build.ps1
+
+# Run CI build with auto-fix formatting
+pwsh scripts/build.ps1 -Fix
+
+# Quick .NET-only build without tests
+pwsh scripts/build.ps1 -SkipFrontend -SkipTests
 ```

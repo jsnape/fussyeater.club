@@ -419,6 +419,7 @@ FodyWeavers.xsd
 
 # SvelteKit generated files
 .svelte-kit/
+web/build/
 
 # TypeSpec output (regenerated from .tsp source)
 specs/**/tsp-output/

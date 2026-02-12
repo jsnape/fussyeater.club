@@ -7,8 +7,36 @@ const config = {
 	kit: {
 		adapter: adapter({
 			customStaticWebAppConfig: {
-				navigationFallback: {
-					rewrite: '/index.html'
+				auth: {
+					identityProviders: {
+						azureActiveDirectory: {
+							registration: {
+								openIdIssuer: 'https://login.microsoftonline.com/<TENANT_ID>/v2.0',
+								clientIdSettingName: 'AAD_CLIENT_ID',
+								clientSecretSettingName: 'AAD_CLIENT_SECRET'
+							}
+						}
+					}
+				},
+				routes: [
+					{
+						route: '/api/*',
+						allowedRoles: ['authenticated']
+					},
+					{
+						route: '/login',
+						redirect: '/.auth/login/aad'
+					},
+					{
+						route: '/logout',
+						redirect: '/.auth/logout'
+					}
+				],
+				responseOverrides: {
+					'401': {
+						redirect: '/.auth/login/aad',
+						statusCode: 302
+					}
 				}
 			}
 		})

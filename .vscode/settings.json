@@ -29,6 +29,7 @@
     "npm run dev": true,
     "npm install": true,
     "npx tsp": true,
-    "dotnet restore": true
+    "dotnet restore": true,
+    "npm run check": true
   }
 }

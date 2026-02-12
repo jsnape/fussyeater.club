@@ -13,6 +13,7 @@ A recipe website for families with fussy eaters. Users create and browse recipes
 | API Hosting      | Azure Container Apps (consumption, scale-to-zero)          |
 | Frontend Hosting | Azure Static Web Apps                                      |
 | IaC              | Bicep                                                      |
+| API Spec         | TypeSpec → OpenAPI 3.0                                     |
 | CI/CD            | GitHub Actions                                             |
 
 ## Repository Structure
@@ -32,6 +33,12 @@ fussyeater.club/
 │   ├── FussyEaterClub.Application.Tests/
 │   └── FussyEaterClub.Api.Tests/
 ├── web/                          # SvelteKit frontend
+├── specs/
+│   └── api/                      # TypeSpec API definitions (source of truth)
+│       ├── main.tsp              # Entry point
+│       ├── models/               # Enums, value objects, DTOs
+│       ├── routes/               # API endpoint definitions
+│       └── tspconfig.yaml        # TypeSpec compiler config
 ├── infra/                        # Bicep IaC modules
 ├── tests/                        # Integration and end-to-end tests
 ├── docs/                         # Documentation
@@ -65,6 +72,28 @@ cd web
 npm install
 npm run dev
 ```
+
+### API-First Workflow (TypeSpec)
+
+The API contract is defined in [TypeSpec](https://typespec.io/) under `specs/api/` and is the canonical source of truth.
+
+```powershell
+# Install TypeSpec dependencies (first time only)
+cd specs/api
+npm install
+
+# Compile TypeSpec → OpenAPI 3.0 spec
+npx tsp compile .
+
+# Generate frontend TypeScript types from the spec
+cd ../../web
+npm run generate:types
+
+# Validate .NET API conforms to the TypeSpec spec
+pwsh tools/Validate-ApiConformance.ps1
+```
+
+**Workflow**: define/update `.tsp` files → compile → implement in .NET → generate frontend types → validate conformance.
 
 ## Deployment
 

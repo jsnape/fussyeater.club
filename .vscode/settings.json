@@ -26,6 +26,9 @@
     "dotnet build": true,
     "dotnet test": true,
     "Test-Path": true,
-    "npm run dev": true
+    "npm run dev": true,
+    "npm install": true,
+    "npx tsp": true,
+    "dotnet restore": true
   }
 }

@@ -419,3 +419,9 @@ FodyWeavers.xsd
 
 # SvelteKit generated files
 .svelte-kit/
+
+# TypeSpec output (regenerated from .tsp source)
+specs/**/tsp-output/
+
+# Build-time OpenAPI output (regenerated on build)
+api/**/openapi-output/

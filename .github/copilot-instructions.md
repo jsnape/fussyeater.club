@@ -15,6 +15,7 @@ A recipe website for families with fussy eaters. Users create/browse recipes, bu
 | API Hosting | Azure Container Apps (consumption, scale-to-zero) |
 | Frontend Hosting | Azure Static Web Apps (with `adapter-azure-swa`) |
 | IaC | Bicep |
+| API Spec | TypeSpec → OpenAPI 3.0 |
 | CI/CD | GitHub Actions |
 
 ### Directory Structure
@@ -33,6 +34,12 @@ api/
   FussyEaterClub.Application.Tests/
   FussyEaterClub.Api.Tests/
 web/                              # SvelteKit frontend
+specs/
+  api/                            # TypeSpec API definitions (source of truth)
+    main.tsp                      # Entry point
+    models/                       # Enums, value objects, DTOs
+    routes/                       # API endpoint definitions
+    tspconfig.yaml                # TypeSpec compiler config
 tests/                            # Integration and end-to-end tests
 infra/                            # Bicep modules (cosmosdb, container-app, static-web-app)
 docs/                             # Documentation
@@ -54,6 +61,27 @@ Keep the repository root clean. Only repo-wide configuration files belong here (
 ### Domain Model
 
 Core entities: `Household`, `Member`, `Recipe`, `MealPlan`, `ShoppingList`, `StoreCupboard`. All household-scoped data is partitioned by `householdId` in Cosmos DB. Value objects are immutable records: `Ingredient`, `FoodPreference`, `MealSlot`, `ShoppingItem`, `StoreCupboardItem`.
+
+## API-First Development (TypeSpec)
+
+The API contract is defined in TypeSpec (`specs/api/`) and is the **canonical source of truth**.
+
+### Workflow
+
+1. **Define or modify the API** in `.tsp` files under `specs/api/`
+2. **Compile** with `cd specs/api && npx tsp compile .` to generate `tsp-output/@typespec/openapi3/openapi.yaml`
+3. **Implement** the endpoint in the .NET Minimal API (`api/FussyEaterClub.Api/Endpoints/`)
+4. **Generate frontend types** with `cd web && npm run generate:types` to update `src/lib/api-types.d.ts`
+5. **Validate conformance** with `pwsh tools/Validate-ApiConformance.ps1`
+
+### Rules
+
+- Always update the TypeSpec spec **before** implementing a new endpoint
+- Frontend TypeScript types in `web/src/lib/api-types.d.ts` are auto-generated — never edit manually
+- Use types from `api-types.d.ts` via `components['schemas']['ModelName']` in frontend code
+- TypeSpec validation decorators (`@minLength`, `@maxLength`, `@minValue`, `@minItems`) should mirror FluentValidation rules
+- `decimal` fields use `float64` in TypeSpec (no native decimal support)
+- The .NET API also generates an OpenAPI spec at build time via `Microsoft.Extensions.ApiDescription.Server` — this is used for conformance validation against the TypeSpec spec
 
 ## Azure Integration
 
@@ -118,6 +146,7 @@ This project follows **Test-Driven Development (TDD)**. When modifying or adding
 
 - TypeScript strict mode enabled
 - API client in `web/src/lib/api.ts` — all backend calls go through typed `apiFetch<T>()` wrapper
+- API types in `web/src/lib/api-types.d.ts` — auto-generated from TypeSpec OpenAPI spec (do not edit)
 - Routes mirror domain: `/recipes`, `/meal-plan`, `/shopping-list`, `/household`
 - Dev proxy in `vite.config.ts` forwards `/api` to the .NET backend
 
@@ -135,6 +164,21 @@ dotnet format api/FussyEaterClub.slnx
 
 # Run API locally
 dotnet run --project api/FussyEaterClub.Api
+
+# Compile TypeSpec API spec (from specs/api/)
+npx tsp compile .
+
+# Watch TypeSpec for changes (from specs/api/)
+npx tsp compile . --watch
+
+# Format TypeSpec files (from specs/api/)
+npx tsp format **/*.tsp
+
+# Generate frontend types from OpenAPI spec (from web/)
+npm run generate:types
+
+# Validate API conformance (from repo root)
+pwsh tools/Validate-ApiConformance.ps1
 
 # Run frontend dev server (from web/)
 npm run dev

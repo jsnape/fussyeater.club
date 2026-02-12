@@ -9,6 +9,7 @@
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
     "editorconfig.editorconfig",
-    "github.copilot"
+    "github.copilot",
+    "typespec.typespec-vscode"
   ]
 }

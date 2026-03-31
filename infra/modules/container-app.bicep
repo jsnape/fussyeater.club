@@ -11,15 +11,18 @@ param cosmosDbConnectionString string
 @description('Cosmos DB database name.')
 param cosmosDbDatabaseName string
 
-@description('Container image name (e.g., ghcr.io/owner/repo:tag).')
+@description('Container image name (e.g., myacr.azurecr.io/api:latest).')
 param apiImageName string
 
-@description('GitHub Container Registry username.')
-param ghcrUsername string = ''
+@description('ACR login server.')
+param acrLoginServer string
 
-@description('GitHub Container Registry PAT (read:packages scope).')
-@secure()
-param ghcrToken string = ''
+@description('ACR name.')
+param acrName string
+
+resource acr 'Microsoft.ContainerRegistry/registries@2023-11-01-preview' existing = {
+  name: acrName
+}
 
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: '${baseName}-logs'
@@ -49,6 +52,9 @@ resource containerAppEnv 'Microsoft.App/managedEnvironments@2024-03-01' = {
 resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
   name: '${baseName}-api'
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     managedEnvironmentId: containerAppEnv.id
     configuration: {
@@ -62,24 +68,23 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
           allowedHeaders: ['*']
         }
       }
-      registries: !empty(ghcrToken) ? [
+      registries: [
         {
-          server: 'ghcr.io'
-          username: ghcrUsername
-          passwordSecretRef: 'ghcr-token'
+          server: acrLoginServer
+          username: acr.listCredentials().username
+          passwordSecretRef: 'acr-password'
         }
-      ] : []
-      secrets: concat([
+      ]
+      secrets: [
         {
           name: 'cosmosdb-connection'
           value: cosmosDbConnectionString
         }
-      ], !empty(ghcrToken) ? [
         {
-          name: 'ghcr-token'
-          value: ghcrToken
+          name: 'acr-password'
+          value: acr.listCredentials().passwords[0].value
         }
-      ] : [])
+      ]
     }
     template: {
       containers: [

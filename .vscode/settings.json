@@ -33,6 +33,8 @@
     "npm run check": true,
     "npm run generate:types": true,
     "npm run build": true,
-    "dotnet run": true
+    "dotnet run": true,
+    "az": true,
+    "azd": true
   }
 }

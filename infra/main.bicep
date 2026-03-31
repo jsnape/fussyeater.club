@@ -12,12 +12,14 @@ param cosmosDbDatabaseName string = 'fussy-eater-club'
 @description('The container app image to deploy (e.g., ghcr.io/jsnape/fussyeaterclub-api:latest).')
 param apiImageName string = ''
 
-@description('GitHub Container Registry username.')
-param ghcrUsername string = ''
-
-@description('GitHub Container Registry PAT (read:packages scope).')
-@secure()
-param ghcrToken string = ''
+// Azure Container Registry
+module acr 'modules/acr.bicep' = {
+  name: 'acr'
+  params: {
+    baseName: baseName
+    location: location
+  }
+}
 
 // Cosmos DB
 module cosmosDb 'modules/cosmosdb.bicep' = {
@@ -38,8 +40,8 @@ module containerApp 'modules/container-app.bicep' = {
     cosmosDbConnectionString: cosmosDb.outputs.connectionString
     cosmosDbDatabaseName: cosmosDbDatabaseName
     apiImageName: apiImageName
-    ghcrUsername: ghcrUsername
-    ghcrToken: ghcrToken
+    acrLoginServer: acr.outputs.loginServer
+    acrName: acr.outputs.name
   }
 }
 
@@ -56,3 +58,5 @@ module staticWebApp 'modules/static-web-app.bicep' = {
 output apiUrl string = containerApp.outputs.apiUrl
 output staticWebAppUrl string = staticWebApp.outputs.url
 output cosmosDbAccountName string = cosmosDb.outputs.accountName
+output AZURE_CONTAINER_REGISTRY_ENDPOINT string = acr.outputs.loginServer
+output AZURE_CONTAINER_REGISTRY_NAME string = acr.outputs.name

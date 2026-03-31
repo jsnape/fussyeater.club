@@ -7,28 +7,27 @@ param location string
 @description('The backend API base URL for linked backend.')
 param apiBaseUrl string
 
+// Static Web Apps are only available in specific regions
+// Using westeurope as it's closest to uksouth
+var swaLocation = 'westeurope'
+
 resource staticWebApp 'Microsoft.Web/staticSites@2023-12-01' = {
   name: '${baseName}-swa'
-  location: location
+  location: swaLocation
   sku: {
     name: 'Free'
     tier: 'Free'
   }
   properties: {
     buildProperties: {
-      appLocation: 'src/web'
+      appLocation: 'web'
       outputLocation: 'build'
     }
   }
 }
 
-resource linkedBackend 'Microsoft.Web/staticSites/linkedBackends@2023-12-01' = {
-  parent: staticWebApp
-  name: 'api-backend'
-  properties: {
-    backendResourceId: ''
-    region: location
-  }
-}
+// Note: Linked backends require Standard tier SWA
+// For Free tier, the frontend calls the Container App API directly via apiBaseUrl
 
 output url string = 'https://${staticWebApp.properties.defaultHostname}'
+output apiUrl string = apiBaseUrl

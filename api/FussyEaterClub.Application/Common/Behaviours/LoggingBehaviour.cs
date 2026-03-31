@@ -8,7 +8,7 @@ namespace FussyEaterClub.Application.Common.Behaviours;
 /// </summary>
 /// <typeparam name="TRequest">The request type.</typeparam>
 /// <typeparam name="TResponse">The response type.</typeparam>
-public sealed class LoggingBehaviour<TRequest, TResponse>(
+public sealed partial class LoggingBehaviour<TRequest, TResponse>(
     ILogger<LoggingBehaviour<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
 {
@@ -19,12 +19,18 @@ public sealed class LoggingBehaviour<TRequest, TResponse>(
         CancellationToken cancellationToken)
     {
         string requestName = typeof(TRequest).Name;
-        logger.LogInformation("Handling {RequestName}", requestName);
+        LogHandling(logger, requestName);
 
         TResponse response = await next(cancellationToken);
 
-        logger.LogInformation("Handled {RequestName}", requestName);
+        LogHandled(logger, requestName);
 
         return response;
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Handling {RequestName}")]
+    private static partial void LogHandling(ILogger logger, string requestName);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Handled {RequestName}")]
+    private static partial void LogHandled(ILogger logger, string requestName);
 }

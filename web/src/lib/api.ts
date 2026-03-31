@@ -31,6 +31,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const recipes = {
+    list: () => apiFetch<Recipe[]>("/recipes"),
     get: (id: string) => apiFetch<Recipe>(`/recipes/${id}`),
     create: (recipe: CreateRecipeRequest) =>
         apiFetch<Recipe>("/recipes", {

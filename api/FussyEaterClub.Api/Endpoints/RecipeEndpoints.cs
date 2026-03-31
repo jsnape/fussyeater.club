@@ -1,6 +1,7 @@
 using FussyEaterClub.Application.Features.Recipes;
 using FussyEaterClub.Application.Features.Recipes.CreateRecipe;
 using FussyEaterClub.Application.Features.Recipes.GetRecipe;
+using FussyEaterClub.Application.Features.Recipes.ListRecipes;
 using MediatR;
 
 namespace FussyEaterClub.Api.Endpoints;
@@ -20,6 +21,14 @@ public static class RecipeEndpoints
         var group = app.MapGroup("/api/recipes")
             .WithTags("Recipes")
             .RequireAuthorization();
+
+        group.MapGet("/", async (IMediator mediator, CancellationToken cancellationToken) =>
+        {
+            IReadOnlyList<RecipeDto> result = await mediator.Send(new ListRecipesQuery(), cancellationToken);
+            return Results.Ok(result);
+        })
+        .WithName("ListRecipes")
+        .Produces<IReadOnlyList<RecipeDto>>();
 
         group.MapGet("/{id}", async (string id, IMediator mediator, CancellationToken cancellationToken) =>
         {

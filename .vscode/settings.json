@@ -30,6 +30,9 @@
     "npm install": true,
     "npx tsp": true,
     "dotnet restore": true,
-    "npm run check": true
+    "npm run check": true,
+    "npm run generate:types": true,
+    "npm run build": true,
+    "dotnet run": true
   }
 }

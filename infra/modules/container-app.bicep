@@ -11,8 +11,15 @@ param cosmosDbConnectionString string
 @description('Cosmos DB database name.')
 param cosmosDbDatabaseName string
 
-@description('Container image name.')
+@description('Container image name (e.g., ghcr.io/owner/repo:tag).')
 param apiImageName string
+
+@description('GitHub Container Registry username.')
+param ghcrUsername string = ''
+
+@description('GitHub Container Registry PAT (read:packages scope).')
+@secure()
+param ghcrToken string = ''
 
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: '${baseName}-logs'
@@ -55,12 +62,24 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
           allowedHeaders: ['*']
         }
       }
-      secrets: [
+      registries: !empty(ghcrToken) ? [
+        {
+          server: 'ghcr.io'
+          username: ghcrUsername
+          passwordSecretRef: 'ghcr-token'
+        }
+      ] : []
+      secrets: concat([
         {
           name: 'cosmosdb-connection'
           value: cosmosDbConnectionString
         }
-      ]
+      ], !empty(ghcrToken) ? [
+        {
+          name: 'ghcr-token'
+          value: ghcrToken
+        }
+      ] : [])
     }
     template: {
       containers: [

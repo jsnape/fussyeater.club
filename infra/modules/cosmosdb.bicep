@@ -13,6 +13,7 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {
   kind: 'GlobalDocumentDB'
   properties: {
     databaseAccountOfferType: 'Standard'
+    enableFreeTier: true
     locations: [
       {
         locationName: location
@@ -22,11 +23,6 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' = {
     consistencyPolicy: {
       defaultConsistencyLevel: 'Session'
     }
-    capabilities: [
-      {
-        name: 'EnableServerless'
-      }
-    ]
   }
 }
 
@@ -36,6 +32,9 @@ resource database 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2024-05-15
   properties: {
     resource: {
       id: databaseName
+    }
+    options: {
+      throughput: 1000 // Shared throughput covered by free tier
     }
   }
 }

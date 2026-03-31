@@ -5,6 +5,10 @@ namespace FussyEaterClub.Api;
 @tag("Recipes")
 @route("/api/recipes")
 interface Recipes {
+  /** List all recipes for the current household. */
+  @get
+  list(): Recipe[];
+
   /** Get a recipe by its identifier. */
   @get
   get(@path id: string): Recipe | NotFoundResponse;

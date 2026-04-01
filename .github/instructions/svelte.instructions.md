@@ -25,3 +25,10 @@ You MUST use this tool whenever writing Svelte code before sending it to the use
 
 Generates a Svelte Playground link with the provided code.
 After completing the code, ask the user if they want a playground link. Only call this tool after user confirmation and NEVER if code was written to files in their project.
+
+## SvelteKit Conventions
+
+- Routes mirror domain: `/recipes`, `/meal-plan`, `/shopping-list`, `/household`, `/store-cupboard`
+- All backend calls go through the typed `apiFetch<T>()` wrapper in `src/lib/api.ts` — never call `fetch` directly
+- API types in `src/lib/api-types.d.ts` are auto-generated — never edit manually; reference via `components['schemas']['ModelName']`
+- Deploy target uses `@sveltejs/adapter-cloudflare`

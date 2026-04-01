@@ -70,21 +70,12 @@ This project follows **TDD**. When modifying or adding code:
 3. **Refactor** while keeping all tests green
 4. **All relevant frontend and route tests must pass** before work is complete
 
-### Frontend (SvelteKit)
+## Workflow Principles
 
-- **Framework**: Vitest with jsdom environment
-- Test files co-located with source: `*.test.ts` next to the module under test
-- Use `vi.fn()` and `vi.stubGlobal()` for mocking (Vitest built-ins)
-- Test names use descriptive strings: `it('should return data on success', ...)`
-- Arrange-Act-Assert pattern for test structure
-
-## Frontend Conventions (SvelteKit)
-
-- TypeScript strict mode enabled
-- API client in `src/lib/api.ts` — all backend calls go through typed `apiFetch<T>()` wrapper
-- API types in `src/lib/api-types.d.ts` — auto-generated from TypeSpec OpenAPI spec (do not edit)
-- Routes mirror domain: `/recipes`, `/meal-plan`, `/shopping-list`, `/household`, `/store-cupboard`
-- Deploy target uses `@sveltejs/adapter-cloudflare`
+- Start every complex task in plan mode; re-plan immediately if things go sideways
+- Use subagents to keep the main context window clean and focused
+- Never mark a task complete without proving it works — run tests, check logs
+- Simplicity first: make every change as simple as possible; find root causes, no temporary fixes
 
 ## Commands
 

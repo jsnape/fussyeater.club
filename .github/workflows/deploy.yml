@@ -2,8 +2,11 @@ name: Deploy
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
+# TODO: Re-enable automatic triggers when ready for CI
+#   pull_request:
+#     branches: [main]
+#   push:
+#     branches: [main]
 
 permissions:
   contents: read

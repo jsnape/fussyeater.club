@@ -1,4 +1,4 @@
-name: API Spec Conformance
+name: API Type Generation
 
 on:
   workflow_dispatch:
@@ -6,44 +6,9 @@ on:
     branches: [main]
     paths:
       - 'specs/api/**'
-      - 'api/**'
-      - 'web/src/lib/api-types.d.ts'
-      - 'tools/Validate-ApiConformance.ps1'
+      - 'src/lib/api-types.d.ts'
 
 jobs:
-  conformance:
-    name: Validate API Conformance
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: global.json
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: specs/api/package-lock.json
-
-      - name: Install TypeSpec dependencies
-        working-directory: specs/api
-        run: npm ci
-
-      - name: Compile TypeSpec
-        working-directory: specs/api
-        run: npx tsp compile .
-
-      - name: Build .NET API (generates build-time OpenAPI spec)
-        run: dotnet build api/FussyEaterClub.slnx --configuration Release
-
-      - name: Validate API conformance
-        shell: pwsh
-        run: ./tools/Validate-ApiConformance.ps1
-
   types:
     name: Verify Generated Types
     runs-on: ubuntu-latest
@@ -64,18 +29,16 @@ jobs:
         run: npx tsp compile .
 
       - name: Install frontend dependencies
-        working-directory: web
         run: npm ci
 
       - name: Generate TypeScript types
-        working-directory: web
         run: npm run generate:types
 
       - name: Check for uncommitted type changes
         run: |
-          if [ -n "$(git diff --name-only web/src/lib/api-types.d.ts)" ]; then
-            echo "::error::web/src/lib/api-types.d.ts is out of date. Run 'cd web && npm run generate:types' and commit the result."
-            git diff web/src/lib/api-types.d.ts
+          if [ -n "$(git diff --name-only src/lib/api-types.d.ts)" ]; then
+            echo "::error::src/lib/api-types.d.ts is out of date. Run 'npm run generate:types' and commit the result."
+            git diff src/lib/api-types.d.ts
             exit 1
           fi
           echo "Generated types are up to date."

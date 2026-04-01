@@ -9,35 +9,9 @@ on:
 #     branches: [main]
 
 jobs:
-  dotnet:
-    name: .NET Build & Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: global.json
-
-      - name: Restore
-        run: dotnet restore api/FussyEaterClub.slnx
-
-      - name: Build
-        run: dotnet build api/FussyEaterClub.slnx --no-restore --configuration Release
-
-      - name: Test
-        run: dotnet test api/FussyEaterClub.slnx --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
-
-      - name: Format check
-        run: dotnet format api/FussyEaterClub.slnx --verify-no-changes --verbosity diagnostic
-
   frontend:
     name: SvelteKit Build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: web
     steps:
       - uses: actions/checkout@v4
 
@@ -46,7 +20,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: web/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -56,3 +30,6 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Test
+        run: npm test

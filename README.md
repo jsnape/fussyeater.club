@@ -6,13 +6,10 @@ A recipe website for families with fussy eaters. Users create and browse recipes
 
 | Layer            | Technology                                                 |
 | ---------------- | ---------------------------------------------------------- |
-| Backend          | .NET 10 Minimal API, Clean Architecture + CQRS (MediatR)   |
-| Frontend         | SvelteKit 5 with TypeScript                                |
-| Database         | Azure Cosmos DB (direct SDK, partitioned by `householdId`) |
-| Auth             | Microsoft Entra ID                                         |
-| API Hosting      | Azure Container Apps (consumption, scale-to-zero)          |
-| Frontend Hosting | Azure Static Web Apps                                      |
-| IaC              | Bicep                                                      |
+| Runtime          | SvelteKit 5 on Cloudflare Workers                          |
+| Frontend/API     | SvelteKit 5 with TypeScript                                |
+| Database         | Cloudflare D1                                              |
+| Auth             | Cloudflare Access (header-based identity)                  |
 | API Spec         | TypeSpec → OpenAPI 3.0                                     |
 | CI/CD            | GitHub Actions                                             |
 
@@ -20,57 +17,41 @@ A recipe website for families with fussy eaters. Users create and browse recipes
 
 ```
 fussyeater.club/
-├── api/                          # .NET backend
-│   ├── FussyEaterClub.slnx      # Solution file
-│   ├── Directory.Build.props     # Shared MSBuild properties
-│   ├── Directory.Packages.props  # Central NuGet package management
-│   ├── nuget.config              # NuGet source configuration
-│   ├── FussyEaterClub.Domain/    # Entities, value objects, enums, interfaces
-│   ├── FussyEaterClub.Application/  # CQRS commands/queries, handlers, validators
-│   ├── FussyEaterClub.Infrastructure/  # Cosmos DB repos, identity services
-│   ├── FussyEaterClub.Api/       # Minimal API endpoints, Dockerfile
-│   ├── FussyEaterClub.Domain.Tests/
-│   ├── FussyEaterClub.Application.Tests/
-│   └── FussyEaterClub.Api.Tests/
-├── web/                          # SvelteKit frontend
+├── migrations/                   # D1 migrations
+├── src/routes/api/               # Edge API endpoints
+├── wrangler.toml                 # Worker and D1 bindings
 ├── specs/
 │   └── api/                      # TypeSpec API definitions (source of truth)
 │       ├── main.tsp              # Entry point
 │       ├── models/               # Enums, value objects, DTOs
 │       ├── routes/               # API endpoint definitions
 │       └── tspconfig.yaml        # TypeSpec compiler config
-├── infra/                        # Bicep IaC modules
 ├── tests/                        # Integration and end-to-end tests
 ├── docs/                         # Documentation
-└── tools/                        # Developer tooling and scripts
+└── .github/workflows/            # CI/CD workflows
 ```
 
-The root is kept intentionally clean — only repo-wide configuration files (`global.json`, `.editorconfig`, `.gitignore`, etc.) live here. All .NET code and build infrastructure is inside `api/`, and the frontend is in `web/`.
+The SvelteKit app now lives at repository root.
 
 ## Getting Started
 
 ### Prerequisites
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - [Node.js 22+](https://nodejs.org/)
-- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) (for deployment)
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) (optional for local deployment commands)
 
 ### Build & Run
 
 ```powershell
-# Build the .NET solution
-dotnet build api/FussyEaterClub.slnx
-
-# Run tests
-dotnet test api/FussyEaterClub.slnx
-
-# Run API locally
-dotnet run --project api/FussyEaterClub.Api
-
-# Install frontend dependencies and run dev server
-cd web
+# Install dependencies and run dev server
 npm install
 npm run dev
+
+# Run frontend tests
+npm test
+
+# Build for production
+npm run build
 ```
 
 ### API-First Workflow (TypeSpec)
@@ -86,18 +67,30 @@ npm install
 npx tsp compile .
 
 # Generate frontend TypeScript types from the spec
-cd ../../web
+cd ../..
 npm run generate:types
 
-# Validate .NET API conforms to the TypeSpec spec
-pwsh tools/Validate-ApiConformance.ps1
+# Validate generated TypeScript types are current
+npm run generate:types
 ```
 
-**Workflow**: define/update `.tsp` files → compile → implement in .NET → generate frontend types → validate conformance.
+**Workflow**: define/update `.tsp` files → compile → implement Worker routes → generate frontend types.
 
 ## Deployment
 
-Infrastructure is defined in Bicep (`infra/`) and deployed via GitHub Actions. See `.github/workflows/deploy.yml` for the full pipeline.
+Frontend and edge API routes are deployed to Cloudflare Workers with D1 migrations via GitHub Actions.
+
+The deploy workflow in `.github/workflows/deploy.yml` runs:
+
+1. `npm ci`, `npm test`, and `npm run build` at repo root
+2. D1 migrations with `wrangler d1 migrations apply ... --remote`
+3. Worker deploy with `wrangler deploy`
+
+Required repository secrets:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_D1_DATABASE_ID`
 
 ## License
 

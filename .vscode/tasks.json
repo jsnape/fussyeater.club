@@ -3,10 +3,9 @@
   "tasks": [
     {
       "label": "build",
-      "command": "dotnet",
-      "type": "process",
-      "args": ["build", "${workspaceFolder}/api/FussyEaterClub.slnx"],
-      "problemMatcher": "$msCompile",
+      "command": "npm run build",
+      "type": "shell",
+      "problemMatcher": [],
       "group": {
         "kind": "build",
         "isDefault": true
@@ -14,10 +13,9 @@
     },
     {
       "label": "test",
-      "command": "dotnet",
-      "type": "process",
-      "args": ["test", "${workspaceFolder}/api/FussyEaterClub.slnx"],
-      "problemMatcher": "$msCompile",
+      "command": "npm test",
+      "type": "shell",
+      "problemMatcher": [],
       "group": "test"
     },
     {
@@ -25,7 +23,7 @@
       "type": "shell",
       "command": "npm run dev",
       "options": {
-        "cwd": "${workspaceFolder}/web"
+        "cwd": "${workspaceFolder}"
       },
       "isBackground": true,
       "problemMatcher": []

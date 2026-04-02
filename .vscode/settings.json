@@ -1,41 +1,30 @@
 {
-  "editor.formatOnSave": true,
-  "[csharp]": {
-    "editor.defaultFormatter": "ms-dotnettools.csharp"
-  },
-  "[svelte]": {
-    "editor.defaultFormatter": "svelte.svelte-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[bicep]": {
-    "editor.defaultFormatter": "ms-azuretools.vscode-bicep"
-  },
-  "files.exclude": {
-    "**/bin": true,
-    "**/obj": true,
-    "**/node_modules": true,
-    "**/.vs": true
-  },
-  "dotnet.defaultSolution": "api/FussyEaterClub.slnx",
-  "chat.tools.terminal.autoApprove": {
-    "dotnet build": true,
-    "dotnet test": true,
-    "Test-Path": true,
-    "npm run dev": true,
-    "npm install": true,
-    "npx tsp": true,
-    "dotnet restore": true,
-    "npm run check": true,
-    "npm run generate:types": true,
-    "npm run build": true,
-    "dotnet run": true,
-    "az": true,
-    "azd": true,
-    "npm test": true
-  }
+	"editor.formatOnSave": true,
+	"[svelte]": {
+		"editor.defaultFormatter": "svelte.svelte-vscode"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"files.exclude": {
+		"**/node_modules": true,
+		"**/dist": true
+	},
+
+	"files.associations": {
+		"*.css": "tailwindcss"
+	},
+	"chat.tools.terminal.autoApprove": {
+		"Test-Path": true,
+		"npm run dev": true,
+		"npm install": true,
+		"npx tsp": true,
+		"npm run check": true,
+		"npm run generate:types": true,
+		"npm run build": true,
+		"npm test": true
+	}
 }

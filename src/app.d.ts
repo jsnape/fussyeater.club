@@ -2,20 +2,17 @@
 // for information about these interfaces
 declare global {
 	namespace App {
+		interface Platform {
+			env: Env;
+			ctx: ExecutionContext;
+			caches: CacheStorage;
+			cf?: IncomingRequestCfProperties;
+		}
+
 		// interface Error {}
-		interface Locals {
-            householdId: string | null;
-            accessUserEmail: string | null;
-        }
+		// interface Locals {}
 		// interface PageData {}
 		// interface PageState {}
-		interface Platform {
-            env: {
-                DB: D1Database;
-                REQUIRE_ACCESS_AUTH?: string;
-                DEFAULT_HOUSEHOLD_ID?: string;
-            };
-        }
 	}
 }
 

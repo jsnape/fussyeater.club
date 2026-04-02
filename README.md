@@ -1,97 +1,42 @@
-# fussyeater.club
+# sv
 
-A recipe website for families with fussy eaters. Users create and browse recipes, build meal plans, and generate shopping lists — all filtered by family members' food preferences and allergies.
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-## Tech Stack
+## Creating a project
 
-| Layer            | Technology                                                 |
-| ---------------- | ---------------------------------------------------------- |
-| Runtime          | SvelteKit 5 on Cloudflare Workers                          |
-| Frontend/API     | SvelteKit 5 with TypeScript                                |
-| Database         | Cloudflare D1                                              |
-| Auth             | Cloudflare Access (header-based identity)                  |
-| API Spec         | TypeSpec → OpenAPI 3.0                                     |
-| CI/CD            | GitHub Actions                                             |
+If you're seeing this, you've probably already done this step. Congrats!
 
-## Repository Structure
-
-```
-fussyeater.club/
-├── migrations/                   # D1 migrations
-├── src/routes/api/               # Edge API endpoints
-├── wrangler.toml                 # Worker and D1 bindings
-├── specs/
-│   └── api/                      # TypeSpec API definitions (source of truth)
-│       ├── main.tsp              # Entry point
-│       ├── models/               # Enums, value objects, DTOs
-│       ├── routes/               # API endpoint definitions
-│       └── tspconfig.yaml        # TypeSpec compiler config
-├── tests/                        # Integration and end-to-end tests
-├── docs/                         # Documentation
-└── .github/workflows/            # CI/CD workflows
+```sh
+# create a new project
+npx sv create my-app
 ```
 
-The SvelteKit app now lives at repository root.
+To recreate this project with the same configuration:
 
-## Getting Started
+```sh
+# recreate this project
+npx sv@0.13.1 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" tailwindcss="plugins:typography,forms" sveltekit-adapter="adapter:cloudflare+cfTarget:workers" mdsvex mcp="ide:vscode+setup:remote" --install npm ./
+```
 
-### Prerequisites
+## Developing
 
-- [Node.js 22+](https://nodejs.org/)
-- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/install-and-update/) (optional for local deployment commands)
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-### Build & Run
-
-```powershell
-# Install dependencies and run dev server
-npm install
+```sh
 npm run dev
 
-# Run frontend tests
-npm test
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
 
-# Build for production
+## Building
+
+To create a production version of your app:
+
+```sh
 npm run build
 ```
 
-### API-First Workflow (TypeSpec)
+You can preview the production build with `npm run preview`.
 
-The API contract is defined in [TypeSpec](https://typespec.io/) under `specs/api/` and is the canonical source of truth.
-
-```powershell
-# Install TypeSpec dependencies (first time only)
-cd specs/api
-npm install
-
-# Compile TypeSpec → OpenAPI 3.0 spec
-npx tsp compile .
-
-# Generate frontend TypeScript types from the spec
-cd ../..
-npm run generate:types
-
-# Validate generated TypeScript types are current
-npm run generate:types
-```
-
-**Workflow**: define/update `.tsp` files → compile → implement Worker routes → generate frontend types.
-
-## Deployment
-
-Frontend and edge API routes are deployed to Cloudflare Workers with D1 migrations via GitHub Actions.
-
-The deploy workflow in `.github/workflows/deploy.yml` runs:
-
-1. `npm ci`, `npm test`, and `npm run build` at repo root
-2. D1 migrations with `wrangler d1 migrations apply ... --remote`
-3. Worker deploy with `wrangler deploy`
-
-Required repository secrets:
-
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
-- `CLOUDFLARE_D1_DATABASE_ID`
-
-## License
-
-See [LICENSE](LICENSE) for details.
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.

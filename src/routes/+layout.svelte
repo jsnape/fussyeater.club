@@ -1,18 +1,11 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
+	import './layout.css';
+	import favicon from '$lib/assets/favicon.svg';
 
-	let { children }: { children: Snippet } = $props();
+	let { children } = $props();
 </script>
 
-<nav>
-	<a href="/">Home</a>
-	<a href="/recipes">Recipes</a>
-	<a href="/meal-plan">Meal Plan</a>
-	<a href="/shopping-list">Shopping List</a>
-	<a href="/store-cupboard">Store Cupboard</a>
-	<a href="/household">Household</a>
-</nav>
-
+<svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <main>
 	{@render children()}
 </main>

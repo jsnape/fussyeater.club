@@ -80,6 +80,19 @@ This project follows **TDD**. When modifying or adding code:
 ## Commands
 
 ```powershell
+# IMPORTANT: App runtime commands must be run from repo root (E:\Dev\fussyeater.club),
+# not from specs/api. Running from specs/api will use the TypeSpec package scripts.
+
+# Install dependencies (from repo root)
+npm install
+
+# Run local development server (from repo root)
+npm run dev
+
+# Run Cloudflare Worker preview locally (from repo root)
+npm run build
+npm run preview
+
 # Compile TypeSpec API spec (from specs/api/)
 npx tsp compile .
 

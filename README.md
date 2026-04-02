@@ -1,42 +1,36 @@
-# sv
+# fussyeater.club
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Recipe web app for families with fussy eaters. Built with SvelteKit 5 and Cloudflare Workers.
 
-## Creating a project
+## Run locally
 
-If you're seeing this, you've probably already done this step. Congrats!
+Run all app commands from the repository root, not from specs/api.
 
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv@0.13.1 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" tailwindcss="plugins:typography,forms" sveltekit-adapter="adapter:cloudflare+cfTarget:workers" mdsvex mcp="ide:vscode+setup:remote" --install npm ./
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+```powershell
+# from repo root
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+If you want to run the Worker preview locally:
 
-To create a production version of your app:
-
-```sh
+```powershell
+# from repo root
 npm run build
+npm run preview
 ```
 
-You can preview the production build with `npm run preview`.
+If your terminal is currently in specs/api, move back to repo root first:
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```powershell
+Set-Location ..\..
+```
+
+## TypeSpec API contract
+
+TypeSpec commands must be run from specs/api:
+
+```powershell
+Set-Location specs/api
+npx tsp compile .
+```

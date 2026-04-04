@@ -25,6 +25,8 @@ export type DbLike = {
 	exec: (query: string) => Promise<DbRunResult>;
 };
 
+const PBKDF2_ITERATIONS = 600_000;
+
 export function requireDb(platform?: App.Platform): DbLike {
 	const db = platform?.env?.DB as unknown as DbLike | undefined;
 	if (!db) {
@@ -70,10 +72,72 @@ export function maskInviteCode(code: string): string {
 }
 
 export async function hashPassword(password: string): Promise<string> {
-	const payload = new TextEncoder().encode(password);
-	const digest = await crypto.subtle.digest('SHA-256', payload);
-	const bytes = new Uint8Array(digest);
-	return Array.from(bytes)
+	const salt = crypto.getRandomValues(new Uint8Array(16));
+	const encodedPassword = new TextEncoder().encode(password);
+	const keyMaterial = await crypto.subtle.importKey('raw', encodedPassword, 'PBKDF2', false, [
+		'deriveBits'
+	]);
+	const derivedBits = await crypto.subtle.deriveBits(
+		{
+			name: 'PBKDF2',
+			salt,
+			iterations: PBKDF2_ITERATIONS,
+			hash: 'SHA-256'
+		},
+		keyMaterial,
+		256
+	);
+	const hashBytes = new Uint8Array(derivedBits);
+	const saltHex = Array.from(salt)
 		.map((byte) => byte.toString(16).padStart(2, '0'))
 		.join('');
+	const hashHex = Array.from(hashBytes)
+		.map((byte) => byte.toString(16).padStart(2, '0'))
+		.join('');
+
+	return `${saltHex}:${hashHex}`;
+}
+
+export async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
+	const [saltHex, expectedHex] = storedHash.split(':');
+	if (!saltHex || !expectedHex) {
+		return false;
+	}
+
+	const salt = new Uint8Array(
+		saltHex.match(/.{1,2}/g)?.map((byte) => Number.parseInt(byte, 16)) ?? []
+	);
+	const encodedPassword = new TextEncoder().encode(password);
+	const keyMaterial = await crypto.subtle.importKey('raw', encodedPassword, 'PBKDF2', false, [
+		'deriveBits'
+	]);
+	const derivedBits = await crypto.subtle.deriveBits(
+		{
+			name: 'PBKDF2',
+			salt,
+			iterations: PBKDF2_ITERATIONS,
+			hash: 'SHA-256'
+		},
+		keyMaterial,
+		256
+	);
+	const actualHex = Array.from(new Uint8Array(derivedBits))
+		.map((byte) => byte.toString(16).padStart(2, '0'))
+		.join('');
+	const expectedBuffer = new TextEncoder().encode(expectedHex);
+	const actualBuffer = new TextEncoder().encode(actualHex);
+	return constantTimeEqual(expectedBuffer, actualBuffer);
+}
+
+function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
+	if (a.length !== b.length) {
+		return false;
+	}
+
+	let mismatch = 0;
+	for (let index = 0; index < a.length; index += 1) {
+		mismatch |= a[index] ^ b[index];
+	}
+
+	return mismatch === 0;
 }

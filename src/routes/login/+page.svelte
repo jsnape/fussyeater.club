@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { apiFetch, ApiError } from '$lib/api';
+	import { goto } from '$app/navigation';
 
 	let email = $state('');
 	let password = $state('');
@@ -17,8 +18,17 @@
 		loginError = '';
 		isSubmitting = true;
 		try {
+			await apiFetch('/api/auth/login', {
+				method: 'POST',
+				body: JSON.stringify({ email, password })
+			});
 			await goto('/');
-		} catch {
+		} catch (error) {
+			if (error instanceof ApiError) {
+				loginError =
+					error.status === 401 ? 'Invalid credentials.' : 'Unable to sign in right now.';
+				return;
+			}
 			loginError = 'Unable to sign in right now.';
 		} finally {
 			isSubmitting = false;

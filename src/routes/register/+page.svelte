@@ -1,19 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { apiFetch, ApiError } from '$lib/api';
+	import type { components } from '$lib/api-types';
 	import type { PageData } from './$types';
 
 	type HouseholdAction = 'create' | 'join';
 
-	type InviteRedeemResponse = {
-		joinIntentToken: string;
-		household: {
-			id: string;
-			name: string;
-		};
-		remainingUses: number;
-		expiresAt: string;
-	};
+	type InviteRedeemResponse = components['schemas']['InviteRedeemResponse'];
 
 	let { data }: { data: PageData } = $props();
 	let name = $state('');
@@ -149,6 +142,7 @@
 				})
 			});
 			submitMessage = 'Registration complete. You can continue into the app.';
+			idempotencyKey = crypto.randomUUID();
 		} catch (error) {
 			if (error instanceof ApiError) {
 				submitError = submitErrorMessage(error.status);
@@ -166,11 +160,10 @@
 			inviteCode = data.inviteCode ?? '';
 			householdAction = data.inviteCode ? 'join' : 'create';
 			initialized = true;
-		}
-
-		if (data.inviteCode && !autoRedeemed) {
-			autoRedeemed = true;
-			void redeemInvite(true);
+			if (data.inviteCode && !autoRedeemed) {
+				autoRedeemed = true;
+				void redeemInvite(true);
+			}
 		}
 	});
 </script>

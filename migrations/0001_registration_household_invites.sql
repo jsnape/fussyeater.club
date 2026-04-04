@@ -79,11 +79,22 @@ FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 CREATE INDEX IF NOT EXISTS idx_invite_redemption_audit_invite ON invite_redemption_audit(invite_id, created_at);
 
 CREATE TABLE IF NOT EXISTS idempotency_keys (
-idempotency_key TEXT NOT NULL,
-endpoint TEXT NOT NULL,
-user_id TEXT NOT NULL,
-result_status INTEGER NOT NULL,
-result_body TEXT NOT NULL,
-created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-PRIMARY KEY (idempotency_key, endpoint, user_id)
+	idempotency_key TEXT NOT NULL,
+	endpoint TEXT NOT NULL,
+	user_id TEXT NOT NULL,
+	result_status INTEGER NOT NULL,
+	result_body TEXT NOT NULL,
+	created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (idempotency_key, endpoint, user_id)
 );
+
+CREATE TABLE IF NOT EXISTS user_sessions (
+	id TEXT PRIMARY KEY,
+	user_id TEXT NOT NULL,
+	expires_at TEXT NOT NULL,
+	created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	revoked_at TEXT,
+	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_sessions_user ON user_sessions(user_id, expires_at);

@@ -53,7 +53,7 @@ async function ensureUser(
 				input.authUserId,
 				input.authEmail ?? input.email ?? null,
 				input.name.trim(),
-				input.socialProvider ?? 'microsoft'
+				'microsoft'
 			)
 			.run();
 

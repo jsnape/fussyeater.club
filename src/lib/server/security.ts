@@ -22,6 +22,12 @@ export function getAuthContext(request: Request): AuthContext {
 }
 
 export function requireCsrf(request: Request): void {
+	if (!hasValidCsrf(request)) {
+		throw error(403, { message: 'CSRF verification failed' });
+	}
+}
+
+export function hasValidCsrf(request: Request): boolean {
 	const csrfHeader = request.headers.get('x-csrf-token');
 	const cookie = request.headers.get('cookie') ?? '';
 	const cookieToken = cookie
@@ -30,7 +36,20 @@ export function requireCsrf(request: Request): void {
 		.find((part) => part.startsWith('csrf-token='))
 		?.slice('csrf-token='.length);
 
-	if (!csrfHeader || !cookieToken || csrfHeader !== cookieToken) {
-		throw error(403, { message: 'CSRF verification failed' });
+	if (!csrfHeader || !cookieToken) {
+		return false;
 	}
+
+	const a = new TextEncoder().encode(csrfHeader);
+	const b = new TextEncoder().encode(cookieToken);
+	if (a.length !== b.length) {
+		return false;
+	}
+
+	let mismatch = 0;
+	for (let index = 0; index < a.length; index += 1) {
+		mismatch |= a[index] ^ b[index];
+	}
+
+	return mismatch === 0;
 }

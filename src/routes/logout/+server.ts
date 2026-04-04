@@ -1,11 +1,28 @@
 import type { RequestHandler } from '@sveltejs/kit';
+import { hasValidCsrf } from '$lib/server/security';
 
-export const GET: RequestHandler = async ({ cookies }) => {
-cookies.delete('session', { path: '/' });
-return new Response(null, {
-status: 302,
-headers: {
-location: '/login'
-}
-});
+export const POST: RequestHandler = async ({ cookies, request, platform }) => {
+	if (!hasValidCsrf(request)) {
+		return new Response(JSON.stringify({ message: 'CSRF verification failed' }), {
+			status: 403,
+			headers: { 'content-type': 'application/json' }
+		});
+	}
+
+	const sessionId = cookies.get('session');
+	if (sessionId) {
+		const db = platform?.env?.DB;
+		await db
+			?.prepare('UPDATE user_sessions SET revoked_at = ?1 WHERE id = ?2')
+			.bind(new Date().toISOString(), sessionId)
+			.run();
+	}
+
+	cookies.delete('session', { path: '/' });
+	return new Response(null, {
+		status: 302,
+		headers: {
+			location: '/login'
+		}
+	});
 };

@@ -32,3 +32,5 @@ specs/**/tsp-output/
 
 # Build-time OpenAPI output (regenerated on build)
 api/**/openapi-output/
+
+.fake

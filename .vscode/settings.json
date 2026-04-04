@@ -25,6 +25,10 @@
 		"npm run check": true,
 		"npm run generate:types": true,
 		"npm run build": true,
-		"npm test": true
+		"npm test": true,
+		"/^python \\.github/skills/ui-ux-pro-max/scripts/search\\.py \"recipe family children food\" --domain color -n 8$/": {
+			"approve": true,
+			"matchCommandLine": true
+		}
 	}
 }

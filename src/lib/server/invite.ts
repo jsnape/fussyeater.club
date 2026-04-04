@@ -162,6 +162,14 @@ export async function createHouseholdInvite(
 			code = createInviteCode();
 		}
 
+		const stillExisting = await db
+			.prepare('SELECT id FROM household_invites WHERE code = ?1')
+			.bind(code)
+			.first<{ id: string }>();
+		if (stillExisting) {
+			throw new Error('INVITE_CODE_GENERATION_FAILED');
+		}
+
 		const inviteId = crypto.randomUUID();
 		const expiresAt = addDaysIso(expiresInDays);
 		await db

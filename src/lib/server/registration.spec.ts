@@ -1,10 +1,19 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { completeRegistration } from './registration';
 import { createTestDbPair } from './test-db';
 
 describe('registration service', () => {
+	const pairs: Array<ReturnType<typeof createTestDbPair>> = [];
+	afterEach(() => {
+		for (const pair of pairs.splice(0)) {
+			pair.cleanup();
+		}
+	});
+
 	it('should create household in create mode', async () => {
-		const { first } = createTestDbPair();
+		const pair = createTestDbPair();
+		pairs.push(pair);
+		const { first } = pair;
 		const result = await completeRegistration(first, {
 			name: 'Taylor',
 			email: 'taylor@example.com',
@@ -19,7 +28,9 @@ describe('registration service', () => {
 	});
 
 	it('should allow idempotent replay for consumed join intent', async () => {
-		const { first } = createTestDbPair();
+		const pair = createTestDbPair();
+		pairs.push(pair);
+		const { first } = pair;
 		await first
 			.prepare(
 				"INSERT INTO users (id, name, email) VALUES ('owner-4', 'Owner', 'owner4@example.com')"
@@ -68,7 +79,9 @@ describe('registration service', () => {
 	});
 
 	it('should allow only one success for parallel last-use joins', async () => {
-		const { first, second } = createTestDbPair();
+		const pair = createTestDbPair();
+		pairs.push(pair);
+		const { first, second } = pair;
 		await first
 			.prepare(
 				"INSERT INTO users (id, name, email) VALUES ('owner-5', 'Owner', 'owner5@example.com')"

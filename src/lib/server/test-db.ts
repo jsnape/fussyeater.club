@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { DatabaseSync } from 'node:sqlite';
@@ -56,7 +56,13 @@ class SqliteDbAdapter implements DbLike {
 	}
 }
 
-export function createTestDbPair(): { first: SqliteDbAdapter; second: SqliteDbAdapter } {
+export type TestDbPair = {
+	first: SqliteDbAdapter;
+	second: SqliteDbAdapter;
+	cleanup: () => void;
+};
+
+export function createTestDbPair(): TestDbPair {
 	const tempDirectory = mkdtempSync(join(tmpdir(), 'fussyeater-db-'));
 	const databasePath = join(tempDirectory, 'test.sqlite');
 	const migrationPath = join(process.cwd(), 'migrations/0001_registration_household_invites.sql');
@@ -70,6 +76,11 @@ export function createTestDbPair(): { first: SqliteDbAdapter; second: SqliteDbAd
 
 	return {
 		first: new SqliteDbAdapter(firstRaw),
-		second: new SqliteDbAdapter(secondRaw)
+		second: new SqliteDbAdapter(secondRaw),
+		cleanup: () => {
+			firstRaw.close();
+			secondRaw.close();
+			rmSync(tempDirectory, { recursive: true, force: true });
+		}
 	};
 }

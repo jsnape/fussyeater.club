@@ -2,11 +2,17 @@ import { json, type RequestHandler } from '@sveltejs/kit';
 import { requireDb } from '$lib/server/db';
 import { FEATURE_FLAGS, isFeatureEnabled } from '$lib/server/feature-flags';
 import { redeemInviteCode } from '$lib/server/invite';
-import { getAuthContext } from '$lib/server/security';
+import { getAuthContext, requireCsrf } from '$lib/server/security';
 
 export const POST: RequestHandler = async ({ request, platform }) => {
 	if (!isFeatureEnabled(platform, FEATURE_FLAGS.registrationV2Enabled)) {
 		return json({ message: 'Not found' }, { status: 404 });
+	}
+
+	try {
+		requireCsrf(request);
+	} catch {
+		return json({ message: 'CSRF verification failed' }, { status: 403 });
 	}
 
 	let body: { code?: string };
@@ -23,7 +29,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 
 	try {
 		const db = requireDb(platform);
-		const auth = getAuthContext(request);
+		const auth = await getAuthContext(request, platform);
 		const result = await redeemInviteCode(db, code, auth.userId);
 		return json(result);
 	} catch (error) {

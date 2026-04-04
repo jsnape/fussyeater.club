@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { apiFetch, ApiError } from '$lib/api';
 	import { goto } from '$app/navigation';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 
 	let email = $state('');
 	let password = $state('');
-	let inviteCode = $derived(page.url.searchParams.get('invite')?.toUpperCase() ?? '');
+	let inviteCode = $derived(data.inviteCode ?? '');
 	let loginError = $state('');
 	let isSubmitting = $state(false);
 

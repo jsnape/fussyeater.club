@@ -1,7 +1,12 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { requireDb, verifyPassword } from '$lib/server/db';
+import { hasValidCsrf } from '$lib/server/security';
 
 export const POST: RequestHandler = async ({ request, cookies, platform }) => {
+	if (!hasValidCsrf(request)) {
+		return json({ message: 'CSRF verification failed' }, { status: 403 });
+	}
+
 	let body: { email?: string; password?: string };
 	try {
 		body = (await request.json()) as { email?: string; password?: string };
@@ -42,7 +47,7 @@ export const POST: RequestHandler = async ({ request, cookies, platform }) => {
 			path: '/',
 			httpOnly: true,
 			sameSite: 'lax',
-			secure: true
+			secure: new URL(request.url).protocol === 'https:'
 		});
 
 		return json({ ok: true });

@@ -41,7 +41,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 
 	try {
 		const db = requireDb(platform);
-		const auth = getAuthContext(request);
+		const auth = await getAuthContext(request, platform);
 		const userScope = auth.userId ?? `anonymous:${(body.email ?? '').trim().toLowerCase()}`;
 		const existing = await getIdempotentResponse(
 			db,
@@ -72,7 +72,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 			socialProvider: auth.socialProvider
 		});
 
-		await saveIdempotentResponse(
+		const wrote = await saveIdempotentResponse(
 			db,
 			'/api/register/complete',
 			body.idempotencyKey,
@@ -80,6 +80,17 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 			201,
 			result
 		);
+		if (!wrote) {
+			const replay = await getIdempotentResponse(
+				db,
+				'/api/register/complete',
+				body.idempotencyKey,
+				userScope
+			);
+			if (replay) {
+				return replay;
+			}
+		}
 		return json(result, { status: 201 });
 	} catch (error) {
 		if (error instanceof Error) {

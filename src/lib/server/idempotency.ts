@@ -35,16 +35,18 @@ export async function saveIdempotentResponse(
 	userScope: string,
 	status: number,
 	body: unknown
-): Promise<void> {
-	await db
+): Promise<boolean> {
+	const result = await db
 		.prepare(
 			`INSERT INTO idempotency_keys (idempotency_key, endpoint, user_id, result_status, result_body)
  VALUES (?1, ?2, ?3, ?4, ?5)
  ON CONFLICT(idempotency_key, endpoint, user_id)
- DO UPDATE SET result_status = excluded.result_status, result_body = excluded.result_body`
+ DO NOTHING`
 		)
 		.bind(idempotencyKey, endpoint, userScope, status, JSON.stringify(body))
 		.run();
+
+	return (result.meta?.changes ?? 0) === 1;
 }
 
 export function badRequest(message: string): Response {

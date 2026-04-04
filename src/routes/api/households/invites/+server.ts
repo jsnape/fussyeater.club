@@ -11,7 +11,7 @@ export const GET: RequestHandler = async ({ request, platform }) => {
 		return json({ message: 'Not found' }, { status: 404 });
 	}
 
-	const auth = getAuthContext(request);
+	const auth = await getAuthContext(request, platform);
 	if (!auth.userId) {
 		return json({ message: 'Forbidden' }, { status: 403 });
 	}
@@ -34,7 +34,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 		return json({ message: 'Not found' }, { status: 404 });
 	}
 
-	const auth = getAuthContext(request);
+	const auth = await getAuthContext(request, platform);
 	if (!auth.userId) {
 		return json({ message: 'Forbidden' }, { status: 403 });
 	}
@@ -99,7 +99,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 			expiresAt: created.expiresAt
 		};
 
-		await saveIdempotentResponse(
+		const wrote = await saveIdempotentResponse(
 			db,
 			'/api/households/invites',
 			body.idempotencyKey,
@@ -107,6 +107,17 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 			201,
 			responseBody
 		);
+		if (!wrote) {
+			const replay = await getIdempotentResponse(
+				db,
+				'/api/households/invites',
+				body.idempotencyKey,
+				auth.userId
+			);
+			if (replay) {
+				return replay;
+			}
+		}
 
 		return json(responseBody, { status: 201 });
 	} catch (error) {
@@ -116,6 +127,12 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 			}
 			if (error.message === 'INVALID_INVITE_INPUT') {
 				return json({ message: 'Invalid invite configuration' }, { status: 400 });
+			}
+			if (error.message === 'INVITE_CODE_GENERATION_FAILED') {
+				return json(
+					{ message: 'Unable to generate a unique invite code' },
+					{ status: 503 }
+				);
 			}
 		}
 

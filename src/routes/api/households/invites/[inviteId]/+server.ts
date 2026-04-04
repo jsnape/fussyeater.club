@@ -10,7 +10,7 @@ export const DELETE: RequestHandler = async ({ request, params, platform }) => {
 		return json({ message: 'Not found' }, { status: 404 });
 	}
 
-	const auth = getAuthContext(request);
+	const auth = await getAuthContext(request, platform);
 	if (!auth.userId) {
 		return json({ message: 'Forbidden' }, { status: 403 });
 	}

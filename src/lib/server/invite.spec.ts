@@ -1,10 +1,19 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { createHouseholdInvite, listHouseholdInvites, redeemInviteCode } from './invite';
 import { createTestDbPair } from './test-db';
 
 describe('invite service', () => {
+	const pairs: Array<ReturnType<typeof createTestDbPair>> = [];
+	afterEach(() => {
+		for (const pair of pairs.splice(0)) {
+			pair.cleanup();
+		}
+	});
+
 	it('should list masked invite codes only', async () => {
-		const { first } = createTestDbPair();
+		const pair = createTestDbPair();
+		pairs.push(pair);
+		const { first } = pair;
 		await first
 			.prepare(
 				"INSERT INTO users (id, name, email) VALUES ('owner-1', 'Owner', 'owner@example.com')"
@@ -28,7 +37,9 @@ describe('invite service', () => {
 	});
 
 	it('should fail redeem for exhausted invite', async () => {
-		const { first } = createTestDbPair();
+		const pair = createTestDbPair();
+		pairs.push(pair);
+		const { first } = pair;
 		await first
 			.prepare(
 				"INSERT INTO users (id, name, email) VALUES ('owner-2', 'Owner', 'owner2@example.com')"
@@ -51,7 +62,9 @@ describe('invite service', () => {
 	});
 
 	it('should regenerate invite and revoke prior active links', async () => {
-		const { first } = createTestDbPair();
+		const pair = createTestDbPair();
+		pairs.push(pair);
+		const { first } = pair;
 		await first
 			.prepare(
 				"INSERT INTO users (id, name, email) VALUES ('owner-3', 'Owner', 'owner3@example.com')"

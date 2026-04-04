@@ -8,7 +8,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			path: '/',
 			httpOnly: false,
 			sameSite: 'strict',
-			secure: true
+			secure: event.url.protocol === 'https:'
 		});
 	}
 

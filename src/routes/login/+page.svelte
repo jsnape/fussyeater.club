@@ -136,6 +136,8 @@
             <button
                 type="button"
                 class="w-full rounded-md border border-primary-300 px-4 py-2 text-sm font-medium text-primary-900"
+                disabled
+                aria-disabled="true"
             >
                 Continue with Microsoft
             </button>

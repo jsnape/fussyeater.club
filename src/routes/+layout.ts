@@ -1,4 +1,5 @@
 import type { LayoutLoad } from './$types';
+import { apiFetchWith } from '$lib/api';
 
 type SessionUser = {
     id: string;
@@ -11,14 +12,9 @@ export const load: LayoutLoad = async ({ fetch, depends }) => {
     depends('auth:session');
 
     try {
-        const response = await fetch('/api/auth/session');
-        if (!response.ok) {
-            return { sessionUser: null as SessionUser | null };
-        }
-
-        const session = (await response.json()) as {
+        const session = await apiFetchWith<{
             user?: SessionUser | null;
-        };
+        }>(fetch, '/api/auth/session');
         return { sessionUser: session.user ?? null };
     } catch {
         return { sessionUser: null as SessionUser | null };

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { apiFetch, ApiError } from '$lib/api';
@@ -19,7 +20,6 @@
     let joinIntentToken = $state('');
     let redeemedHouseholdName = $state('');
     let idempotencyKey = $state(crypto.randomUUID());
-    let initialized = $state(false);
 
     let isRedeeming = $state(false);
     let isSubmitting = $state(false);
@@ -27,7 +27,6 @@
     let inviteError = $state('');
     let submitMessage = $state('');
     let submitError = $state('');
-    let autoRedeemed = $state(false);
 
     const isJoinMode = $derived(householdAction === 'join');
     const cleanedInviteCode = $derived(inviteCode.trim().toUpperCase());
@@ -141,8 +140,8 @@
                     idempotencyKey
                 })
             });
-            submitMessage = 'Registration complete. You can continue into the app.';
-            await goto(resolve('/'));
+            submitMessage = 'Registration complete. Please log in to continue.';
+            await goto(resolve('/login'));
             idempotencyKey = crypto.randomUUID();
         } catch (error) {
             if (error instanceof ApiError) {
@@ -155,16 +154,12 @@
         }
     }
 
-    $effect(() => {
-        if (!initialized) {
-            email = data.socialEmail ?? '';
-            inviteCode = data.inviteCode ?? '';
-            householdAction = data.inviteCode ? 'join' : 'create';
-            initialized = true;
-            if (data.inviteCode && !autoRedeemed) {
-                autoRedeemed = true;
-                void redeemInvite(true);
-            }
+    onMount(() => {
+        email = data.socialEmail ?? '';
+        inviteCode = data.inviteCode ?? '';
+        householdAction = data.inviteCode ? 'join' : 'create';
+        if (data.inviteCode) {
+            void redeemInvite(true);
         }
     });
 </script>

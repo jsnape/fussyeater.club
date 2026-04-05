@@ -7,8 +7,14 @@ export class ApiError extends Error {
     }
 }
 
-export async function apiFetch<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
-    const response = await fetch(input, {
+type FetchLike = typeof fetch;
+
+async function runApiFetch<T>(
+    fetcher: FetchLike,
+    input: RequestInfo | URL,
+    init?: RequestInit
+): Promise<T> {
+    const response = await fetcher(input, {
         credentials: 'include',
         ...init,
         headers: {
@@ -36,4 +42,16 @@ export async function apiFetch<T>(input: RequestInfo | URL, init?: RequestInit):
     }
 
     return (await response.json()) as T;
+}
+
+export async function apiFetch<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
+    return runApiFetch<T>(fetch, input, init);
+}
+
+export async function apiFetchWith<T>(
+    fetcher: FetchLike,
+    input: RequestInfo | URL,
+    init?: RequestInit
+): Promise<T> {
+    return runApiFetch<T>(fetcher, input, init);
 }

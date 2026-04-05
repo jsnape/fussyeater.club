@@ -47,7 +47,8 @@ export const POST: RequestHandler = async ({ request, cookies, platform }) => {
             path: '/',
             httpOnly: true,
             sameSite: 'lax',
-            secure: new URL(request.url).protocol === 'https:'
+            secure: new URL(request.url).protocol === 'https:',
+            expires: new Date(expiresAt)
         });
 
         return json({ ok: true });

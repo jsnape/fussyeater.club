@@ -48,6 +48,8 @@ type InviteRow = {
 };
 
 const MAX_INVITE_CODE_GENERATION_ATTEMPTS = 5;
+const MAX_ACTIVE_INVITES_IN_LIST = 1;
+const MAX_HISTORICAL_INVITES_IN_LIST = 20;
 const UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN = /unique.*household_invites\.code/i;
 
 function resolveInviteStatus(
@@ -226,8 +228,12 @@ export async function listHouseholdInvites(
     });
 
     // MVP bounded list: at most one active invite + the 20 most recently updated historical invites.
-    const active = mapped.filter((invite) => invite.status === 'active').slice(0, 1);
-    const historical = mapped.filter((invite) => invite.status !== 'active').slice(0, 20);
+    const active = mapped
+        .filter((invite) => invite.status === 'active')
+        .slice(0, MAX_ACTIVE_INVITES_IN_LIST);
+    const historical = mapped
+        .filter((invite) => invite.status !== 'active')
+        .slice(0, MAX_HISTORICAL_INVITES_IN_LIST);
     return [...active, ...historical];
 }
 

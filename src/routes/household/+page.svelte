@@ -23,6 +23,8 @@
     let actionMessage = $state('');
     let actionError = $state('');
     let revealInviteCode = $state('');
+    let pendingCreateIdempotencyKey = $state('');
+    let pendingRegenerateIdempotencyKey = $state('');
 
     const sortedInvites = $derived([...invites].sort((a, b) => b.expiresAt.localeCompare(a.expiresAt)));
 
@@ -35,7 +37,11 @@
         return token ? decodeURIComponent(token) : null;
     }
 
-    function mutationErrorMessage(status: number, action: 'create' | 'regenerate' | 'revoke'): string {
+    function mutationErrorMessage(args: {
+        status: number;
+        action: 'create' | 'regenerate' | 'revoke';
+    }): string {
+        const { status, action } = args;
         if (status === 403) {
             return 'Only the household owner can manage invites.';
         }
@@ -67,6 +73,9 @@
         const actionLabel = regenerate ? 'regenerate' : 'create';
         try {
             const csrfToken = getCookieValue('csrf-token');
+            const idempotencyKey = regenerate
+                ? (pendingRegenerateIdempotencyKey ||= crypto.randomUUID())
+                : (pendingCreateIdempotencyKey ||= crypto.randomUUID());
             const response = await apiFetch<CreateHouseholdInviteResponse>('/api/households/invites', {
                 method: 'POST',
                 headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
@@ -74,15 +83,20 @@
                     maxUses,
                     expiresInDays,
                     regenerate,
-                    idempotencyKey: crypto.randomUUID()
+                    idempotencyKey
                 })
             });
             revealInviteCode = response.code;
             actionMessage = regenerate ? 'Invite regenerated.' : 'Invite created.';
+            if (regenerate) {
+                pendingRegenerateIdempotencyKey = '';
+            } else {
+                pendingCreateIdempotencyKey = '';
+            }
             await refreshInvites();
         } catch (error) {
             if (error instanceof ApiError) {
-                actionError = mutationErrorMessage(error.status, actionLabel);
+                actionError = mutationErrorMessage({ status: error.status, action: actionLabel });
             } else {
                 actionError = 'Could not update invites right now.';
             }
@@ -106,7 +120,7 @@
             await refreshInvites();
         } catch (error) {
             if (error instanceof ApiError) {
-                actionError = mutationErrorMessage(error.status, 'revoke');
+                actionError = mutationErrorMessage({ status: error.status, action: 'revoke' });
             } else {
                 actionError = 'Could not update invites right now.';
             }

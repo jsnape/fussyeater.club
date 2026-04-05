@@ -9,3 +9,4 @@ bun.lockb
 /static/
 /drizzle/
 .github/
+src/lib/api-types.d.ts

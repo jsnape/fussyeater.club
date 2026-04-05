@@ -14,7 +14,7 @@
     "format": "prettier --write .",
     "test:unit": "vitest",
     "test": "npm run test:unit -- --run",
-    "generate:types": "npm run build --prefix specs/api && openapi-typescript specs/api/tsp-output/@typespec/openapi3/openapi.yaml -o src/lib/api-types.d.ts",
+    "generate:types": "npm run build --prefix specs/api && npm exec --yes -- openapi-typescript specs/api/tsp-output/@typespec/openapi3/openapi.yaml -o src/lib/api-types.d.ts",
     "gen": "wrangler types",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",

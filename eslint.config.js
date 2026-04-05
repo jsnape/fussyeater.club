@@ -13,7 +13,7 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 export default defineConfig(
     includeIgnoreFile(gitignorePath),
     {
-        ignores: ['.github/**', 'worker-configuration.d.ts']
+        ignores: ['.github/**', 'worker-configuration.d.ts', 'src/lib/api-types.d.ts']
     },
     js.configs.recommended,
     ts.configs.recommended,

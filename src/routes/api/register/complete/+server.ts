@@ -42,9 +42,9 @@ export const POST: RequestHandler = async ({ request, platform }) => {
     try {
         const db = requireDb(platform);
         const auth = await getAuthContext(request, platform);
-        const normalizedEmail = (body.email ?? '').trim().toLowerCase();
         let userScope = auth.userId;
         if (!userScope) {
+            const normalizedEmail = (body.email ?? '').trim().toLowerCase();
             if (!normalizedEmail) {
                 return json({ message: 'Email is required' }, { status: 400 });
             }

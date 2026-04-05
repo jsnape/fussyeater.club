@@ -158,15 +158,11 @@
         email = data.socialEmail ?? '';
         inviteCode = data.inviteCode ?? '';
         householdAction = data.inviteCode ? 'join' : 'create';
-        const inviteRedeemGuardKey = data.inviteCode
-            ? `register:auto-redeemed:${data.inviteCode}`
-            : null;
         if (
             data.inviteCode &&
-            inviteRedeemGuardKey &&
-            !sessionStorage.getItem(inviteRedeemGuardKey)
+            !sessionStorage.getItem(`register:auto-redeemed:${data.inviteCode}`)
         ) {
-            sessionStorage.setItem(inviteRedeemGuardKey, '1');
+            sessionStorage.setItem(`register:auto-redeemed:${data.inviteCode}`, '1');
             void redeemInvite(true);
         }
     });

@@ -6,6 +6,7 @@
     type HouseholdMember = components['schemas']['HouseholdMember'];
     type InviteStatus = components['schemas']['InviteStatus'];
     type CreateHouseholdInviteResponse = components['schemas']['CreateHouseholdInviteResponse'];
+    type ListHouseholdInvitesResponse = components['schemas']['ListHouseholdInvitesResponse'];
 
     let { data }: { data: PageData } = $props();
     const initialMembers = () => data.members ?? [];
@@ -61,7 +62,7 @@
     }
 
     async function refreshInvites(): Promise<void> {
-        const response = await apiFetch<{ invites: InviteStatus[] }>('/api/households/invites');
+        const response = await apiFetch<ListHouseholdInvitesResponse>('/api/households/invites');
         invites = response.invites;
     }
 

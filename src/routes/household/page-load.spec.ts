@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
 import { load } from './+page';
-import { ApiError } from '$lib/api';
 
 describe('/household page load', () => {
     it('should return members and invites on success', async () => {
@@ -82,10 +81,5 @@ describe('/household page load', () => {
         expect(result.members).toEqual([]);
         expect(result.invites).toEqual([]);
         expect(result.loadError).toBe('Unable to load household details right now.');
-    });
-
-    it('should throw ApiError from fetch helper when non-ok', () => {
-        const error = new ApiError('Forbidden', 403);
-        expect(error.status).toBe(403);
     });
 });

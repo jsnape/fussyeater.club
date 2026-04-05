@@ -80,6 +80,24 @@ export const POST: RequestHandler = async (event) => {
     try {
         const db = requireDb(platform);
         const auth = await getAuthContext(request, platform);
+        if (isSocialContinuationPayload && !auth.userId) {
+            logWarn('register.complete.unauthenticated_social_continuation', requestId);
+            return jsonWithRequestId(
+                { message: 'Authentication required for social continuation' },
+                requestId,
+                { status: 401 }
+            );
+        }
+        if (isSocialContinuationPayload && auth.socialProvider !== 'microsoft') {
+            logWarn('register.complete.invalid_social_continuation_provider', requestId, {
+                provider: auth.socialProvider
+            });
+            return jsonWithRequestId(
+                { message: 'Authentication required for social continuation' },
+                requestId,
+                { status: 401 }
+            );
+        }
         let userScope = auth.userId;
         if (!userScope) {
             const normalizedEmail = (body.email ?? '').trim().toLowerCase();
@@ -136,15 +154,6 @@ export const POST: RequestHandler = async (event) => {
             }
         }
 
-        if (auth.socialProvider === 'microsoft' && !auth.userId) {
-            logWarn('register.complete.unauthenticated_social_continuation', requestId);
-            return jsonWithRequestId(
-                { message: 'Authentication required for social continuation' },
-                requestId,
-                { status: 401 }
-            );
-        }
-
         try {
             const result = await completeRegistration(db, {
                 name: body.name ?? '',
@@ -183,6 +192,20 @@ export const POST: RequestHandler = async (event) => {
                         status: replay.status
                     });
                 }
+                if (reserved) {
+                    await releasePendingIdempotencyKey(
+                        db,
+                        '/api/register/complete',
+                        body.idempotencyKey,
+                        userScope
+                    );
+                }
+                logError('register.complete.idempotency_finalize_failed', requestId, {
+                    idempotencyKey: body.idempotencyKey
+                });
+                return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, {
+                    status: 503
+                });
             }
             logInfo('register.complete.success', requestId, {
                 requestId,

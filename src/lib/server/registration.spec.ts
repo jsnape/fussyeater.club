@@ -243,4 +243,26 @@ describe('registration service', () => {
             })
         ).rejects.toThrow('INVALID_REGISTRATION_INPUT');
     });
+
+    it('should rollback user creation when create flow fails after user insert', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+
+        await expect(
+            completeRegistration(pair.first, {
+                name: 'Taylor',
+                email: 'taylor@example.com',
+                password: 'Password123',
+                confirmPassword: 'Password123',
+                householdAction: 'create'
+            })
+        ).rejects.toThrow('INVALID_REGISTRATION_INPUT');
+
+        const persistedUser = await pair.first
+            .prepare('SELECT id FROM users WHERE email = ?1')
+            .bind('taylor@example.com')
+            .first<{ id: string }>();
+
+        expect(persistedUser).toBeNull();
+    });
 });

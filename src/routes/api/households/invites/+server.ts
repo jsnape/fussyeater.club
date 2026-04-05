@@ -2,7 +2,13 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { requireDb } from '$lib/server/db';
 import { FEATURE_FLAGS, isFeatureEnabled } from '$lib/server/feature-flags';
 import { createHouseholdInvite, listHouseholdInvites } from '$lib/server/invite';
-import { getIdempotentResponse, saveIdempotentResponse } from '$lib/server/idempotency';
+import {
+    finalizeIdempotentResponse,
+    getIdempotentResponse,
+    hasPendingIdempotencyKey,
+    releasePendingIdempotencyKey,
+    reserveIdempotencyKey
+} from '$lib/server/idempotency';
 import { requireOwnerHouseholdId } from '$lib/server/household';
 import { getAuthContext, requireCsrf } from '$lib/server/security';
 import {
@@ -139,31 +145,13 @@ export const POST: RequestHandler = async (event) => {
             return jsonWithRequestId(await existing.json(), requestId, { status: existing.status });
         }
 
-        const created = await createHouseholdInvite(
-            db,
-            householdId,
-            auth.userId,
-            body.maxUses as number,
-            expiresInDays,
-            Boolean(body.regenerate)
-        );
-
-        const responseBody = {
-            code: created.code,
-            maxUses: created.maxUses,
-            remainingUses: created.remainingUses,
-            expiresAt: created.expiresAt
-        };
-
-        const wrote = await saveIdempotentResponse(
+        const reserved = await reserveIdempotencyKey(
             db,
             '/api/households/invites',
             body.idempotencyKey,
-            auth.userId,
-            201,
-            responseBody
+            auth.userId
         );
-        if (!wrote) {
+        if (!reserved) {
             const replay = await getIdempotentResponse(
                 db,
                 '/api/households/invites',
@@ -172,7 +160,7 @@ export const POST: RequestHandler = async (event) => {
             );
             if (replay) {
                 logInfo(
-                    'households.invites.post.idempotent_replay_after_concurrent_write',
+                    'households.invites.post.idempotent_replay_after_duplicate_reservation',
                     requestId,
                     {
                         userId: auth.userId
@@ -182,15 +170,100 @@ export const POST: RequestHandler = async (event) => {
                     status: replay.status
                 });
             }
+
+            if (
+                await hasPendingIdempotencyKey(
+                    db,
+                    '/api/households/invites',
+                    body.idempotencyKey,
+                    auth.userId
+                )
+            ) {
+                return jsonWithRequestId({ message: 'Duplicate request in progress' }, requestId, {
+                    status: 409
+                });
+            }
         }
 
-        logInfo('households.invites.post.success', requestId, {
-            requestId,
-            userId: auth.userId,
-            maxUses: created.maxUses,
-            regenerate: Boolean(body.regenerate)
-        });
-        return jsonWithRequestId(responseBody, requestId, { status: 201 });
+        try {
+            const created = await createHouseholdInvite(
+                db,
+                householdId,
+                auth.userId,
+                body.maxUses as number,
+                expiresInDays,
+                Boolean(body.regenerate)
+            );
+
+            const responseBody = {
+                code: created.code,
+                maxUses: created.maxUses,
+                remainingUses: created.remainingUses,
+                expiresAt: created.expiresAt
+            };
+
+            const wrote = await finalizeIdempotentResponse(
+                db,
+                '/api/households/invites',
+                body.idempotencyKey,
+                auth.userId,
+                201,
+                responseBody
+            );
+            if (!wrote) {
+                const replay = await getIdempotentResponse(
+                    db,
+                    '/api/households/invites',
+                    body.idempotencyKey,
+                    auth.userId
+                );
+                if (replay) {
+                    logInfo(
+                        'households.invites.post.idempotent_replay_after_concurrent_write',
+                        requestId,
+                        {
+                            userId: auth.userId
+                        }
+                    );
+                    return jsonWithRequestId(await replay.json(), requestId, {
+                        status: replay.status
+                    });
+                }
+                if (reserved) {
+                    await releasePendingIdempotencyKey(
+                        db,
+                        '/api/households/invites',
+                        body.idempotencyKey,
+                        auth.userId
+                    );
+                }
+                logError('households.invites.post.idempotency_finalize_failed', requestId, {
+                    userId: auth.userId,
+                    idempotencyKey: body.idempotencyKey
+                });
+                return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, {
+                    status: 503
+                });
+            }
+
+            logInfo('households.invites.post.success', requestId, {
+                requestId,
+                userId: auth.userId,
+                maxUses: created.maxUses,
+                regenerate: Boolean(body.regenerate)
+            });
+            return jsonWithRequestId(responseBody, requestId, { status: 201 });
+        } catch (error) {
+            if (reserved) {
+                await releasePendingIdempotencyKey(
+                    db,
+                    '/api/households/invites',
+                    body.idempotencyKey,
+                    auth.userId
+                );
+            }
+            throw error;
+        }
     } catch (error) {
         if (error instanceof Error) {
             if (error.message === 'FORBIDDEN_NOT_OWNER') {

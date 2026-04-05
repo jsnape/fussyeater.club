@@ -132,4 +132,36 @@ describe('/api/households/invites routes', () => {
         expect(body.invites[0].codeMasked).toBe('ABC…FGH');
         expect(body.invites[0].code).toBeUndefined();
     });
+
+    it('should return 409 when duplicate invite idempotency request is pending', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        await seedOwnerSession(pair);
+
+        await pair.first
+            .prepare(
+                `INSERT INTO idempotency_keys (idempotency_key, endpoint, user_id, result_status, result_body)
+ VALUES ('idem-household-invite-pending', '/api/households/invites', 'owner-1', 0, '{}')`
+            )
+            .run();
+
+        const response = await POST({
+            request: new Request('http://localhost/api/households/invites', {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify({
+                    maxUses: 3,
+                    expiresInDays: 7,
+                    regenerate: false,
+                    idempotencyKey: 'idem-household-invite-pending'
+                })
+            }),
+            platform: { env: { DB: pair.first, AUTH_REGISTRATION_V2_ENABLED: 'true' } }
+        } as never);
+
+        expect(response.status).toBe(409);
+        await expect(response.json()).resolves.toEqual({
+            message: 'Duplicate request in progress'
+        });
+    });
 });

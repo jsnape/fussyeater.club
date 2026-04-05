@@ -177,4 +177,24 @@ describe('POST /api/register/complete', () => {
             message: 'Join invitation is no longer valid'
         });
     });
+
+    it('should return 401 for unauthenticated social-continuation payload', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+
+        const response = await POST({
+            request: buildRequest({
+                name: 'Taylor',
+                householdAction: 'create',
+                householdName: 'Taylor Family',
+                idempotencyKey: 'idem-social-unauth'
+            }),
+            platform: { env: { DB: pair.first, AUTH_REGISTRATION_V2_ENABLED: 'true' } }
+        } as never);
+
+        expect(response.status).toBe(401);
+        await expect(response.json()).resolves.toEqual({
+            message: 'Authentication required for social continuation'
+        });
+    });
 });

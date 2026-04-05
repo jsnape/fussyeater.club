@@ -68,6 +68,8 @@ describe('GET /api/households/members', () => {
             name: 'Owner',
             role: 'owner'
         });
+        expect(body.members[0].joinedAt).toContain('T');
+        expect(body.members[0].joinedAt.endsWith('Z')).toBe(true);
     });
 
     it('should return 403 for unauthenticated request', async () => {

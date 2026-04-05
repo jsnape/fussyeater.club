@@ -28,7 +28,7 @@
     let pendingCreateIdempotencyKey = $state('');
     let pendingRegenerateIdempotencyKey = $state('');
 
-    const sortedInvites = $derived([...invites].sort((a, b) => b.expiresAt.localeCompare(a.expiresAt)));
+    const sortedInvites = $derived([...invites]);
 
     function mutationErrorMessage(args: {
         status: number;

@@ -58,15 +58,18 @@ export async function listHouseholdMembers(
 ): Promise<HouseholdMember[]> {
     const members = await db
         .prepare(
-            `SELECT
-                hm.user_id as userId,
-                u.name as name,
-                u.email as email,
-                hm.role as role,
-                hm.created_at as joinedAt
-             FROM household_memberships hm
-             JOIN users u ON u.id = hm.user_id
-             WHERE hm.household_id = ?1
+             `SELECT
+                 hm.user_id as userId,
+                 u.name as name,
+                 u.email as email,
+                 hm.role as role,
+                 CASE
+                     WHEN instr(hm.created_at, 'T') > 0 THEN hm.created_at
+                     ELSE replace(hm.created_at, ' ', 'T') || 'Z'
+                 END as joinedAt
+              FROM household_memberships hm
+              JOIN users u ON u.id = hm.user_id
+              WHERE hm.household_id = ?1
              ORDER BY hm.created_at ASC, hm.user_id ASC`
         )
         .bind(householdId)

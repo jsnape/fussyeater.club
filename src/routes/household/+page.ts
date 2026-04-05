@@ -4,6 +4,8 @@ import type { components } from '$lib/api-types';
 
 type HouseholdMember = components['schemas']['HouseholdMember'];
 type InviteStatus = components['schemas']['InviteStatus'];
+type ListHouseholdMembersResponse = components['schemas']['ListHouseholdMembersResponse'];
+type ListHouseholdInvitesResponse = components['schemas']['ListHouseholdInvitesResponse'];
 
 function pageErrorMessage(status: number): string {
     switch (status) {
@@ -21,8 +23,8 @@ function pageErrorMessage(status: number): string {
 export const load: PageLoad = async ({ fetch }) => {
     try {
         const [membersResponse, invitesResponse] = await Promise.all([
-            apiFetchWith<{ members: HouseholdMember[] }>(fetch, '/api/households/members'),
-            apiFetchWith<{ invites: InviteStatus[] }>(fetch, '/api/households/invites')
+            apiFetchWith<ListHouseholdMembersResponse>(fetch, '/api/households/members'),
+            apiFetchWith<ListHouseholdInvitesResponse>(fetch, '/api/households/invites')
         ]);
 
         return {

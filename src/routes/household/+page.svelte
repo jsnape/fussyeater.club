@@ -182,6 +182,7 @@
                         class="mt-1 w-full rounded-md border border-primary-300 px-3 py-2"
                         type="number"
                         min="1"
+                        aria-label="Max uses"
                         bind:value={maxUses}
                     />
                 </label>
@@ -192,6 +193,7 @@
                         class="mt-1 w-full rounded-md border border-primary-300 px-3 py-2"
                         type="number"
                         min="1"
+                        aria-label="Expires in days"
                         bind:value={expiresInDays}
                     />
                 </label>
@@ -255,6 +257,11 @@
                                             class="text-sm font-medium text-primary-900 underline disabled:opacity-50"
                                             onclick={() => void revokeInvite(invite.id)}
                                             disabled={isRevokingInviteId === invite.id || invite.status === 'revoked'}
+                                            aria-label={invite.status === 'revoked'
+                                                ? 'Invite already revoked'
+                                                : isRevokingInviteId === invite.id
+                                                    ? 'Revoking invite'
+                                                    : 'Revoke invite'}
                                         >
                                             {isRevokingInviteId === invite.id ? 'Revoking…' : 'Revoke'}
                                         </button>

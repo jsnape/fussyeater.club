@@ -31,14 +31,14 @@ type JoinIntentRow = {
 async function ensureUser(
     db: DbLike,
     input: RegisterCompleteInput
-): Promise<{ userId: string; email: string | null }> {
+): Promise<{ userId: string; email: string | null; created: boolean }> {
     if (input.authUserId) {
         const existing = await db
             .prepare('SELECT id, email FROM users WHERE id = ?1')
             .bind(input.authUserId)
             .first<{ id: string; email: string | null }>();
         if (existing) {
-            return { userId: existing.id, email: existing.email };
+            return { userId: existing.id, email: existing.email, created: false };
         }
 
         if (!input.authEmail && !input.email) {
@@ -58,7 +58,7 @@ async function ensureUser(
             )
             .run();
 
-        return { userId: input.authUserId, email: input.authEmail ?? input.email ?? null };
+        return { userId: input.authUserId, email: input.authEmail ?? input.email ?? null, created: true };
     }
 
     const email = input.email?.trim().toLowerCase();
@@ -88,7 +88,7 @@ async function ensureUser(
         .bind(userId, email, input.name.trim(), passwordHash)
         .run();
 
-    return { userId, email };
+    return { userId, email, created: true };
 }
 
 export async function completeRegistration(
@@ -103,92 +103,101 @@ export async function completeRegistration(
         throw new Error('INVALID_REGISTRATION_INPUT');
     }
 
-    const { userId } = await ensureUser(db, input);
+    const { userId, created } = await ensureUser(db, input);
 
-    const existingMembership = await db
-        .prepare('SELECT household_id FROM household_memberships WHERE user_id = ?1')
-        .bind(userId)
-        .first<{ household_id: string }>();
-
-    if (existingMembership) {
-        if (input.householdAction === 'join' && input.joinIntentToken) {
-            const joinIntent = await db
-                .prepare('SELECT household_id, consumed_at FROM join_intents WHERE token = ?1')
-                .bind(input.joinIntentToken)
-                .first<{ household_id: string; consumed_at: string | null }>();
-            if (joinIntent?.consumed_at && joinIntent.household_id === existingMembership.household_id) {
-                return {
-                    userId,
-                    householdId: existingMembership.household_id,
-                    actionApplied: 'join'
-                };
-            }
-        }
-
-        throw new Error('ALREADY_IN_HOUSEHOLD');
-    }
-
-    if (input.householdAction === 'create') {
-        const householdId = crypto.randomUUID();
-        await db
-            .prepare(
-                `INSERT INTO households (id, owner_user_id, name)
- VALUES (?1, ?2, ?3)`
-            )
-            .bind(householdId, userId, input.householdName!.trim())
-            .run();
-
-        await db
-            .prepare(
-                `INSERT INTO household_memberships (user_id, household_id, role)
- VALUES (?1, ?2, 'owner')`
-            )
-            .bind(userId, householdId)
-            .run();
-
-        return { userId, householdId, actionApplied: 'create' };
-    }
-
-    if (!input.joinIntentToken) {
-        throw new Error('INVALID_REGISTRATION_INPUT');
-    }
-
-    const joinIntent = await db
-        .prepare(
-            `SELECT token, invite_id, household_id, expires_at, consumed_at, issued_for_user_id
- FROM join_intents
- WHERE token = ?1`
-        )
-        .bind(input.joinIntentToken)
-        .first<JoinIntentRow>();
-
-    if (!joinIntent) {
-        throw new Error('JOIN_INTENT_INVALID');
-    }
-
-    if (joinIntent.issued_for_user_id && joinIntent.issued_for_user_id !== userId) {
-        throw new Error('JOIN_INTENT_INVALID');
-    }
-
-    if (joinIntent.consumed_at) {
-        const existing = await db
+    try {
+        const existingMembership = await db
             .prepare('SELECT household_id FROM household_memberships WHERE user_id = ?1')
             .bind(userId)
             .first<{ household_id: string }>();
-        if (existing?.household_id === joinIntent.household_id) {
-            return { userId, householdId: joinIntent.household_id, actionApplied: 'join' };
+
+        if (existingMembership) {
+            if (input.householdAction === 'join' && input.joinIntentToken) {
+                const joinIntent = await db
+                    .prepare('SELECT household_id, consumed_at FROM join_intents WHERE token = ?1')
+                    .bind(input.joinIntentToken)
+                    .first<{ household_id: string; consumed_at: string | null }>();
+                if (joinIntent?.consumed_at && joinIntent.household_id === existingMembership.household_id) {
+                    return {
+                        userId,
+                        householdId: existingMembership.household_id,
+                        actionApplied: 'join'
+                    };
+                }
+            }
+
+            throw new Error('ALREADY_IN_HOUSEHOLD');
         }
-        throw new Error('JOIN_INTENT_EXPIRED');
-    }
 
-    if (new Date(joinIntent.expires_at).getTime() <= Date.now()) {
-        throw new Error('JOIN_INTENT_EXPIRED');
-    }
+        if (input.householdAction === 'create') {
+            const householdId = crypto.randomUUID();
+            await db
+                .prepare(
+                    `INSERT INTO households (id, owner_user_id, name)
+ VALUES (?1, ?2, ?3)`
+                )
+                .bind(householdId, userId, input.householdName!.trim())
+                .run();
 
-    const timestamp = nowIso();
-    const decrement = await db
-        .prepare(
-            `UPDATE household_invites
+            try {
+                await db
+                    .prepare(
+                        `INSERT INTO household_memberships (user_id, household_id, role)
+ VALUES (?1, ?2, 'owner')`
+                    )
+                    .bind(userId, householdId)
+                    .run();
+            } catch (error) {
+                const cleanup = await db.prepare('DELETE FROM households WHERE id = ?1').bind(householdId).run();
+                if ((cleanup.meta?.changes ?? 0) !== 1) {
+                    throw new Error('HOUSEHOLD_CLEANUP_FAILED');
+                }
+                throw error;
+            }
+
+            return { userId, householdId, actionApplied: 'create' };
+        }
+
+        if (!input.joinIntentToken) {
+            throw new Error('INVALID_REGISTRATION_INPUT');
+        }
+
+        const joinIntent = await db
+            .prepare(
+                `SELECT token, invite_id, household_id, expires_at, consumed_at, issued_for_user_id
+ FROM join_intents
+ WHERE token = ?1`
+            )
+            .bind(input.joinIntentToken)
+            .first<JoinIntentRow>();
+
+        if (!joinIntent) {
+            throw new Error('JOIN_INTENT_INVALID');
+        }
+
+        if (joinIntent.issued_for_user_id && joinIntent.issued_for_user_id !== userId) {
+            throw new Error('JOIN_INTENT_INVALID');
+        }
+
+        if (joinIntent.consumed_at) {
+            const existing = await db
+                .prepare('SELECT household_id FROM household_memberships WHERE user_id = ?1')
+                .bind(userId)
+                .first<{ household_id: string }>();
+            if (existing?.household_id === joinIntent.household_id) {
+                return { userId, householdId: joinIntent.household_id, actionApplied: 'join' };
+            }
+            throw new Error('JOIN_INTENT_EXPIRED');
+        }
+
+        if (new Date(joinIntent.expires_at).getTime() <= Date.now()) {
+            throw new Error('JOIN_INTENT_EXPIRED');
+        }
+
+        const timestamp = nowIso();
+        const decrement = await db
+            .prepare(
+                `UPDATE household_invites
  SET remaining_uses = remaining_uses - 1,
  status = CASE WHEN remaining_uses - 1 <= 0 THEN 'exhausted' ELSE status END,
  last_redeemed_at = ?1,
@@ -197,28 +206,58 @@ export async function completeRegistration(
    AND revoked_at IS NULL
    AND expires_at > ?1
    AND remaining_uses > 0`
-        )
-        .bind(timestamp, joinIntent.invite_id)
-        .run();
+            )
+            .bind(timestamp, joinIntent.invite_id)
+            .run();
 
-    if ((decrement.meta?.changes ?? 0) !== 1) {
-        throw new Error('INVITE_EXHAUSTED');
-    }
+        if ((decrement.meta?.changes ?? 0) !== 1) {
+            throw new Error('INVITE_EXHAUSTED');
+        }
 
-    const consume = await db
-        .prepare('UPDATE join_intents SET consumed_at = ?1 WHERE token = ?2 AND consumed_at IS NULL')
-        .bind(timestamp, joinIntent.token)
-        .run();
-    if ((consume.meta?.changes ?? 0) !== 1) {
-        throw new Error('JOIN_INTENT_EXPIRED');
-    }
+        const consume = await db
+            .prepare('UPDATE join_intents SET consumed_at = ?1 WHERE token = ?2 AND consumed_at IS NULL')
+            .bind(timestamp, joinIntent.token)
+            .run();
+        if ((consume.meta?.changes ?? 0) !== 1) {
+            throw new Error('JOIN_INTENT_EXPIRED');
+        }
 
-    await db
-        .prepare(
-            `INSERT INTO household_memberships (user_id, household_id, role)
+        await db
+            .prepare(
+                `INSERT INTO household_memberships (user_id, household_id, role)
  VALUES (?1, ?2, 'member')`
-        )
-        .bind(userId, joinIntent.household_id)
-        .run();
-    return { userId, householdId: joinIntent.household_id, actionApplied: 'join' };
+            )
+            .bind(userId, joinIntent.household_id)
+            .run();
+        return { userId, householdId: joinIntent.household_id, actionApplied: 'join' };
+    } catch (error) {
+        if (created) {
+            const cleanup = await db
+                .prepare(
+                    `DELETE FROM users
+ WHERE id = ?1
+   AND NOT EXISTS (
+       SELECT 1 FROM household_memberships WHERE user_id = ?1
+   )`
+                )
+                .bind(userId)
+                .run();
+            if ((cleanup.meta?.changes ?? 0) !== 1) {
+                const stillExists = await db
+                    .prepare('SELECT id FROM users WHERE id = ?1')
+                    .bind(userId)
+                    .first<{ id: string }>();
+                if (stillExists) {
+                    const hasMembership = await db
+                        .prepare('SELECT 1 as present FROM household_memberships WHERE user_id = ?1')
+                        .bind(userId)
+                        .first<{ present: number }>();
+                    if (!hasMembership) {
+                        throw new Error('USER_CLEANUP_FAILED');
+                    }
+                }
+            }
+        }
+        throw error;
+    }
 }

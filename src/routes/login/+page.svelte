@@ -132,15 +132,15 @@
             {/if}
         </form>
 
-        <div class="mt-4 border-t border-primary-200 pt-4">
-            <button
-                type="button"
-                class="w-full rounded-md border border-primary-300 px-4 py-2 text-sm font-medium text-primary-900"
-                disabled
-                aria-disabled="true"
-            >
-                Continue with Microsoft
-            </button>
-        </div>
+        {#if data.microsoftOAuthEnabled}
+            <div class="mt-4 border-t border-primary-200 pt-4">
+                <button
+                    type="button"
+                    class="w-full rounded-md border border-primary-300 px-4 py-2 text-sm font-medium text-primary-900"
+                >
+                    Continue with Microsoft
+                </button>
+            </div>
+        {/if}
     </section>
 </main>

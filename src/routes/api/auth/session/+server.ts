@@ -1,5 +1,6 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
 import { nowIso, requireDb } from '$lib/server/db';
+import { FEATURE_FLAGS, isFeatureEnabled } from '$lib/server/feature-flags';
 
 function getSessionCookie(request: Request): string | null {
     const cookie = request.headers.get('cookie') ?? '';
@@ -13,9 +14,11 @@ function getSessionCookie(request: Request): string | null {
 }
 
 export const GET: RequestHandler = async ({ request, platform }) => {
+    const microsoftOAuthEnabled = isFeatureEnabled(platform, FEATURE_FLAGS.microsoftOAuthEnabled);
+
     const sessionId = getSessionCookie(request);
     if (!sessionId) {
-        return json({ user: null });
+        return json({ user: null, featureFlags: { microsoftOAuthEnabled } });
     }
 
     try {
@@ -39,7 +42,7 @@ export const GET: RequestHandler = async ({ request, platform }) => {
             }>();
 
         if (!session) {
-            return json({ user: null });
+            return json({ user: null, featureFlags: { microsoftOAuthEnabled } });
         }
 
         return json({
@@ -48,9 +51,10 @@ export const GET: RequestHandler = async ({ request, platform }) => {
                 email: session.email,
                 name: session.name,
                 authProvider: session.authProvider
-            }
+            },
+            featureFlags: { microsoftOAuthEnabled }
         });
     } catch {
-        return json({ user: null });
+        return json({ user: null, featureFlags: { microsoftOAuthEnabled } });
     }
 };

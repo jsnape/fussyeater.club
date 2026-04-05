@@ -7,7 +7,7 @@ export const FEATURE_FLAGS = {
 const DEFAULTS: Record<(typeof FEATURE_FLAGS)[keyof typeof FEATURE_FLAGS], boolean> = {
     [FEATURE_FLAGS.registrationV2Enabled]: true,
     [FEATURE_FLAGS.inviteMultiuseEnabled]: true,
-    [FEATURE_FLAGS.microsoftOAuthEnabled]: true
+    [FEATURE_FLAGS.microsoftOAuthEnabled]: false
 };
 
 export function isFeatureEnabled(platform: App.Platform | undefined, name: string): boolean {

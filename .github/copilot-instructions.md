@@ -41,6 +41,7 @@ The SvelteKit app is rooted at repository root. Keep project structure tidy and 
 - **Server utilities**: Place shared server logic in `src/lib/server/**`
 - **Household scoping**: Resolve household context through `hooks.server.ts` + server helpers
 - **Persistence**: Schema changes must be done via D1 migration files in `migrations/`
+- **D1 transactions**: Never use raw SQL transaction statements (`BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`); use supported JavaScript transaction APIs instead
 
 ## API-First Development (TypeSpec)
 

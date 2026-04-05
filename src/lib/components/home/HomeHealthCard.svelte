@@ -33,9 +33,9 @@
             healthState = 'unhealthy';
             if (error instanceof ApiError) {
                 statusText = `Health check failed (${error.status})`;
-                return;
+            } else {
+                statusText = 'Unable to fetch health status';
             }
-            statusText = 'Unable to fetch health status';
         }
     }
 

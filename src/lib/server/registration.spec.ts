@@ -147,4 +147,83 @@ describe('registration service', () => {
             /INVITE_EXHAUSTED|database is locked/
         );
     });
+
+    it('should enforce household name uniqueness per owner at persistence layer', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        const { first } = pair;
+
+        await first
+            .prepare(
+                "INSERT INTO users (id, name, email) VALUES ('owner-u1', 'Owner', 'owneru1@example.com')"
+            )
+            .run();
+
+        await first
+            .prepare(
+                "INSERT INTO households (id, owner_user_id, name) VALUES ('house-u1a', 'owner-u1', 'Family Home')"
+            )
+            .run();
+
+        await expect(
+            first
+                .prepare(
+                    "INSERT INTO households (id, owner_user_id, name) VALUES ('house-u1b', 'owner-u1', 'Family Home')"
+                )
+                .run()
+        ).rejects.toThrow();
+    });
+
+    it('should block users already in a household from joining another household', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        const { first } = pair;
+
+        await first
+            .prepare(
+                "INSERT INTO users (id, name, email) VALUES ('owner-6', 'Owner', 'owner6@example.com')"
+            )
+            .run();
+        await first
+            .prepare(
+                "INSERT INTO users (id, name, email) VALUES ('user-6', 'User Six', 'user6@example.com')"
+            )
+            .run();
+        await first
+            .prepare(
+                "INSERT INTO households (id, owner_user_id, name) VALUES ('house-6a', 'owner-6', 'Family A')"
+            )
+            .run();
+        await first
+            .prepare(
+                "INSERT INTO households (id, owner_user_id, name) VALUES ('house-6b', 'owner-6', 'Family B')"
+            )
+            .run();
+        await first
+            .prepare(
+                "INSERT INTO household_memberships (user_id, household_id, role) VALUES ('user-6', 'house-6a', 'member')"
+            )
+            .run();
+        await first
+            .prepare(
+                "INSERT INTO household_invites (id, household_id, code, status, expires_at, max_uses, remaining_uses, created_by_user_id) VALUES ('inv-6', 'house-6b', 'JOIN6666', 'active', datetime('now', '+1 day'), 2, 2, 'owner-6')"
+            )
+            .run();
+        await first
+            .prepare(
+                "INSERT INTO join_intents (token, invite_id, household_id, issued_for_user_id, expires_at) VALUES ('token-6', 'inv-6', 'house-6b', 'user-6', datetime('now', '+1 day'))"
+            )
+            .run();
+
+        await expect(
+            completeRegistration(first, {
+                name: 'User Six',
+                householdAction: 'join',
+                joinIntentToken: 'token-6',
+                authUserId: 'user-6',
+                authEmail: 'user6@example.com',
+                socialProvider: 'microsoft'
+            })
+        ).rejects.toThrow('ALREADY_IN_HOUSEHOLD');
+    });
 });

@@ -416,9 +416,9 @@ Failure responses:
 
 ### Phase 1: Data And Contracts
 
-1. Add D1 schema changes for invite status, usage counters, and audit metadata.
-2. Update API contract source of truth in TypeSpec for all auth and invite endpoints used by this feature.
-3. Regenerate API types and confirm no breaking type regressions in existing consumers.
+- [x] Add D1 schema changes for invite status, usage counters, and audit metadata.
+- [ ] Update API contract source of truth in TypeSpec for all auth and invite endpoints used by this feature.
+- [x] Regenerate API types and confirm no breaking type regressions in existing consumers.
 
 Deliverables:
 
@@ -436,10 +436,10 @@ Risk:
 
 ### Phase 2: Core Server Flows
 
-1. Implement invite redeem endpoint with short-lived join intent exchange.
-2. Implement register-complete endpoint for create or join household action.
-3. Implement invite create/list/revoke endpoints with owner authorization.
-4. Enforce owner-scoped household-name uniqueness and single-household membership guard.
+- [x] Implement invite redeem endpoint with short-lived join intent exchange.
+- [x] Implement register-complete endpoint for create or join household action.
+- [x] Implement invite create/list/revoke endpoints with owner authorization.
+- [x] Enforce owner-scoped household-name uniqueness and single-household membership guard.
 
 Deliverables:
 
@@ -457,10 +457,10 @@ Risk:
 
 ### Phase 3: Client Registration Experience
 
-1. Build SPA register flow with create versus join household branch.
-2. Implement invite query prefill and immediate URL cleanup after redeem.
-3. Implement social continuation mode with read-only identity and no password recollection.
-4. Add resilient error states and preserved form state for retryable failures.
+- [x] Build SPA register flow with create versus join household branch.
+- [x] Implement invite query prefill and immediate URL cleanup after redeem.
+- [x] Implement social continuation mode with read-only identity and no password recollection.
+- [x] Add resilient error states and preserved form state for retryable failures.
 
 Deliverables:
 
@@ -478,10 +478,10 @@ Risk:
 
 ### Phase 4: Security And Quality Controls
 
-1. Add CSRF verification, generic auth error behavior, and endpoint-level authorization checks.
-2. Add idempotency key enforcement for mutating endpoints.
-3. Add logging redaction and correlation-id propagation.
-4. Add rollout flags and ensure flags-off behavior preserves legacy paths.
+- [x] Add CSRF verification, generic auth error behavior, and endpoint-level authorization checks.
+- [x] Add idempotency key enforcement for mutating endpoints.
+- [ ] Add logging redaction and correlation-id propagation.
+- [x] Add rollout flags and ensure flags-off behavior preserves legacy paths.
 
 Deliverables:
 
@@ -499,10 +499,10 @@ Risk:
 
 ### Phase 5: Verification And Rollout
 
-1. Implement unit, integration, and e2e tests for all critical acceptance criteria.
-2. Add concurrency tests for final remaining invite use and idempotency replays.
-3. Validate observability events and release guardrail metrics in staging.
-4. Execute staged rollout and stop on guardrail breach.
+- [ ] Implement unit, integration, and e2e tests for all critical acceptance criteria.
+- [x] Add concurrency tests for final remaining invite use and idempotency replays.
+- [ ] Validate observability events and release guardrail metrics in staging.
+- [ ] Execute staged rollout and stop on guardrail breach.
 
 Deliverables:
 
@@ -517,6 +517,26 @@ Dependencies:
 Risk:
 
 1. Medium: insufficient load and race-condition coverage may miss production edge cases.
+
+### Coverage Matrix
+
+| Engineering Item                                                                            | Test Coverage                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Regenerate API types and confirm no breaking type regressions in existing consumers         | `src/lib/api-types.spec.ts`                                                                                                                                                                                        |
+| Implement invite redeem endpoint with short-lived join intent exchange                      | `src/routes/api/invites/redeem/redeem.spec.ts`                                                                                                                                                                     |
+| Implement register-complete endpoint for create or join household action                    | `src/routes/api/register/complete/complete.spec.ts`, `src/lib/server/registration.spec.ts`                                                                                                                         |
+| Implement invite create/list/revoke endpoints with owner authorization                      | `src/routes/api/households/invites/invites.spec.ts`, `src/routes/api/households/invites/[inviteId]/revoke.spec.ts`                                                                                                 |
+| Enforce owner-scoped household-name uniqueness and single-household membership guard        | `src/lib/server/registration.spec.ts`                                                                                                                                                                              |
+| Build SPA register flow with create versus join household branch                            | `src/routes/register/register-page.svelte.spec.ts`                                                                                                                                                                 |
+| Implement invite query prefill and immediate URL cleanup after redeem                       | `src/routes/register/page-load.spec.ts`, `src/routes/register/register-page.svelte.spec.ts`                                                                                                                        |
+| Implement social continuation mode with read-only identity and no password recollection     | `src/routes/register/page-load.spec.ts`, `src/routes/register/register-page.svelte.spec.ts`                                                                                                                        |
+| Add resilient error states and preserved form state for retryable failures                  | `src/routes/register/register-page.svelte.spec.ts`                                                                                                                                                                 |
+| Add CSRF verification, generic auth error behavior, and endpoint-level authorization checks | `src/routes/api/auth/login/login.spec.ts`, `src/routes/api/register/complete/complete.spec.ts`, `src/routes/api/households/invites/invites.spec.ts`, `src/routes/api/households/invites/[inviteId]/revoke.spec.ts` |
+| Add idempotency key enforcement for mutating endpoints                                      | `src/routes/api/register/complete/complete.spec.ts`, `src/routes/api/households/invites/invites.spec.ts`, `src/lib/server/registration.spec.ts`                                                                    |
+| Add rollout flags and ensure flags-off behavior preserves legacy paths                      | `src/routes/api/register/complete/complete.spec.ts`, `src/routes/api/households/invites/invites.spec.ts`                                                                                                           |
+| Add concurrency tests for final remaining invite use and idempotency replays                | `src/lib/server/registration.spec.ts`                                                                                                                                                                              |
+
+Items still unchecked in the engineering breakdown remain without implementation and therefore have no mapped tests yet.
 
 ### Suggested Ticket Slice
 

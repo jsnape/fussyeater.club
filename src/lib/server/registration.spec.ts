@@ -18,6 +18,7 @@ describe('registration service', () => {
             name: 'Taylor',
             email: 'taylor@example.com',
             password: 'Password123',
+            confirmPassword: 'Password123',
             householdAction: 'create',
             householdName: 'Taylor Family'
         });
@@ -225,5 +226,21 @@ describe('registration service', () => {
                 socialProvider: 'microsoft'
             })
         ).rejects.toThrow('ALREADY_IN_HOUSEHOLD');
+    });
+
+    it('should reject email/password registration when confirmPassword does not match', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+
+        await expect(
+            completeRegistration(pair.first, {
+                name: 'Taylor',
+                email: 'taylor@example.com',
+                password: 'Password123',
+                confirmPassword: 'Password456',
+                householdAction: 'create',
+                householdName: 'Taylor Family'
+            })
+        ).rejects.toThrow('INVALID_REGISTRATION_INPUT');
     });
 });

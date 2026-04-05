@@ -14,6 +14,7 @@
     let name = $state('');
     let email = $state('');
     let password = $state('');
+    let confirmPassword = $state('');
     let householdAction = $state<HouseholdAction>('create');
     let householdName = $state('');
     let inviteCode = $state('');
@@ -124,6 +125,11 @@
             return;
         }
 
+        if (!data.socialContinuation && password !== confirmPassword) {
+            submitError = 'Passwords do not match.';
+            return;
+        }
+
         isSubmitting = true;
         try {
             const csrfToken = getCookieValue('csrf-token');
@@ -134,6 +140,7 @@
                     name,
                     email,
                     password: data.socialContinuation ? undefined : password,
+                    confirmPassword: data.socialContinuation ? undefined : confirmPassword,
                     householdAction,
                     householdName: isJoinMode ? undefined : householdName,
                     joinIntentToken: isJoinMode ? joinIntentToken : undefined,
@@ -223,6 +230,22 @@
                         autocomplete="new-password"
                         minlength="8"
                         bind:value={password}
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label
+                        class="mb-1 block text-sm font-medium text-primary-900"
+                        for="confirm-password">Confirm password</label
+                    >
+                    <input
+                        id="confirm-password"
+                        class="w-full rounded-md border border-primary-300 px-3 py-2"
+                        type="password"
+                        autocomplete="new-password"
+                        minlength="8"
+                        bind:value={confirmPassword}
                         required
                     />
                 </div>

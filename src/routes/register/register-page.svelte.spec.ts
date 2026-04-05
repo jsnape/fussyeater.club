@@ -78,7 +78,8 @@ describe('register page ui', () => {
 
         await page.getByRole('textbox', { name: 'Full name' }).fill('Taylor');
         await page.getByRole('textbox', { name: 'Email' }).fill('taylor@example.com');
-        await page.getByRole('textbox', { name: 'Password' }).fill('Password123');
+        await page.getByRole('textbox', { name: 'Password', exact: true }).fill('Password123');
+        await page.getByRole('textbox', { name: 'Confirm password' }).fill('Password123');
         await page.getByRole('textbox', { name: 'Household name' }).fill('Taylor Family');
 
         await page.getByRole('button', { name: 'Complete registration' }).click();
@@ -96,11 +97,31 @@ describe('register page ui', () => {
             .element(page.getByRole('textbox', { name: 'Household name' }))
             .toHaveValue('Taylor Family');
         await expect
-            .element(page.getByRole('textbox', { name: 'Password' }))
+            .element(page.getByRole('textbox', { name: 'Password', exact: true }))
+            .toHaveValue('Password123');
+        await expect
+            .element(page.getByRole('textbox', { name: 'Confirm password' }))
             .toHaveValue('Password123');
         expect(mockedApiFetch).toHaveBeenCalledWith(
             '/api/register/complete',
             expect.objectContaining({ method: 'POST' })
         );
+    });
+
+    it('should block submit when password confirmation does not match', async () => {
+        render(RegisterPage, {
+            data: { inviteCode: '', socialContinuation: false, socialEmail: '' }
+        });
+
+        await page.getByRole('textbox', { name: 'Full name' }).fill('Taylor');
+        await page.getByRole('textbox', { name: 'Email' }).fill('taylor@example.com');
+        await page.getByRole('textbox', { name: 'Password', exact: true }).fill('Password123');
+        await page.getByRole('textbox', { name: 'Confirm password' }).fill('Password456');
+        await page.getByRole('textbox', { name: 'Household name' }).fill('Taylor Family');
+
+        await page.getByRole('button', { name: 'Complete registration' }).click();
+
+        await expect.element(page.getByText('Passwords do not match.')).toBeInTheDocument();
+        expect(mockedApiFetch).not.toHaveBeenCalled();
     });
 });

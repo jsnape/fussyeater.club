@@ -25,6 +25,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
         name?: string;
         email?: string;
         password?: string;
+        confirmPassword?: string;
         householdAction?: 'create' | 'join';
         householdName?: string;
         joinIntentToken?: string;
@@ -48,6 +49,12 @@ export const POST: RequestHandler = async ({ request, platform }) => {
             householdAction: body.householdAction ?? null
         });
         return json({ message: 'householdAction must be create or join' }, { status: 400 });
+    }
+
+    const isSocialContinuationPayload = !body.password && !body.confirmPassword;
+    if (!isSocialContinuationPayload && body.password !== body.confirmPassword) {
+        console.warn('[register.complete] password confirmation mismatch', { requestId });
+        return json({ message: 'Validation failed' }, { status: 400 });
     }
 
     try {
@@ -87,6 +94,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
             name: body.name ?? '',
             email: body.email,
             password: body.password,
+            confirmPassword: body.confirmPassword,
             householdAction: body.householdAction,
             householdName: body.householdName,
             joinIntentToken: body.joinIntentToken,

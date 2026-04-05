@@ -31,6 +31,7 @@
       "matchCommandLine": true
     },
     "npx wrangler": true,
-    "npx prettier": true
+    "npx prettier": true,
+    "npx @sveltejs/mcp": true
   }
 }

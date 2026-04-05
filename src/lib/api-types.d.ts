@@ -164,6 +164,7 @@ export interface components {
             name: string;
             email?: string;
             password?: string;
+            confirmPassword?: string;
             /** @enum {string} */
             householdAction: "create" | "join";
             householdName?: string;

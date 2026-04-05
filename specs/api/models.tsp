@@ -34,6 +34,7 @@ model RegisterCompleteRequest {
 name: string;
 email?: string;
 password?: string;
+confirmPassword?: string;
 householdAction: "create" | "join";
 householdName?: string;
 joinIntentToken?: string;

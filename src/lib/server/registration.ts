@@ -4,6 +4,7 @@ export type RegisterCompleteInput = {
     name: string;
     email?: string;
     password?: string;
+    confirmPassword?: string;
     householdAction: 'create' | 'join';
     householdName?: string;
     joinIntentToken?: string;
@@ -61,7 +62,11 @@ async function ensureUser(
     }
 
     const email = input.email?.trim().toLowerCase();
-    if (!email || !input.password) {
+    if (!email || !input.password || !input.confirmPassword) {
+        throw new Error('INVALID_REGISTRATION_INPUT');
+    }
+
+    if (input.password !== input.confirmPassword) {
         throw new Error('INVALID_REGISTRATION_INPUT');
     }
 

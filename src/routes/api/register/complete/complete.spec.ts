@@ -37,6 +37,7 @@ describe('POST /api/register/complete', () => {
                 name: 'Taylor',
                 email: 'taylor@example.com',
                 password: 'Password123',
+                confirmPassword: 'Password123',
                 householdAction: 'create',
                 householdName: 'Taylor Family',
                 idempotencyKey: 'idem-disabled'
@@ -57,6 +58,7 @@ describe('POST /api/register/complete', () => {
                     name: 'Taylor',
                     email: 'taylor@example.com',
                     password: 'Password123',
+                    confirmPassword: 'Password123',
                     householdAction: 'create',
                     householdName: 'Taylor Family',
                     idempotencyKey: 'idem-no-csrf'
@@ -78,6 +80,7 @@ describe('POST /api/register/complete', () => {
             name: 'Taylor',
             email: 'taylor@example.com',
             password: 'Password123',
+            confirmPassword: 'Password123',
             householdAction: 'create' as const,
             householdName: 'Taylor Family',
             idempotencyKey: 'idem-register-1'
@@ -98,5 +101,26 @@ describe('POST /api/register/complete', () => {
         expect(firstResponse.status).toBe(201);
         expect(replayResponse.status).toBe(201);
         expect(replayBody).toEqual(firstBody);
+    });
+
+    it('should reject mismatched confirm password', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+
+        const response = await POST({
+            request: buildRequest({
+                name: 'Taylor',
+                email: 'taylor@example.com',
+                password: 'Password123',
+                confirmPassword: 'Password456',
+                householdAction: 'create',
+                householdName: 'Taylor Family',
+                idempotencyKey: 'idem-register-mismatch'
+            }),
+            platform: { env: { DB: pair.first, AUTH_REGISTRATION_V2_ENABLED: 'true' } }
+        } as never);
+
+        expect(response.status).toBe(400);
+        await expect(response.json()).resolves.toEqual({ message: 'Validation failed' });
     });
 });

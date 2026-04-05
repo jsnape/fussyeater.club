@@ -1,5 +1,6 @@
 <script lang="ts">
     import { apiFetch, ApiError } from '$lib/api';
+    import { getCookieValue } from '$lib/browser/cookies';
     import type { components } from '$lib/api-types';
     import type { PageData } from './$types';
 
@@ -28,15 +29,6 @@
     let pendingRegenerateIdempotencyKey = $state('');
 
     const sortedInvites = $derived([...invites].sort((a, b) => b.expiresAt.localeCompare(a.expiresAt)));
-
-    function getCookieValue(name: string): string | null {
-        const token = document.cookie
-            .split(';')
-            .map((part) => part.trim())
-            .find((part) => part.startsWith(`${name}=`))
-            ?.slice(name.length + 1);
-        return token ? decodeURIComponent(token) : null;
-    }
 
     function mutationErrorMessage(args: {
         status: number;
@@ -74,9 +66,18 @@
         const actionLabel = regenerate ? 'regenerate' : 'create';
         try {
             const csrfToken = getCookieValue('csrf-token');
-            const idempotencyKey = regenerate
-                ? (pendingRegenerateIdempotencyKey ||= crypto.randomUUID())
-                : (pendingCreateIdempotencyKey ||= crypto.randomUUID());
+            let idempotencyKey = '';
+            if (regenerate) {
+                if (!pendingRegenerateIdempotencyKey) {
+                    pendingRegenerateIdempotencyKey = crypto.randomUUID();
+                }
+                idempotencyKey = pendingRegenerateIdempotencyKey;
+            } else {
+                if (!pendingCreateIdempotencyKey) {
+                    pendingCreateIdempotencyKey = crypto.randomUUID();
+                }
+                idempotencyKey = pendingCreateIdempotencyKey;
+            }
             const response = await apiFetch<CreateHouseholdInviteResponse>('/api/households/invites', {
                 method: 'POST',
                 headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},

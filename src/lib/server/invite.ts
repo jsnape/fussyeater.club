@@ -204,6 +204,8 @@ export async function listHouseholdInvites(
     db: DbLike,
     householdId: string
 ): Promise<InviteListItem[]> {
+    // Returns a bounded list for MVP: latest active invite (if any) plus up to
+    // MAX_HISTORICAL_INVITES_IN_LIST most recently updated non-active invites.
     const invites = await db
         .prepare(
             `SELECT id, code, status, expires_at, max_uses, remaining_uses, revoked_at, updated_at

@@ -3,6 +3,7 @@
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import { apiFetch, ApiError } from '$lib/api';
+    import { getCookieValue } from '$lib/browser/cookies';
     import type { components } from '$lib/api-types';
     import type { PageData } from './$types';
 
@@ -31,15 +32,6 @@
 
     const isJoinMode = $derived(householdAction === 'join');
     const cleanedInviteCode = $derived(inviteCode.trim().toUpperCase());
-
-    function getCookieValue(name: string): string | null {
-        const token = document.cookie
-            .split(';')
-            .map((part) => part.trim())
-            .find((part) => part.startsWith(`${name}=`))
-            ?.slice(name.length + 1);
-        return token ? decodeURIComponent(token) : null;
-    }
 
     function inviteErrorMessage(status: number): string {
         switch (status) {

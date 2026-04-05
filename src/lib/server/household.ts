@@ -5,6 +5,14 @@ export type HouseholdMembership = {
     role: string;
 };
 
+export type HouseholdMember = {
+    userId: string;
+    name: string;
+    email: string;
+    role: string;
+    joinedAt: string;
+};
+
 export async function getMembership(
     db: DbLike,
     userId: string
@@ -42,4 +50,27 @@ export async function requireOwnerHouseholdId(db: DbLike, userId: string): Promi
     }
 
     return householdId;
+}
+
+export async function listHouseholdMembers(
+    db: DbLike,
+    householdId: string
+): Promise<HouseholdMember[]> {
+    const members = await db
+        .prepare(
+            `SELECT
+                hm.user_id as userId,
+                u.name as name,
+                u.email as email,
+                hm.role as role,
+                hm.created_at as joinedAt
+             FROM household_memberships hm
+             JOIN users u ON u.id = hm.user_id
+             WHERE hm.household_id = ?1
+             ORDER BY hm.created_at ASC, hm.user_id ASC`
+        )
+        .bind(householdId)
+        .all<HouseholdMember>();
+
+    return members.results ?? [];
 }

@@ -85,4 +85,48 @@ describe('invite service', () => {
             .first<{ count: number }>();
         expect(revokedCount?.count).toBe(1);
     });
+
+    it('should list only active invite plus up to 20 recent historical invites', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        const { first } = pair;
+        await first
+            .prepare(
+                "INSERT INTO users (id, name, email) VALUES ('owner-4', 'Owner', 'owner4@example.com')"
+            )
+            .run();
+        await first
+            .prepare(
+                "INSERT INTO households (id, owner_user_id, name) VALUES ('house-4', 'owner-4', 'Family Home')"
+            )
+            .run();
+
+        await first
+            .prepare(
+                `INSERT INTO household_invites (
+                    id, household_id, code, status, expires_at, max_uses, remaining_uses, created_by_user_id, updated_at
+                 ) VALUES (
+                    'active-invite', 'house-4', 'ACTIVE01', 'active', datetime('now', '+7 day'), 3, 2, 'owner-4', datetime('now', '+10 minute')
+                 )`
+            )
+            .run();
+
+        for (let i = 0; i < 25; i += 1) {
+            await first
+                .prepare(
+                    `INSERT INTO household_invites (
+                        id, household_id, code, status, expires_at, max_uses, remaining_uses, created_by_user_id, revoked_at, updated_at
+                     ) VALUES (
+                        ?1, 'house-4', ?2, 'revoked', datetime('now', '+7 day'), 3, 3, 'owner-4', datetime('now', '-1 day'), datetime('now', ?3)
+                     )`
+                )
+                .bind(`hist-${i}`, `HIST${(1000 + i).toString().slice(1)}`, `-${i} minute`)
+                .run();
+        }
+
+        const invites = await listHouseholdInvites(first, 'house-4');
+        expect(invites).toHaveLength(21);
+        expect(invites[0]?.id).toBe('active-invite');
+        expect(invites.filter((invite) => invite.status === 'active')).toHaveLength(1);
+    });
 });

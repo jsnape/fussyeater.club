@@ -12,5 +12,6 @@ describe('generated api types', () => {
         expect(contents).toContain('"/api/register/complete"');
         expect(contents).toContain('"/api/households/invites"');
         expect(contents).toContain('"/api/households/invites/{inviteId}"');
+        expect(contents).toContain('"/api/households/members"');
     });
 });

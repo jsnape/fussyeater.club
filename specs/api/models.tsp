@@ -89,3 +89,15 @@ expiresAt: utcDateTime;
 model ListHouseholdInvitesResponse {
 invites: InviteStatus[];
 }
+
+model HouseholdMember {
+userId: string;
+name: string;
+email: string;
+role: string;
+joinedAt: utcDateTime;
+}
+
+model ListHouseholdMembersResponse {
+members: HouseholdMember[];
+}

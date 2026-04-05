@@ -204,25 +204,29 @@ export async function listHouseholdInvites(
 ): Promise<InviteListItem[]> {
     const invites = await db
         .prepare(
-            `SELECT id, code, status, expires_at, max_uses, remaining_uses, revoked_at
- FROM household_invites
- WHERE household_id = ?1
- ORDER BY created_at DESC`
+            `SELECT id, code, status, expires_at, max_uses, remaining_uses, revoked_at, updated_at
+  FROM household_invites
+  WHERE household_id = ?1
+  ORDER BY updated_at DESC, id DESC`
         )
         .bind(householdId)
-        .all<InviteRow>();
+        .all<InviteRow & { updated_at: string }>();
 
-    return (invites.results ?? []).map((invite) => {
-        const status = resolveInviteStatus(invite);
+    const mapped = (invites.results ?? []).map((invite) => {
+        const resolvedStatus = resolveInviteStatus(invite);
         return {
             id: invite.id,
             codeMasked: maskInviteCode(invite.code),
             maxUses: invite.max_uses,
             remainingUses: invite.remaining_uses,
             expiresAt: invite.expires_at,
-            status
-        };
+            status: resolvedStatus
+        } satisfies InviteListItem;
     });
+
+    const active = mapped.filter((invite) => invite.status === 'active').slice(0, 1);
+    const historical = mapped.filter((invite) => invite.status !== 'active').slice(0, 20);
+    return [...active, ...historical];
 }
 
 export async function revokeHouseholdInvite(

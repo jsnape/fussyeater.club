@@ -25,7 +25,8 @@ export type DbLike = {
     exec: (query: string) => Promise<DbRunResult>;
 };
 
-const PBKDF2_ITERATIONS = 600_000;
+// Cloudflare Workers WebCrypto currently rejects PBKDF2 iteration counts above 100000.
+const PBKDF2_ITERATIONS = 100_000;
 
 export function requireDb(platform?: App.Platform): DbLike {
     const db = platform?.env?.DB as unknown as DbLike | undefined;

@@ -1,13 +1,21 @@
 {
-	"$schema": "./node_modules/wrangler/config-schema.json",
-	"name": "fussyeater-club",
-	"compatibility_date": "2026-04-02",
-	"compatibility_flags": ["nodejs_als"],
-	"main": ".svelte-kit/cloudflare/_worker.js",
-	"assets": {
-		"binding": "ASSETS",
-		"directory": ".svelte-kit/cloudflare"
-	},
-	"workers_dev": true,
-	"preview_urls": true
+    "$schema": "./node_modules/wrangler/config-schema.json",
+    "name": "fussyeater-club",
+    "compatibility_date": "2026-04-02",
+    "compatibility_flags": ["nodejs_als"],
+    "main": ".svelte-kit/cloudflare/_worker.js",
+    "assets": {
+        "binding": "ASSETS",
+        "directory": ".svelte-kit/cloudflare"
+    },
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "d1-fussyeater-prod",
+            "database_id": "61d7bbe1-0107-4ce2-8a33-33d0787f49c9",
+            "preview_database_id": "61d7bbe1-0107-4ce2-8a33-33d0787f49c9"
+        }
+    ],
+    "workers_dev": true,
+    "preview_urls": true
 }

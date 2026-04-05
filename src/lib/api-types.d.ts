@@ -4,14 +4,14 @@
  */
 
 export interface paths {
-    "/api/health": {
+    '/api/health': {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["Health_check"];
+        get: operations['Health_check'];
         put?: never;
         post?: never;
         delete?: never;
@@ -20,23 +20,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/households/invites": {
+    '/api/households/invites': {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["HouseholdInvites_list"];
+        get: operations['HouseholdInvites_list'];
         put?: never;
-        post: operations["HouseholdInvites_create"];
+        post: operations['HouseholdInvites_create'];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/households/invites/{inviteId}": {
+    '/api/households/invites/{inviteId}': {
         parameters: {
             query?: never;
             header?: never;
@@ -46,13 +46,13 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete: operations["HouseholdInvites_revoke"];
+        delete: operations['HouseholdInvites_revoke'];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/invites/redeem": {
+    '/api/invites/redeem': {
         parameters: {
             query?: never;
             header?: never;
@@ -61,14 +61,14 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["InviteRedemption_redeem"];
+        post: operations['InviteRedemption_redeem'];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/register/complete": {
+    '/api/register/complete': {
         parameters: {
             query?: never;
             header?: never;
@@ -77,7 +77,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["Registration_complete"];
+        post: operations['Registration_complete'];
         delete?: never;
         options?: never;
         head?: never;
@@ -133,7 +133,7 @@ export interface components {
         };
         InviteRedeemResponse: {
             joinIntentToken: string;
-            household: components["schemas"]["HouseholdSummary"];
+            household: components['schemas']['HouseholdSummary'];
             /** Format: int32 */
             remainingUses: number;
             /** Format: date-time */
@@ -151,12 +151,12 @@ export interface components {
             /** Format: date-time */
             expiresAt: string;
             /** @enum {string} */
-            status: "active" | "expired" | "exhausted" | "revoked";
+            status: 'active' | 'expired' | 'exhausted' | 'revoked';
         } & {
             [key: string]: unknown;
         };
         ListHouseholdInvitesResponse: {
-            invites: components["schemas"]["InviteStatus"][];
+            invites: components['schemas']['InviteStatus'][];
         } & {
             [key: string]: unknown;
         };
@@ -165,7 +165,7 @@ export interface components {
             email?: string;
             password?: string;
             /** @enum {string} */
-            householdAction: "create" | "join";
+            householdAction: 'create' | 'join';
             householdName?: string;
             joinIntentToken?: string;
             idempotencyKey: string;
@@ -176,7 +176,7 @@ export interface components {
             userId: string;
             householdId: string;
             /** @enum {string} */
-            actionApplied: "create" | "join";
+            actionApplied: 'create' | 'join';
         } & {
             [key: string]: unknown;
         };
@@ -204,7 +204,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HealthCheckResponse"];
+                    'application/json': components['schemas']['HealthCheckResponse'];
                 };
             };
         };
@@ -224,7 +224,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ListHouseholdInvitesResponse"];
+                    'application/json': components['schemas']['ListHouseholdInvitesResponse'];
                 };
             };
             /** @description Access is forbidden. */
@@ -233,7 +233,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
         };
@@ -247,7 +247,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateHouseholdInviteRequest"];
+                'application/json': components['schemas']['CreateHouseholdInviteRequest'];
             };
         };
         responses: {
@@ -257,7 +257,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CreateHouseholdInviteResponse"];
+                    'application/json': components['schemas']['CreateHouseholdInviteResponse'];
                 };
             };
             /** @description The server could not understand the request due to invalid syntax. */
@@ -266,7 +266,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description Access is forbidden. */
@@ -275,7 +275,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description Client error */
@@ -284,7 +284,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description Service unavailable. */
@@ -293,7 +293,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
         };
@@ -322,7 +322,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description The server cannot find the requested resource. */
@@ -331,7 +331,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
         };
@@ -345,7 +345,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["InviteRedeemRequest"];
+                'application/json': components['schemas']['InviteRedeemRequest'];
             };
         };
         responses: {
@@ -355,7 +355,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["InviteRedeemResponse"];
+                    'application/json': components['schemas']['InviteRedeemResponse'];
                 };
             };
             /** @description The server cannot find the requested resource. */
@@ -364,7 +364,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description The request conflicts with the current state of the server. */
@@ -373,7 +373,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description Client error */
@@ -382,7 +382,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description Client error */
@@ -391,7 +391,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description Service unavailable. */
@@ -400,7 +400,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
         };
@@ -414,7 +414,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["RegisterCompleteRequest"];
+                'application/json': components['schemas']['RegisterCompleteRequest'];
             };
         };
         responses: {
@@ -424,7 +424,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RegisterCompleteResponse"];
+                    'application/json': components['schemas']['RegisterCompleteResponse'];
                 };
             };
             /** @description The server could not understand the request due to invalid syntax. */
@@ -433,7 +433,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description Access is unauthorized. */
@@ -442,7 +442,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description Access is forbidden. */
@@ -451,7 +451,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description The request conflicts with the current state of the server. */
@@ -460,7 +460,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description Client error */
@@ -469,7 +469,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description Client error */
@@ -478,7 +478,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
             /** @description Service unavailable. */
@@ -487,7 +487,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
+                    'application/json': components['schemas']['ErrorResponse'];
                 };
             };
         };

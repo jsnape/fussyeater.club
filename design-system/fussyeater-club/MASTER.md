@@ -22,24 +22,24 @@
 
 1. Prefer Tailwind utility classes over custom CSS classes for page-level styling.
 2. Before building new UX components, check existing Flowbite packages in this order:
-	- `flowbite-svelte` components
-	- `flowbite-svelte-icons` icons
-	- `flowbite-svelte-blocks` page blocks
+    - `flowbite-svelte` components
+    - `flowbite-svelte-icons` icons
+    - `flowbite-svelte-blocks` page blocks
 3. Create custom CSS classes only when utilities and existing Flowbite building blocks do not satisfy reuse or accessibility needs.
 
 ## Tokens
 
 ### Color Palette
 
-| Role | Hex | CSS Variable |
-|------|-----|--------------|
-| Primary | `#DC2626` | `--fe-color-primary` |
-| Secondary | `#F87171` | `--fe-color-secondary` |
-| Accent / CTA | `#CA8A04` | `--fe-color-accent` |
-| Success | `#16A34A` | `--fe-color-success` |
-| Surface | `#FEF2F2` | `--fe-color-surface` |
-| Text | `#450A0A` | `--fe-color-text` |
-| Muted Text | `#7F1D1D` | `--fe-color-text-muted` |
+| Role         | Hex       | CSS Variable            |
+| ------------ | --------- | ----------------------- |
+| Primary      | `#DC2626` | `--fe-color-primary`    |
+| Secondary    | `#F87171` | `--fe-color-secondary`  |
+| Accent / CTA | `#CA8A04` | `--fe-color-accent`     |
+| Success      | `#16A34A` | `--fe-color-success`    |
+| Surface      | `#FEF2F2` | `--fe-color-surface`    |
+| Text         | `#450A0A` | `--fe-color-text`       |
+| Muted Text   | `#7F1D1D` | `--fe-color-text-muted` |
 
 **Color Notes:** Appetizing red + warm gold, with green only for positive states.
 
@@ -56,21 +56,21 @@
 
 ### Spacing Scale
 
-| Token | Value |
-|------|-------|
-| `--fe-space-xs` | `4px` |
-| `--fe-space-sm` | `8px` |
-| `--fe-space-md` | `16px` |
-| `--fe-space-lg` | `24px` |
-| `--fe-space-xl` | `32px` |
+| Token            | Value  |
+| ---------------- | ------ |
+| `--fe-space-xs`  | `4px`  |
+| `--fe-space-sm`  | `8px`  |
+| `--fe-space-md`  | `16px` |
+| `--fe-space-lg`  | `24px` |
+| `--fe-space-xl`  | `32px` |
 | `--fe-space-2xl` | `48px` |
 
 ### Elevation
 
-| Token | Value |
-|------|-------|
-| `--fe-shadow-sm` | `0 1px 2px rgba(69,10,10,0.08)` |
-| `--fe-shadow-md` | `0 6px 18px rgba(69,10,10,0.12)` |
+| Token            | Value                             |
+| ---------------- | --------------------------------- |
+| `--fe-shadow-sm` | `0 1px 2px rgba(69,10,10,0.08)`   |
+| `--fe-shadow-md` | `0 6px 18px rgba(69,10,10,0.12)`  |
 | `--fe-shadow-lg` | `0 12px 30px rgba(69,10,10,0.16)` |
 
 ## Component Guidance

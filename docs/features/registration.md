@@ -10,13 +10,13 @@ Support email/password and Microsoft social login using Better Auth. Registratio
 
 ## Routes
 
-| Path | Purpose |
-|---|---|
-| `/register` | Create a new account |
-| `/login` | Sign in to an existing account |
-| `/api/auth/*` | Better Auth handler endpoints (sign-in, callback, session, sign-out) |
-| `/api/invites/redeem` | Exchange invite code for short-lived server join intent |
-| `/logout` | Sign out and clear session |
+| Path                  | Purpose                                                              |
+| --------------------- | -------------------------------------------------------------------- |
+| `/register`           | Create a new account                                                 |
+| `/login`              | Sign in to an existing account                                       |
+| `/api/auth/*`         | Better Auth handler endpoints (sign-in, callback, session, sign-out) |
+| `/api/invites/redeem` | Exchange invite code for short-lived server join intent              |
+| `/logout`             | Sign out and clear session                                           |
 
 ---
 
@@ -115,7 +115,7 @@ The following cross-cutting controls apply to this feature and the whole site:
 ### Cloudflare Workers Compatibility
 
 - Enable AsyncLocalStorage support in Worker config:
-  - `compatibility_flags = ["nodejs_compat"]` (or `nodejs_als` if only ALS support is required).
+    - `compatibility_flags = ["nodejs_compat"]` (or `nodejs_als` if only ALS support is required).
 - Pass Worker context `waitUntil` to Better Auth background task handler where deferred operations are enabled.
 
 ### Database
@@ -211,18 +211,18 @@ All auth pages share a centred, single-column card layout with the site logo abo
 
 ## Components & Tokens
 
-| Element | Flowbite component | Notes |
-|---|---|---|
-| Page wrapper | — | `min-h-dvh bg-primary-50 flex items-center justify-center px-4` |
-| Card | `<Card>` | `border-primary-200 bg-white w-full max-w-sm` |
-| Heading | — | `text-2xl font-semibold text-primary-900` |
-| Label + Input | `<Label>` + `<Input>` | Standard pattern from design system |
-| Password input | `<Input type="password">` | Suffix slot for show/hide toggle |
-| Primary action | `<Button color="yellow">` | Full width |
-| Social button | `<Button color="light">` | Full width, icon prefix |
-| Divider | — | `<hr>` with "or" label, `text-primary-600 text-sm` |
-| Error alert | `<Alert color="red">` | Inline, above primary action |
-| Spinner | `<Spinner>` | Replaces button text during submit |
+| Element        | Flowbite component        | Notes                                                           |
+| -------------- | ------------------------- | --------------------------------------------------------------- |
+| Page wrapper   | —                         | `min-h-dvh bg-primary-50 flex items-center justify-center px-4` |
+| Card           | `<Card>`                  | `border-primary-200 bg-white w-full max-w-sm`                   |
+| Heading        | —                         | `text-2xl font-semibold text-primary-900`                       |
+| Label + Input  | `<Label>` + `<Input>`     | Standard pattern from design system                             |
+| Password input | `<Input type="password">` | Suffix slot for show/hide toggle                                |
+| Primary action | `<Button color="yellow">` | Full width                                                      |
+| Social button  | `<Button color="light">`  | Full width, icon prefix                                         |
+| Divider        | —                         | `<hr>` with "or" label, `text-primary-600 text-sm`              |
+| Error alert    | `<Alert color="red">`     | Inline, above primary action                                    |
+| Spinner        | `<Spinner>`               | Replaces button text during submit                              |
 
 ---
 
@@ -230,22 +230,22 @@ All auth pages share a centred, single-column card layout with the site logo abo
 
 ### Register
 
-| Field | Rules |
-|---|---|
-| Full name | Required, 2–100 chars |
-| Email | Required, valid format |
-| Password | Required, min 8 chars, at least one number |
-| Confirm password | Must match password |
-| Household action | Required; one of `create` or `join` |
-| Household name | Required when action is `create`; 2–100 chars; unique per owner |
-| Invite code | Required when action is `join`; prefilled from `invite` URL param when available |
+| Field            | Rules                                                                            |
+| ---------------- | -------------------------------------------------------------------------------- |
+| Full name        | Required, 2–100 chars                                                            |
+| Email            | Required, valid format                                                           |
+| Password         | Required, min 8 chars, at least one number                                       |
+| Confirm password | Must match password                                                              |
+| Household action | Required; one of `create` or `join`                                              |
+| Household name   | Required when action is `create`; 2–100 chars; unique per owner                  |
+| Invite code      | Required when action is `join`; prefilled from `invite` URL param when available |
 
 ### Login
 
-| Field | Rules |
-|---|---|
-| Email | Required, valid format |
-| Password | Required |
+| Field    | Rules                  |
+| -------- | ---------------------- |
+| Email    | Required, valid format |
+| Password | Required               |
 
 ### Household Join
 

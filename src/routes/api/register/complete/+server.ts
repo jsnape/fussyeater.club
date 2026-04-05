@@ -43,10 +43,13 @@ export const POST: RequestHandler = async ({ request, platform }) => {
         const db = requireDb(platform);
         const auth = await getAuthContext(request, platform);
         const normalizedEmail = (body.email ?? '').trim().toLowerCase();
-        if (!auth.userId && !normalizedEmail) {
-            return json({ message: 'Email is required' }, { status: 400 });
+        let userScope = auth.userId;
+        if (!userScope) {
+            if (!normalizedEmail) {
+                return json({ message: 'Email is required' }, { status: 400 });
+            }
+            userScope = `anonymous:${normalizedEmail}`;
         }
-        const userScope = auth.userId ?? `anonymous:${normalizedEmail}`;
         const existing = await getIdempotentResponse(
             db,
             '/api/register/complete',

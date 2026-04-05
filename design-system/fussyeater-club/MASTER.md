@@ -25,7 +25,8 @@
     - `flowbite-svelte` components
     - `flowbite-svelte-icons` icons
     - `flowbite-svelte-blocks` page blocks
-3. Create custom CSS classes only when utilities and existing Flowbite building blocks do not satisfy reuse or accessibility needs.
+3. Use `flowbite-svelte-icons` **Outline** variants by default for product UI (for example `BookOpenOutline` instead of `BookOpenSolid`). Use Solid variants only with explicit design approval.
+4. Create custom CSS classes only when utilities and existing Flowbite building blocks do not satisfy reuse or accessibility needs.
 
 ## Tokens
 

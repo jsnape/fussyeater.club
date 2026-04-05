@@ -1,24 +1,24 @@
 <script lang="ts">
     import { Card } from 'flowbite-svelte';
-    import { BookOpenSolid, CartPlusSolid, ClockSolid } from 'flowbite-svelte-icons';
+    import { BookOpenOutline, CartPlusOutline, ClockOutline } from 'flowbite-svelte-icons';
 
     const features = [
         {
             title: 'Recipe library',
             description: 'Save family-approved meals and avoid repetitive guesswork.',
-            icon: BookOpenSolid,
+            icon: BookOpenOutline,
             iconLabel: 'Recipe library'
         },
         {
             title: 'Weekly planning',
             description: 'Drag and arrange meals by day with minimal effort.',
-            icon: ClockSolid,
+            icon: ClockOutline,
             iconLabel: 'Weekly planning'
         },
         {
             title: 'Shopping list',
             description: 'Export consolidated grocery lists based on your meal plan.',
-            icon: CartPlusSolid,
+            icon: CartPlusOutline,
             iconLabel: 'Shopping list'
         }
     ];

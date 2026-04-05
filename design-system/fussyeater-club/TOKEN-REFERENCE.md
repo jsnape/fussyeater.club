@@ -15,6 +15,9 @@ For full rules and rationale, see:
 - `flowbite-svelte-icons` for icons
 - `flowbite-svelte-blocks` for layout blocks
 
+Icon rule:
+Use `flowbite-svelte-icons` Outline variants for new product features by default (for example `CheckCircleOutline`, `ClockOutline`, `CartPlusOutline`). Only use Solid variants when a page-specific design explicitly requires it.
+
 3. Add custom CSS classes only when reusable behavior cannot be expressed with utilities and existing Flowbite pieces.
 
 ## Color Tokens

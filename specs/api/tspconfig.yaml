@@ -1,7 +1,7 @@
 emit:
-  - "@typespec/openapi3"
+  - '@typespec/openapi3'
 options:
-  "@typespec/openapi3":
+  '@typespec/openapi3':
     file-type: yaml
     output-file: openapi.yaml
     seal-object-schemas: true

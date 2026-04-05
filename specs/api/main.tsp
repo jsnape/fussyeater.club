@@ -3,6 +3,11 @@ import "@typespec/rest";
 import "@typespec/openapi";
 import "@typespec/openapi3";
 import "./routes/health.tsp";
+import "./routes/households.tsp";
+import "./routes/register.tsp";
+import "./routes/invites.tsp";
+import "./routes/auth.tsp";
+import "./models.tsp";
 
 using TypeSpec.Http;
 using TypeSpec.OpenAPI;

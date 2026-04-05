@@ -10,13 +10,13 @@ Support email/password and Microsoft social login using Better Auth. Registratio
 
 ## Routes
 
-| Path | Purpose |
-|---|---|
-| `/register` | Create a new account |
-| `/login` | Sign in to an existing account |
-| `/api/auth/*` | Better Auth handler endpoints (sign-in, callback, session, sign-out) |
-| `/api/invites/redeem` | Exchange invite code for short-lived server join intent |
-| `/logout` | Sign out and clear session |
+| Path                  | Purpose                                                              |
+| --------------------- | -------------------------------------------------------------------- |
+| `/register`           | Create a new account                                                 |
+| `/login`              | Sign in to an existing account                                       |
+| `/api/auth/*`         | Better Auth handler endpoints (sign-in, callback, session, sign-out) |
+| `/api/invites/redeem` | Exchange invite code for short-lived server join intent              |
+| `/logout`             | Sign out and clear session                                           |
 
 ---
 
@@ -115,7 +115,7 @@ The following cross-cutting controls apply to this feature and the whole site:
 ### Cloudflare Workers Compatibility
 
 - Enable AsyncLocalStorage support in Worker config:
-  - `compatibility_flags = ["nodejs_compat"]` (or `nodejs_als` if only ALS support is required).
+    - `compatibility_flags = ["nodejs_compat"]` (or `nodejs_als` if only ALS support is required).
 - Pass Worker context `waitUntil` to Better Auth background task handler where deferred operations are enabled.
 
 ### Database
@@ -211,18 +211,18 @@ All auth pages share a centred, single-column card layout with the site logo abo
 
 ## Components & Tokens
 
-| Element | Flowbite component | Notes |
-|---|---|---|
-| Page wrapper | — | `min-h-dvh bg-primary-50 flex items-center justify-center px-4` |
-| Card | `<Card>` | `border-primary-200 bg-white w-full max-w-sm` |
-| Heading | — | `text-2xl font-semibold text-primary-900` |
-| Label + Input | `<Label>` + `<Input>` | Standard pattern from design system |
-| Password input | `<Input type="password">` | Suffix slot for show/hide toggle |
-| Primary action | `<Button color="yellow">` | Full width |
-| Social button | `<Button color="light">` | Full width, icon prefix |
-| Divider | — | `<hr>` with "or" label, `text-primary-600 text-sm` |
-| Error alert | `<Alert color="red">` | Inline, above primary action |
-| Spinner | `<Spinner>` | Replaces button text during submit |
+| Element        | Flowbite component        | Notes                                                           |
+| -------------- | ------------------------- | --------------------------------------------------------------- |
+| Page wrapper   | —                         | `min-h-dvh bg-primary-50 flex items-center justify-center px-4` |
+| Card           | `<Card>`                  | `border-primary-200 bg-white w-full max-w-sm`                   |
+| Heading        | —                         | `text-2xl font-semibold text-primary-900`                       |
+| Label + Input  | `<Label>` + `<Input>`     | Standard pattern from design system                             |
+| Password input | `<Input type="password">` | Suffix slot for show/hide toggle                                |
+| Primary action | `<Button color="yellow">` | Full width                                                      |
+| Social button  | `<Button color="light">`  | Full width, icon prefix                                         |
+| Divider        | —                         | `<hr>` with "or" label, `text-primary-600 text-sm`              |
+| Error alert    | `<Alert color="red">`     | Inline, above primary action                                    |
+| Spinner        | `<Spinner>`               | Replaces button text during submit                              |
 
 ---
 
@@ -230,22 +230,22 @@ All auth pages share a centred, single-column card layout with the site logo abo
 
 ### Register
 
-| Field | Rules |
-|---|---|
-| Full name | Required, 2–100 chars |
-| Email | Required, valid format |
-| Password | Required, min 8 chars, at least one number |
-| Confirm password | Must match password |
-| Household action | Required; one of `create` or `join` |
-| Household name | Required when action is `create`; 2–100 chars; unique per owner |
-| Invite code | Required when action is `join`; prefilled from `invite` URL param when available |
+| Field            | Rules                                                                            |
+| ---------------- | -------------------------------------------------------------------------------- |
+| Full name        | Required, 2–100 chars                                                            |
+| Email            | Required, valid format                                                           |
+| Password         | Required, min 8 chars, at least one number                                       |
+| Confirm password | Required in email/password registration; must match password                     |
+| Household action | Required; one of `create` or `join`                                              |
+| Household name   | Required when action is `create`; 2–100 chars; unique per owner                  |
+| Invite code      | Required when action is `join`; prefilled from `invite` URL param when available |
 
 ### Login
 
-| Field | Rules |
-|---|---|
-| Email | Required, valid format |
-| Password | Required |
+| Field    | Rules                  |
+| -------- | ---------------------- |
+| Email    | Required, valid format |
+| Password | Required               |
 
 ### Household Join
 
@@ -416,9 +416,9 @@ Failure responses:
 
 ### Phase 1: Data And Contracts
 
-1. Add D1 schema changes for invite status, usage counters, and audit metadata.
-2. Update API contract source of truth in TypeSpec for all auth and invite endpoints used by this feature.
-3. Regenerate API types and confirm no breaking type regressions in existing consumers.
+- [x] Add D1 schema changes for invite status, usage counters, and audit metadata.
+- [x] Update API contract source of truth in TypeSpec for all auth and invite endpoints used by this feature.
+- [x] Regenerate API types and confirm no breaking type regressions in existing consumers.
 
 Deliverables:
 
@@ -436,10 +436,10 @@ Risk:
 
 ### Phase 2: Core Server Flows
 
-1. Implement invite redeem endpoint with short-lived join intent exchange.
-2. Implement register-complete endpoint for create or join household action.
-3. Implement invite create/list/revoke endpoints with owner authorization.
-4. Enforce owner-scoped household-name uniqueness and single-household membership guard.
+- [x] Implement invite redeem endpoint with short-lived join intent exchange.
+- [x] Implement register-complete endpoint for create or join household action.
+- [x] Implement invite create/list/revoke endpoints with owner authorization.
+- [x] Enforce owner-scoped household-name uniqueness and single-household membership guard.
 
 Deliverables:
 
@@ -457,10 +457,10 @@ Risk:
 
 ### Phase 3: Client Registration Experience
 
-1. Build SPA register flow with create versus join household branch.
-2. Implement invite query prefill and immediate URL cleanup after redeem.
-3. Implement social continuation mode with read-only identity and no password recollection.
-4. Add resilient error states and preserved form state for retryable failures.
+- [x] Build SPA register flow with create versus join household branch.
+- [x] Implement invite query prefill and immediate URL cleanup after redeem.
+- [x] Implement social continuation mode with read-only identity and no password recollection.
+- [x] Add resilient error states and preserved form state for retryable failures.
 
 Deliverables:
 
@@ -478,10 +478,10 @@ Risk:
 
 ### Phase 4: Security And Quality Controls
 
-1. Add CSRF verification, generic auth error behavior, and endpoint-level authorization checks.
-2. Add idempotency key enforcement for mutating endpoints.
-3. Add logging redaction and correlation-id propagation.
-4. Add rollout flags and ensure flags-off behavior preserves legacy paths.
+- [x] Add CSRF verification, generic auth error behavior, and endpoint-level authorization checks.
+- [x] Add idempotency key enforcement for mutating endpoints.
+- [x] Add logging redaction and correlation-id propagation.
+- [x] Add rollout flags and ensure flags-off behavior preserves legacy paths.
 
 Deliverables:
 
@@ -499,10 +499,10 @@ Risk:
 
 ### Phase 5: Verification And Rollout
 
-1. Implement unit, integration, and e2e tests for all critical acceptance criteria.
-2. Add concurrency tests for final remaining invite use and idempotency replays.
-3. Validate observability events and release guardrail metrics in staging.
-4. Execute staged rollout and stop on guardrail breach.
+- [ ] Implement unit, integration, and e2e tests for all critical acceptance criteria.
+- [x] Add concurrency tests for final remaining invite use and idempotency replays.
+- [ ] Validate observability events and release guardrail metrics in staging.
+- [ ] Execute staged rollout and stop on guardrail breach.
 
 Deliverables:
 
@@ -517,6 +517,30 @@ Dependencies:
 Risk:
 
 1. Medium: insufficient load and race-condition coverage may miss production edge cases.
+
+### Coverage Matrix
+
+| Engineering Item                                                                                       | Test Coverage                                                                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Regenerate API types and confirm no breaking type regressions in existing consumers                    | `src/lib/api-types.spec.ts`                                                                                                                                                                                                       |
+| Implement invite redeem endpoint with short-lived join intent exchange                                 | `src/routes/api/invites/redeem/redeem.spec.ts`                                                                                                                                                                                    |
+| Implement register-complete endpoint for create or join household action                               | `src/routes/api/register/complete/complete.spec.ts`, `src/lib/server/registration.spec.ts`                                                                                                                                        |
+| Implement invite create/list/revoke endpoints with owner authorization                                 | `src/routes/api/households/invites/invites.spec.ts`, `src/routes/api/households/invites/[inviteId]/revoke.spec.ts`                                                                                                                |
+| Enforce owner-scoped household-name uniqueness and single-household membership guard                   | `src/lib/server/registration.spec.ts`                                                                                                                                                                                             |
+| Build SPA register flow with create versus join household branch                                       | `src/routes/register/register-page.svelte.spec.ts`                                                                                                                                                                                |
+| Implement invite query prefill and immediate URL cleanup after redeem                                  | `src/routes/register/page-load.spec.ts`, `src/routes/register/register-page.svelte.spec.ts`                                                                                                                                       |
+| Implement social continuation mode with read-only identity and no password recollection                | `src/routes/register/page-load.spec.ts`, `src/routes/register/register-page.svelte.spec.ts`                                                                                                                                       |
+| Add resilient error states and preserved form state for retryable failures                             | `src/routes/register/register-page.svelte.spec.ts`                                                                                                                                                                                |
+| Add CSRF verification, generic auth error behavior, and endpoint-level authorization checks            | `src/routes/api/auth/login/login.spec.ts`, `src/routes/api/register/complete/complete.spec.ts`, `src/routes/api/households/invites/invites.spec.ts`, `src/routes/api/households/invites/[inviteId]/revoke.spec.ts`                |
+| Update API contract source of truth in TypeSpec for all auth and invite endpoints used by this feature | `src/lib/api-types.spec.ts`                                                                                                                                                                                                       |
+| Add logging redaction and correlation-id propagation                                                   | `src/routes/api/auth/login/login.spec.ts`, `src/routes/api/auth/session/session.spec.ts`, `src/routes/logout/logout.spec.ts`, `src/routes/api/register/complete/complete.spec.ts`, `src/routes/api/invites/redeem/redeem.spec.ts` |
+| Existing authenticated sessions remain valid across rollout/rollback                                   | `src/routes/api/auth/session/session.spec.ts`                                                                                                                                                                                     |
+| Add idempotency key enforcement for mutating endpoints                                                 | `src/routes/api/register/complete/complete.spec.ts`, `src/routes/api/households/invites/invites.spec.ts`, `src/lib/server/registration.spec.ts`                                                                                   |
+| Add rollout flags and ensure flags-off behavior preserves legacy paths                                 | `src/routes/api/register/complete/complete.spec.ts`, `src/routes/api/households/invites/invites.spec.ts`                                                                                                                          |
+| Add concurrency tests for final remaining invite use and idempotency replays                           | `src/lib/server/registration.spec.ts`                                                                                                                                                                                             |
+| Integration coverage for redeem -> join registration happy path                                        | `src/routes/api/registration-flow.integration.spec.ts`                                                                                                                                                                            |
+
+Items still unchecked in the engineering breakdown remain without implementation and therefore have no mapped tests yet.
 
 ### Suggested Ticket Slice
 
@@ -534,6 +558,97 @@ Definition of done for this feature:
 1. All acceptance criteria in this document pass.
 2. Shared architecture baseline requirements are satisfied.
 3. Rollout can be disabled via flags without data loss.
+
+### Staging Sign-Off Checklist
+
+- [ ] Run smoke suite on staging for create-household registration path.
+- [ ] Run smoke suite on staging for invite join path (including exhausted invite behavior).
+- [ ] Verify request logs include correlation id and redaction for sensitive fields.
+- [ ] Verify guardrail dashboards for error rate and p95 latency remain within thresholds.
+- [ ] Confirm authenticated sessions remain valid with registration feature flag both on and off.
+
+### Production Rollout Log Template
+
+| Timestamp (UTC) | Rollout Stage | Registration Flag State | Key Metrics Snapshot | Decision | Approver |
+| --------------- | ------------- | ----------------------- | -------------------- | -------- | -------- |
+|                 |               |                         |                      |          |          |
+|                 |               |                         |                      |          |          |
+
+### Operator Runbook (Command-By-Command)
+
+Use this sequence for staging validation and production rollout execution.
+
+1. Preflight checks (repo root)
+
+```powershell
+npm install
+npm run lint
+npm run check
+npm test
+npm run build
+```
+
+2. Confirm TypeSpec and generated contract are up to date
+
+```powershell
+npm run generate:types
+npm run test:unit -- --run --project server src/lib/api-types.spec.ts
+```
+
+3. Deploy to staging with flags disabled (`AUTH_REGISTRATION_V2_ENABLED=false`, `AUTH_INVITE_MULTIUSE_ENABLED=false`)
+
+```powershell
+npx wrangler deploy --config wrangler.jsonc
+```
+
+4. Validate session continuity while feature is disabled
+
+```powershell
+npm run test:unit -- --run --project server src/routes/api/auth/session/session.spec.ts
+```
+
+5. Start log stream for staging verification
+
+```powershell
+npx wrangler tail --format=json --config wrangler.jsonc
+```
+
+6. Execute registration smoke checks against staging
+
+```powershell
+npm run test:unit -- --run --project server src/routes/api/registration-flow.integration.spec.ts
+npm run test:unit -- --run --project server src/routes/api/invites/redeem/redeem.spec.ts src/routes/api/register/complete/complete.spec.ts
+```
+
+7. Verify guardrails before each ramp stage
+
+- Error rate: registration endpoints 5xx <= 2% for trailing 10 minutes.
+- Latency: `POST /api/register/complete` p95 <= 1200 ms for trailing 10 minutes.
+- Security: correlation header present and no redaction violations in logs.
+- Business: invite-redeem success rate within 20% of baseline.
+
+8. Ramp sequence
+
+- Stage 0: `AUTH_REGISTRATION_V2_ENABLED=false`, `AUTH_INVITE_MULTIUSE_ENABLED=false`
+- Stage 1: 10%
+- Stage 2: 25%
+- Stage 3: 50%
+- Stage 4: 100%
+
+Hold each stage for at least 30 minutes and only progress if all guardrails pass.
+
+9. Rollback procedure (execute immediately on guardrail breach)
+
+- Disable registration flags to previous safe value.
+- Redeploy Worker configuration.
+- Confirm session endpoint health and login/logout behavior.
+- Record rollback reason, timestamp, and approver in the rollout log table above.
+
+10. Final sign-off evidence
+
+- Attach sample structured logs showing `event`, `requestId`, and redacted fields.
+- Attach metrics snapshots per stage.
+- Attach test run outputs for steps 4 and 6.
 
 ---
 

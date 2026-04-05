@@ -1,34 +1,37 @@
 {
-	"editor.formatOnSave": true,
-	"[svelte]": {
-		"editor.defaultFormatter": "svelte.svelte-vscode"
-	},
-	"[typescript]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	"[json]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	"files.exclude": {
-		"**/node_modules": true,
-		"**/dist": true
-	},
+  "editor.formatOnSave": true,
+  "[svelte]": {
+    "editor.defaultFormatter": "svelte.svelte-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true
+  },
 
-	"files.associations": {
-		"*.css": "tailwindcss"
-	},
-	"chat.tools.terminal.autoApprove": {
-		"Test-Path": true,
-		"npm run dev": true,
-		"npm install": true,
-		"npx tsp": true,
-		"npm run check": true,
-		"npm run generate:types": true,
-		"npm run build": true,
-		"npm test": true,
-		"/^python \\.github/skills/ui-ux-pro-max/scripts/search\\.py \"recipe family children food\" --domain color -n 8$/": {
-			"approve": true,
-			"matchCommandLine": true
-		}
-	}
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "chat.tools.terminal.autoApprove": {
+    "Test-Path": true,
+    "npm run dev": true,
+    "npm install": true,
+    "npx tsp": true,
+    "npm run check": true,
+    "npm run generate:types": true,
+    "npm run build": true,
+    "npm test": true,
+    "/^python \\.github/skills/ui-ux-pro-max/scripts/search\\.py \"recipe family children food\" --domain color -n 8$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "npx wrangler": true,
+    "npx prettier": true,
+    "npx @sveltejs/mcp": true
+  }
 }

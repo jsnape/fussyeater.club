@@ -33,7 +33,7 @@ docs/                             # Documentation
 
 ### Root Folder Policy
 
-The SvelteKit app is rooted at repository root. Keep project structure tidy and place runtime code in `src/`, migrations in `migrations/`, and worker config in `wrangler.toml`.
+The SvelteKit app is rooted at repository root. Keep project structure tidy and place runtime code in `src/`, migrations in `migrations/`, and worker config in `wrangler.jsonc`.
 
 ### Runtime Rules
 
@@ -75,6 +75,7 @@ This project follows **TDD**. When modifying or adding code:
 - Start every complex task in plan mode; re-plan immediately if things go sideways
 - Use subagents to keep the main context window clean and focused
 - Never mark a task complete without proving it works — run tests, check logs
+- Observability by default: when implementing new features, add or update meaningful logs/telemetry so runtime behavior and failures are diagnosable in production. Log in JSON format.
 - Simplicity first: make every change as simple as possible; find root causes, no temporary fixes
 
 ## Commands

@@ -583,6 +583,7 @@ Use this sequence for staging validation and production rollout execution.
 ```powershell
 npm install
 npm run lint
+npm run check
 npm test
 npm run build
 ```

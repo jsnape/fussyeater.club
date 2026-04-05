@@ -73,13 +73,22 @@ function redactValue(value: unknown, keyHint = ''): unknown {
     return value;
 }
 
+function redactFields(fields: LogFields): LogFields {
+    const redacted = redactValue(fields);
+    if (redacted && typeof redacted === 'object' && !Array.isArray(redacted)) {
+        return redacted as LogFields;
+    }
+
+    return {};
+}
+
 function emit(level: LogLevel, eventName: string, requestId: string, fields: LogFields): void {
     const payload = {
         timestamp: new Date().toISOString(),
         level,
         event: eventName,
         requestId,
-        ...redactValue(fields)
+        ...redactFields(fields)
     };
 
     const line = JSON.stringify(payload);

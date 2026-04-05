@@ -3,7 +3,11 @@ import { requireDb, verifyPassword } from '$lib/server/db';
 import { hasValidCsrf } from '$lib/server/security';
 
 export const POST: RequestHandler = async ({ request, cookies, platform }) => {
+    const requestId = crypto.randomUUID().slice(0, 8);
+    console.info('[auth.login] start', { requestId, path: '/api/auth/login' });
+
     if (!hasValidCsrf(request)) {
+        console.warn('[auth.login] csrf verification failed', { requestId });
         return json({ message: 'CSRF verification failed' }, { status: 403 });
     }
 
@@ -11,12 +15,14 @@ export const POST: RequestHandler = async ({ request, cookies, platform }) => {
     try {
         body = (await request.json()) as { email?: string; password?: string };
     } catch {
+        console.warn('[auth.login] invalid request body', { requestId });
         return json({ message: 'Invalid request body' }, { status: 400 });
     }
 
     const email = body.email?.trim().toLowerCase();
     const password = body.password ?? '';
     if (!email || !password) {
+        console.warn('[auth.login] missing credentials', { requestId, hasEmail: Boolean(email) });
         return json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
@@ -28,11 +34,13 @@ export const POST: RequestHandler = async ({ request, cookies, platform }) => {
             .first<{ id: string; password_hash: string | null }>();
 
         if (!user?.password_hash) {
+            console.warn('[auth.login] user not found or password auth unavailable', { requestId });
             return json({ message: 'Invalid credentials' }, { status: 401 });
         }
 
         const valid = await verifyPassword(password, user.password_hash);
         if (!valid) {
+            console.warn('[auth.login] invalid password', { requestId, userId: user.id });
             return json({ message: 'Invalid credentials' }, { status: 401 });
         }
 
@@ -51,8 +59,13 @@ export const POST: RequestHandler = async ({ request, cookies, platform }) => {
             expires: new Date(expiresAt)
         });
 
+        console.info('[auth.login] success', { requestId, userId: user.id });
         return json({ ok: true });
-    } catch {
+    } catch (error) {
+        console.error('[auth.login] unexpected failure', {
+            requestId,
+            error: error instanceof Error ? error.message : error
+        });
         return json({ message: 'Service temporarily unavailable' }, { status: 503 });
     }
 };

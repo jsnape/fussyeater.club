@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { completeRegistration } from './registration';
 import { createTestDbPair } from './test-db';
+import type { DbLike } from './db';
 
 describe('registration service', () => {
     const pairs: Array<ReturnType<typeof createTestDbPair>> = [];
@@ -21,6 +22,31 @@ describe('registration service', () => {
             confirmPassword: 'Password123',
             householdAction: 'create',
             householdName: 'Taylor Family'
+        });
+
+        expect(result.actionApplied).toBe('create');
+        expect(result.userId).toBeTruthy();
+        expect(result.householdId).toBeTruthy();
+    });
+
+    it('should complete registration without SQL transaction statements', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+
+        const transactionlessDb: DbLike = {
+            prepare: pair.first.prepare.bind(pair.first),
+            exec: async () => {
+                throw new Error('SQL transactions are not supported');
+            }
+        };
+
+        const result = await completeRegistration(transactionlessDb, {
+            name: 'Jordan',
+            email: 'jordan@example.com',
+            password: 'Password123',
+            confirmPassword: 'Password123',
+            householdAction: 'create',
+            householdName: 'Jordan Family'
         });
 
         expect(result.actionApplied).toBe('create');

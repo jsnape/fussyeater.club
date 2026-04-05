@@ -47,6 +47,9 @@ type InviteRow = {
     household_name: string;
 };
 
+const MAX_INVITE_CODE_GENERATION_ATTEMPTS = 5;
+const UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN = /unique.*household_invites\.code/i;
+
 function resolveInviteStatus(
     invite: Pick<InviteRow, 'status' | 'expires_at' | 'remaining_uses' | 'revoked_at'>
 ): InviteListItem['status'] {
@@ -137,63 +140,62 @@ export async function createHouseholdInvite(
         throw new Error('INVALID_INVITE_INPUT');
     }
 
-    await db.exec('BEGIN IMMEDIATE');
-    try {
-        if (regenerate) {
-            await db
-                .prepare(
-                    `UPDATE household_invites
+    if (regenerate) {
+        await db
+            .prepare(
+                `UPDATE household_invites
  SET status = 'revoked', revoked_at = ?1, updated_at = ?1
  WHERE household_id = ?2 AND revoked_at IS NULL AND status = 'active'`
-                )
-                .bind(nowIso(), householdId)
-                .run();
-        }
+            )
+            .bind(nowIso(), householdId)
+            .run();
+    }
 
-        let code = createInviteCode();
-        for (let attempt = 0; attempt < 5; attempt += 1) {
-            const existing = await db
-                .prepare('SELECT id FROM household_invites WHERE code = ?1')
-                .bind(code)
-                .first<{ id: string }>();
-            if (!existing) {
-                break;
-            }
-            code = createInviteCode();
-        }
-
-        const stillExisting = await db
+    let code = createInviteCode();
+    for (let attempt = 0; attempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS; attempt += 1) {
+        const existing = await db
             .prepare('SELECT id FROM household_invites WHERE code = ?1')
             .bind(code)
             .first<{ id: string }>();
-        if (stillExisting) {
-            throw new Error('INVITE_CODE_GENERATION_FAILED');
+        if (!existing) {
+            break;
         }
+        code = createInviteCode();
+    }
 
-        const inviteId = crypto.randomUUID();
-        const expiresAt = addDaysIso(expiresInDays);
-        await db
-            .prepare(
-                `INSERT INTO household_invites (
+    const inviteId = crypto.randomUUID();
+    const expiresAt = addDaysIso(expiresInDays);
+    for (let insertAttempt = 0; insertAttempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS; insertAttempt += 1) {
+        try {
+            await db
+                .prepare(
+                    `INSERT INTO household_invites (
 id, household_id, code, status, expires_at, max_uses, remaining_uses, created_by_user_id
  ) VALUES (?1, ?2, ?3, 'active', ?4, ?5, ?5, ?6)`
-            )
-            .bind(inviteId, householdId, code, expiresAt, maxUses, createdByUserId)
-            .run();
+                )
+                .bind(inviteId, householdId, code, expiresAt, maxUses, createdByUserId)
+                .run();
 
-        await db.exec('COMMIT');
-
-        return {
-            id: inviteId,
-            code,
-            maxUses,
-            remainingUses: maxUses,
-            expiresAt
-        };
-    } catch (error) {
-        await db.exec('ROLLBACK');
-        throw error;
+            return {
+                id: inviteId,
+                code,
+                maxUses,
+                remainingUses: maxUses,
+                expiresAt
+            };
+        } catch (error) {
+            if (
+                error instanceof Error &&
+                UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN.test(error.message)
+            ) {
+                code = createInviteCode();
+                continue;
+            }
+            throw error;
+        }
     }
+
+    throw new Error('INVITE_CODE_GENERATION_FAILED');
 }
 
 export async function listHouseholdInvites(

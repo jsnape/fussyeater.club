@@ -13,8 +13,8 @@
     const initialInvites = () => data.invites ?? [];
     const initialLoadError = () => data.loadError ?? '';
 
-    let members = $state.raw<HouseholdMember[]>(initialMembers());
-    let invites = $state.raw<InviteStatus[]>(initialInvites());
+    let members = $state<HouseholdMember[]>(initialMembers());
+    let invites = $state<InviteStatus[]>(initialInvites());
     let loadError = $state(initialLoadError());
 
     let maxUses = $state(3);
@@ -128,6 +128,20 @@
         } finally {
             isRevokingInviteId = '';
         }
+    }
+
+    function isRevokeDisabled(invite: InviteStatus): boolean {
+        return isRevokingInviteId === invite.id || invite.status === 'revoked';
+    }
+
+    function revokeInviteAriaLabel(invite: InviteStatus): string {
+        if (invite.status === 'revoked') {
+            return 'Invite already revoked';
+        }
+        if (isRevokingInviteId === invite.id) {
+            return 'Revoking invite';
+        }
+        return 'Revoke invite';
     }
 </script>
 
@@ -256,12 +270,8 @@
                                             type="button"
                                             class="text-sm font-medium text-primary-900 underline disabled:opacity-50"
                                             onclick={() => void revokeInvite(invite.id)}
-                                            disabled={isRevokingInviteId === invite.id || invite.status === 'revoked'}
-                                            aria-label={invite.status === 'revoked'
-                                                ? 'Invite already revoked'
-                                                : isRevokingInviteId === invite.id
-                                                    ? 'Revoking invite'
-                                                    : 'Revoke invite'}
+                                            disabled={isRevokeDisabled(invite)}
+                                            aria-label={revokeInviteAriaLabel(invite)}
                                         >
                                             {isRevokingInviteId === invite.id ? 'Revoking…' : 'Revoke'}
                                         </button>

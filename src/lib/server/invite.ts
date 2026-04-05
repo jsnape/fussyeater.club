@@ -209,7 +209,7 @@ export async function listHouseholdInvites(
             `SELECT id, code, status, expires_at, max_uses, remaining_uses, revoked_at, updated_at
   FROM household_invites
   WHERE household_id = ?1
-  -- latest updates first so active/historical slicing reflects most recent state transitions
+  -- latest updates first so the bounded list keeps the most recently modified invites
   ORDER BY updated_at DESC, id DESC`
         )
         .bind(householdId)

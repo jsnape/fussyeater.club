@@ -28,7 +28,7 @@
     let pendingCreateIdempotencyKey = $state('');
     let pendingRegenerateIdempotencyKey = $state('');
 
-    const sortedInvites = $derived([...invites]);
+    const displayInvites = $derived([...invites]);
 
     function mutationErrorMessage(args: {
         status: number;
@@ -245,7 +245,7 @@
                 <p class="mt-3 text-sm text-red-700">{actionError}</p>
             {/if}
 
-            {#if sortedInvites.length === 0}
+            {#if displayInvites.length === 0}
                 <p class="mt-4 text-sm text-primary-700">No invites yet.</p>
             {:else}
                 <div class="mt-4 overflow-x-auto">
@@ -260,7 +260,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each sortedInvites as invite (invite.id)}
+                            {#each displayInvites as invite (invite.id)}
                                 <tr class="border-b border-primary-100">
                                     <td class="py-2 pr-4">{invite.codeMasked}</td>
                                     <td class="py-2 pr-4 capitalize">{invite.status}</td>

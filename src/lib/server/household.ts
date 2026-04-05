@@ -65,7 +65,7 @@ export async function listHouseholdMembers(
                  hm.role as role,
                  CASE
                      WHEN instr(hm.created_at, 'T') > 0 THEN hm.created_at
-                     ELSE replace(hm.created_at, ' ', 'T') || 'Z'
+                     ELSE strftime('%Y-%m-%dT%H:%M:%SZ', hm.created_at)
                  END as joinedAt
               FROM household_memberships hm
               JOIN users u ON u.id = hm.user_id

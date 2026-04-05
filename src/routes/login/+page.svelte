@@ -137,6 +137,10 @@
                 <button
                     type="button"
                     class="w-full rounded-md border border-primary-300 px-4 py-2 text-sm font-medium text-primary-900"
+                    disabled
+                    aria-disabled="true"
+                    title="Microsoft sign-in is coming soon"
+                    aria-label="Continue with Microsoft (coming soon)"
                 >
                     Continue with Microsoft
                 </button>

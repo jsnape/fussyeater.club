@@ -88,7 +88,7 @@ describe('/api/households/invites routes', () => {
             }),
             platform: { env: { DB: pair.first, AUTH_REGISTRATION_V2_ENABLED: 'true' } }
         } as never);
-        const firstBody = await firstResponse.json();
+        const firstBody = (await firstResponse.json()) as { code: string };
 
         const replayResponse = await POST({
             request: new Request('http://localhost/api/households/invites', {
@@ -98,7 +98,7 @@ describe('/api/households/invites routes', () => {
             }),
             platform: { env: { DB: pair.first, AUTH_REGISTRATION_V2_ENABLED: 'true' } }
         } as never);
-        const replayBody = await replayResponse.json();
+        const replayBody = (await replayResponse.json()) as { code: string };
 
         expect(firstResponse.status).toBe(201);
         expect(replayResponse.status).toBe(201);
@@ -124,7 +124,9 @@ describe('/api/households/invites routes', () => {
             platform: { env: { DB: pair.first, AUTH_REGISTRATION_V2_ENABLED: 'true' } }
         } as never);
 
-        const body = await response.json();
+        const body = (await response.json()) as {
+            invites: Array<{ codeMasked: string; code?: string }>;
+        };
         expect(response.status).toBe(200);
         expect(body.invites).toHaveLength(1);
         expect(body.invites[0].codeMasked).toBe('ABC…FGH');

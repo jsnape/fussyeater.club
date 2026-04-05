@@ -3,7 +3,7 @@
     import { resolve } from '$app/paths';
     import { page } from '$app/state';
     import { NavBrand, NavHamburger, NavLi, Navbar, NavUl } from 'flowbite-svelte';
-    import { apiFetch } from '$lib/api';
+    import { ApiError, apiFetch } from '$lib/api';
     import { siteNavLinks } from '$lib/components/layout/nav-links';
 
     let { isAuthenticated = false, userLabel = null } = $props();
@@ -20,11 +20,19 @@
 
     async function logout(): Promise<void> {
         const csrfToken = getCookieValue('csrf-token');
-        await apiFetch<{ ok: true }>('/logout', {
-            method: 'POST',
-            headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
-            body: JSON.stringify({})
-        });
+        try {
+            await apiFetch<{ ok: true }>('/logout', {
+                method: 'POST',
+                headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
+                body: JSON.stringify({})
+            });
+        } catch (error) {
+            if (!(error instanceof ApiError) || error.status >= 500) {
+                await invalidate('auth:session');
+                await invalidateAll();
+                return;
+            }
+        }
         await invalidate('auth:session');
         await invalidateAll();
     }

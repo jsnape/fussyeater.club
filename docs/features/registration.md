@@ -235,7 +235,7 @@ All auth pages share a centred, single-column card layout with the site logo abo
 | Full name        | Required, 2–100 chars                                                            |
 | Email            | Required, valid format                                                           |
 | Password         | Required, min 8 chars, at least one number                                       |
-| Confirm password | Must match password                                                              |
+| Confirm password | Required in email/password registration; must match password                     |
 | Household action | Required; one of `create` or `join`                                              |
 | Household name   | Required when action is `create`; 2–100 chars; unique per owner                  |
 | Invite code      | Required when action is `join`; prefilled from `invite` URL param when available |

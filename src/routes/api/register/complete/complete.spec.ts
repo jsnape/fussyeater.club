@@ -103,6 +103,34 @@ describe('POST /api/register/complete', () => {
         expect(replayBody).toEqual(firstBody);
     });
 
+    it('should return 409 when duplicate idempotency request is in progress', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+
+        await pair.first
+            .prepare(
+                `INSERT INTO idempotency_keys (idempotency_key, endpoint, user_id, result_status, result_body)
+ VALUES ('idem-pending', '/api/register/complete', 'anonymous:taylor@example.com', 0, '{}')`
+            )
+            .run();
+
+        const response = await POST({
+            request: buildRequest({
+                name: 'Taylor',
+                email: 'taylor@example.com',
+                password: 'Password123',
+                confirmPassword: 'Password123',
+                householdAction: 'create',
+                householdName: 'Taylor Family',
+                idempotencyKey: 'idem-pending'
+            }),
+            platform: { env: { DB: pair.first, AUTH_REGISTRATION_V2_ENABLED: 'true' } }
+        } as never);
+
+        expect(response.status).toBe(409);
+        await expect(response.json()).resolves.toEqual({ message: 'Duplicate request in progress' });
+    });
+
     it('should reject mismatched confirm password', async () => {
         const pair = createTestDbPair();
         pairs.push(pair);
@@ -122,5 +150,28 @@ describe('POST /api/register/complete', () => {
 
         expect(response.status).toBe(400);
         await expect(response.json()).resolves.toEqual({ message: 'Validation failed' });
+    });
+
+    it('should return 410 for invalid join intent token', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+
+        const response = await POST({
+            request: buildRequest({
+                name: 'Taylor',
+                householdAction: 'join',
+                joinIntentToken: 'missing-token',
+                idempotencyKey: 'idem-join-missing',
+                email: 'taylor@example.com',
+                password: 'Password123',
+                confirmPassword: 'Password123'
+            }),
+            platform: { env: { DB: pair.first, AUTH_REGISTRATION_V2_ENABLED: 'true' } }
+        } as never);
+
+        expect(response.status).toBe(410);
+        await expect(response.json()).resolves.toEqual({
+            message: 'Join invitation is no longer valid'
+        });
     });
 });

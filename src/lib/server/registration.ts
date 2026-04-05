@@ -189,9 +189,12 @@ export async function completeRegistration(
         throw new Error('JOIN_INTENT_EXPIRED');
     }
 
-    const decrement = await db
-        .prepare(
-            `UPDATE household_invites
+    const timestamp = nowIso();
+    await db.exec('BEGIN IMMEDIATE');
+    try {
+        const decrement = await db
+            .prepare(
+                `UPDATE household_invites
  SET remaining_uses = remaining_uses - 1,
  status = CASE WHEN remaining_uses - 1 <= 0 THEN 'exhausted' ELSE status END,
  last_redeemed_at = ?1,
@@ -200,26 +203,34 @@ export async function completeRegistration(
    AND revoked_at IS NULL
    AND expires_at > ?1
    AND remaining_uses > 0`
-        )
-        .bind(nowIso(), joinIntent.invite_id)
-        .run();
+            )
+            .bind(timestamp, joinIntent.invite_id)
+            .run();
 
-    if ((decrement.meta?.changes ?? 0) !== 1) {
-        throw new Error('INVITE_EXHAUSTED');
-    }
+        if ((decrement.meta?.changes ?? 0) !== 1) {
+            throw new Error('INVITE_EXHAUSTED');
+        }
 
-    await db
-        .prepare('UPDATE join_intents SET consumed_at = ?1 WHERE token = ?2')
-        .bind(nowIso(), joinIntent.token)
-        .run();
+        const consume = await db
+            .prepare('UPDATE join_intents SET consumed_at = ?1 WHERE token = ?2 AND consumed_at IS NULL')
+            .bind(timestamp, joinIntent.token)
+            .run();
+        if ((consume.meta?.changes ?? 0) !== 1) {
+            throw new Error('JOIN_INTENT_EXPIRED');
+        }
 
-    await db
-        .prepare(
-            `INSERT INTO household_memberships (user_id, household_id, role)
+        await db
+            .prepare(
+                `INSERT INTO household_memberships (user_id, household_id, role)
  VALUES (?1, ?2, 'member')`
-        )
-        .bind(userId, joinIntent.household_id)
-        .run();
+            )
+            .bind(userId, joinIntent.household_id)
+            .run();
+        await db.exec('COMMIT');
+    } catch (error) {
+        await db.exec('ROLLBACK');
+        throw error;
+    }
 
     return { userId, householdId: joinIntent.household_id, actionApplied: 'join' };
 }

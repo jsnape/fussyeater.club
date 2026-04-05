@@ -2,7 +2,13 @@ import { json, type RequestHandler } from '@sveltejs/kit';
 import { completeRegistration } from '$lib/server/registration';
 import { requireDb } from '$lib/server/db';
 import { FEATURE_FLAGS, isFeatureEnabled } from '$lib/server/feature-flags';
-import { getIdempotentResponse, saveIdempotentResponse } from '$lib/server/idempotency';
+import {
+    finalizeIdempotentResponse,
+    getIdempotentResponse,
+    hasPendingIdempotencyKey,
+    releasePendingIdempotencyKey,
+    reserveIdempotencyKey
+} from '$lib/server/idempotency';
 import { getAuthContext, requireCsrf } from '$lib/server/security';
 
 export const POST: RequestHandler = async ({ request, platform }) => {
@@ -81,6 +87,38 @@ export const POST: RequestHandler = async ({ request, platform }) => {
             console.info('[register.complete] idempotent replay', { requestId, userScope });
             return existing;
         }
+        const reserved = await reserveIdempotencyKey(
+            db,
+            '/api/register/complete',
+            body.idempotencyKey,
+            userScope
+        );
+        if (!reserved) {
+            const replay = await getIdempotentResponse(
+                db,
+                '/api/register/complete',
+                body.idempotencyKey,
+                userScope
+            );
+            if (replay) {
+                console.info('[register.complete] idempotent replay after duplicate reservation', {
+                    requestId,
+                    userScope
+                });
+                return replay;
+            }
+
+            if (
+                await hasPendingIdempotencyKey(
+                    db,
+                    '/api/register/complete',
+                    body.idempotencyKey,
+                    userScope
+                )
+            ) {
+                return json({ message: 'Duplicate request in progress' }, { status: 409 });
+            }
+        }
 
         if (auth.socialProvider === 'microsoft' && !auth.userId) {
             console.warn('[register.complete] unauthenticated social continuation', { requestId });
@@ -90,48 +128,60 @@ export const POST: RequestHandler = async ({ request, platform }) => {
             );
         }
 
-        const result = await completeRegistration(db, {
-            name: body.name ?? '',
-            email: body.email,
-            password: body.password,
-            confirmPassword: body.confirmPassword,
-            householdAction: body.householdAction,
-            householdName: body.householdName,
-            joinIntentToken: body.joinIntentToken,
-            authUserId: auth.userId,
-            authEmail: auth.email,
-            socialProvider: auth.socialProvider
-        });
+        try {
+            const result = await completeRegistration(db, {
+                name: body.name ?? '',
+                email: body.email,
+                password: body.password,
+                confirmPassword: body.confirmPassword,
+                householdAction: body.householdAction,
+                householdName: body.householdName,
+                joinIntentToken: body.joinIntentToken,
+                authUserId: auth.userId,
+                authEmail: auth.email,
+                socialProvider: auth.socialProvider
+            });
 
-        const wrote = await saveIdempotentResponse(
-            db,
-            '/api/register/complete',
-            body.idempotencyKey,
-            userScope,
-            201,
-            result
-        );
-        if (!wrote) {
-            const replay = await getIdempotentResponse(
+            const wrote = await finalizeIdempotentResponse(
                 db,
                 '/api/register/complete',
                 body.idempotencyKey,
-                userScope
+                userScope,
+                201,
+                result
             );
-            if (replay) {
-                console.info('[register.complete] idempotent replay after concurrent write', {
-                    requestId,
+            if (!wrote) {
+                const replay = await getIdempotentResponse(
+                    db,
+                    '/api/register/complete',
+                    body.idempotencyKey,
                     userScope
-                });
-                return replay;
+                );
+                if (replay) {
+                    console.info('[register.complete] idempotent replay after concurrent write', {
+                        requestId,
+                        userScope
+                    });
+                    return replay;
+                }
             }
+            console.info('[register.complete] success', {
+                requestId,
+                actionApplied: result.actionApplied,
+                householdAction: body.householdAction
+            });
+            return json(result, { status: 201 });
+        } catch (error) {
+            if (reserved) {
+                await releasePendingIdempotencyKey(
+                    db,
+                    '/api/register/complete',
+                    body.idempotencyKey,
+                    userScope
+                );
+            }
+            throw error;
         }
-        console.info('[register.complete] success', {
-            requestId,
-            actionApplied: result.actionApplied,
-            householdAction: body.householdAction
-        });
-        return json(result, { status: 201 });
     } catch (error) {
         if (error instanceof Error) {
             switch (error.message) {

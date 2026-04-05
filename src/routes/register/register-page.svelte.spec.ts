@@ -30,7 +30,7 @@ describe('register page ui', () => {
 
     it('should switch between create and join household modes', async () => {
         render(RegisterPage, {
-            data: { inviteCode: '', socialContinuation: false, socialEmail: '' }
+            data: { sessionUser: null, inviteCode: '', socialContinuation: false, socialEmail: '' }
         });
 
         await expect
@@ -49,6 +49,7 @@ describe('register page ui', () => {
     it('should hide password and keep readonly email in social continuation mode', async () => {
         render(RegisterPage, {
             data: {
+                sessionUser: null,
                 inviteCode: '',
                 socialContinuation: true,
                 socialEmail: 'microsoft.user@example.com'
@@ -73,7 +74,7 @@ describe('register page ui', () => {
         mockedApiFetch.mockRejectedValueOnce(new ApiError('temporary failure', 503));
 
         render(RegisterPage, {
-            data: { inviteCode: '', socialContinuation: false, socialEmail: '' }
+            data: { sessionUser: null, inviteCode: '', socialContinuation: false, socialEmail: '' }
         });
 
         await page.getByRole('textbox', { name: 'Full name' }).fill('Taylor');
@@ -110,7 +111,7 @@ describe('register page ui', () => {
 
     it('should block submit when password confirmation does not match', async () => {
         render(RegisterPage, {
-            data: { inviteCode: '', socialContinuation: false, socialEmail: '' }
+            data: { sessionUser: null, inviteCode: '', socialContinuation: false, socialEmail: '' }
         });
 
         await page.getByRole('textbox', { name: 'Full name' }).fill('Taylor');

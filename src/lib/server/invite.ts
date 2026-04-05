@@ -207,6 +207,7 @@ export async function listHouseholdInvites(
             `SELECT id, code, status, expires_at, max_uses, remaining_uses, revoked_at, updated_at
   FROM household_invites
   WHERE household_id = ?1
+  -- latest updates first so active/historical slicing reflects most recent state transitions
   ORDER BY updated_at DESC, id DESC`
         )
         .bind(householdId)
@@ -224,6 +225,7 @@ export async function listHouseholdInvites(
         } satisfies InviteListItem;
     });
 
+    // MVP bounded list: at most one active invite + the 20 most recently updated historical invites.
     const active = mapped.filter((invite) => invite.status === 'active').slice(0, 1);
     const historical = mapped.filter((invite) => invite.status !== 'active').slice(0, 20);
     return [...active, ...historical];

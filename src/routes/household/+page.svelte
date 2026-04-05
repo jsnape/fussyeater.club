@@ -8,13 +8,13 @@
     type CreateHouseholdInviteResponse = components['schemas']['CreateHouseholdInviteResponse'];
 
     let { data }: { data: PageData } = $props();
-    const initialMembers = (() => data.members ?? [])();
-    const initialInvites = (() => data.invites ?? [])();
-    const initialLoadError = (() => data.loadError ?? '')();
+    const initialMembers = () => data.members ?? [];
+    const initialInvites = () => data.invites ?? [];
+    const initialLoadError = () => data.loadError ?? '';
 
-    let members = $state.raw<HouseholdMember[]>(initialMembers);
-    let invites = $state.raw<InviteStatus[]>(initialInvites);
-    let loadError = $state(initialLoadError);
+    let members = $state.raw<HouseholdMember[]>(initialMembers());
+    let invites = $state.raw<InviteStatus[]>(initialInvites());
+    let loadError = $state(initialLoadError());
 
     let maxUses = $state(3);
     let expiresInDays = $state(7);
@@ -100,8 +100,7 @@
             const csrfToken = getCookieValue('csrf-token');
             await apiFetch('/api/households/invites/' + inviteId, {
                 method: 'DELETE',
-                headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
-                body: JSON.stringify({})
+                headers: csrfToken ? { 'x-csrf-token': csrfToken } : {}
             });
             actionMessage = 'Invite revoked.';
             await refreshInvites();

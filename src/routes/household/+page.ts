@@ -28,7 +28,7 @@ export const load: PageLoad = async ({ fetch }) => {
         return {
             members: membersResponse.members,
             invites: invitesResponse.invites,
-            loadError: null as string | null
+            loadError: null
         };
     } catch (error) {
         if (error instanceof ApiError) {

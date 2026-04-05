@@ -21,7 +21,9 @@ declare global {
         }
 
         // interface Error {}
-        // interface Locals {}
+        interface Locals {
+            requestId?: string;
+        }
         // interface PageData {}
         // interface PageState {}
     }

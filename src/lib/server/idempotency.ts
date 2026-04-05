@@ -87,7 +87,14 @@ export async function finalizeIdempotentResponse(
  SET result_status = ?4, result_body = ?5
  WHERE idempotency_key = ?1 AND endpoint = ?2 AND user_id = ?3 AND result_status = ?6`
         )
-        .bind(idempotencyKey, endpoint, userScope, status, JSON.stringify(body), PENDING_RESULT_STATUS)
+        .bind(
+            idempotencyKey,
+            endpoint,
+            userScope,
+            status,
+            JSON.stringify(body),
+            PENDING_RESULT_STATUS
+        )
         .run();
 
     return (result.meta?.changes ?? 0) === 1;

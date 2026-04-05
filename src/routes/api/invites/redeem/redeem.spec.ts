@@ -31,6 +31,7 @@ describe('POST /api/invites/redeem', () => {
         } as never);
 
         expect(response.status).toBe(404);
+        expect(response.headers.get('x-request-id')).toMatch(/^[A-Za-z0-9._-]{8,64}$/);
         await expect(response.json()).resolves.toEqual({ message: 'Invite not found' });
     });
 });

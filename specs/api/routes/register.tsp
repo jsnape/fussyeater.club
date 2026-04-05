@@ -24,6 +24,10 @@ interface Registration {
 				@body body: ErrorResponse;
 		  }
 		| {
+				@statusCode statusCode: 404;
+				@body body: ErrorResponse;
+		  }
+		| {
 				@statusCode statusCode: 409;
 				@body body: ErrorResponse;
 		  }

@@ -5,10 +5,20 @@ using TypeSpec.Http;
 @route("/api/households/invites")
 interface HouseholdInvites {
 	@get
-	list(): ListHouseholdInvitesResponse | {
-		@statusCode statusCode: 403;
-		@body body: ErrorResponse;
-	};
+	list():
+		| ListHouseholdInvitesResponse
+		| {
+				@statusCode statusCode: 403;
+				@body body: ErrorResponse;
+		  }
+		| {
+				@statusCode statusCode: 404;
+				@body body: ErrorResponse;
+		  }
+		| {
+				@statusCode statusCode: 503;
+				@body body: ErrorResponse;
+		  };
 
 	@post
 	create(@body body: CreateHouseholdInviteRequest):
@@ -22,6 +32,10 @@ interface HouseholdInvites {
 		  }
 		| {
 				@statusCode statusCode: 403;
+				@body body: ErrorResponse;
+		  }
+		| {
+				@statusCode statusCode: 404;
 				@body body: ErrorResponse;
 		  }
 		| {
@@ -42,6 +56,9 @@ interface HouseholdInvites {
 		@body body: ErrorResponse;
 	} | {
 		@statusCode statusCode: 404;
+		@body body: ErrorResponse;
+	} | {
+		@statusCode statusCode: 503;
 		@body body: ErrorResponse;
 	};
 }

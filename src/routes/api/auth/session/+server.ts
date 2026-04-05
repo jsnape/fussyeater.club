@@ -1,6 +1,12 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import { nowIso, requireDb } from '$lib/server/db';
 import { FEATURE_FLAGS, isFeatureEnabled } from '$lib/server/feature-flags';
+import {
+    jsonWithRequestId,
+    logError,
+    logInfo,
+    resolveEventRequestId
+} from '$lib/server/observability';
 
 function getSessionCookie(request: Request): string | null {
     const cookie = request.headers.get('cookie') ?? '';
@@ -13,12 +19,18 @@ function getSessionCookie(request: Request): string | null {
     );
 }
 
-export const GET: RequestHandler = async ({ request, platform }) => {
+export const GET: RequestHandler = async (event) => {
+    const { request, platform } = event;
+    const requestId = resolveEventRequestId(event);
     const microsoftOAuthEnabled = isFeatureEnabled(platform, FEATURE_FLAGS.microsoftOAuthEnabled);
 
     const sessionId = getSessionCookie(request);
     if (!sessionId) {
-        return json({ user: null, featureFlags: { microsoftOAuthEnabled } });
+        logInfo('auth.session.anonymous', requestId);
+        return jsonWithRequestId(
+            { user: null, featureFlags: { microsoftOAuthEnabled } },
+            requestId
+        );
     }
 
     try {
@@ -42,19 +54,36 @@ export const GET: RequestHandler = async ({ request, platform }) => {
             }>();
 
         if (!session) {
-            return json({ user: null, featureFlags: { microsoftOAuthEnabled } });
+            logInfo('auth.session.not_found', requestId);
+            return jsonWithRequestId(
+                { user: null, featureFlags: { microsoftOAuthEnabled } },
+                requestId
+            );
         }
 
-        return json({
-            user: {
-                id: session.id,
-                email: session.email,
-                name: session.name,
-                authProvider: session.authProvider
-            },
-            featureFlags: { microsoftOAuthEnabled }
+        logInfo('auth.session.success', requestId, {
+            userId: session.id,
+            authProvider: session.authProvider
         });
-    } catch {
-        return json({ user: null, featureFlags: { microsoftOAuthEnabled } });
+        return jsonWithRequestId(
+            {
+                user: {
+                    id: session.id,
+                    email: session.email,
+                    name: session.name,
+                    authProvider: session.authProvider
+                },
+                featureFlags: { microsoftOAuthEnabled }
+            },
+            requestId
+        );
+    } catch (error) {
+        logError('auth.session.unexpected_failure', requestId, {
+            error: error instanceof Error ? error.message : String(error)
+        });
+        return jsonWithRequestId(
+            { user: null, featureFlags: { microsoftOAuthEnabled } },
+            requestId
+        );
     }
 };

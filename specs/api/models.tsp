@@ -30,6 +30,31 @@ remainingUses: int32;
 expiresAt: utcDateTime;
 }
 
+model LoginRequest {
+email: string;
+password: string;
+}
+
+model LoginResponse {
+ok: boolean;
+}
+
+model AuthSessionFeatureFlags {
+microsoftOAuthEnabled: boolean;
+}
+
+model AuthSessionUser {
+id: string;
+email?: string;
+name?: string;
+authProvider: string;
+}
+
+model AuthSessionResponse {
+user: AuthSessionUser | null;
+featureFlags: AuthSessionFeatureFlags;
+}
+
 model RegisterCompleteRequest {
 name: string;
 email?: string;

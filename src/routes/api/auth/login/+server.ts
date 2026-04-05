@@ -1,29 +1,39 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import { requireDb, verifyPassword } from '$lib/server/db';
 import { hasValidCsrf } from '$lib/server/security';
+import {
+    jsonWithRequestId,
+    logError,
+    logInfo,
+    logWarn,
+    resolveEventRequestId
+} from '$lib/server/observability';
 
-export const POST: RequestHandler = async ({ request, cookies, platform }) => {
-    const requestId = crypto.randomUUID().slice(0, 8);
-    console.info('[auth.login] start', { requestId, path: '/api/auth/login' });
+export const POST: RequestHandler = async (event) => {
+    const { request, cookies, platform } = event;
+    const requestId = resolveEventRequestId(event);
+    logInfo('auth.login.start', requestId, { path: '/api/auth/login' });
 
     if (!hasValidCsrf(request)) {
-        console.warn('[auth.login] csrf verification failed', { requestId });
-        return json({ message: 'CSRF verification failed' }, { status: 403 });
+        logWarn('auth.login.csrf_failed', requestId);
+        return jsonWithRequestId({ message: 'CSRF verification failed' }, requestId, {
+            status: 403
+        });
     }
 
     let body: { email?: string; password?: string };
     try {
         body = (await request.json()) as { email?: string; password?: string };
     } catch {
-        console.warn('[auth.login] invalid request body', { requestId });
-        return json({ message: 'Invalid request body' }, { status: 400 });
+        logWarn('auth.login.invalid_body', requestId);
+        return jsonWithRequestId({ message: 'Invalid request body' }, requestId, { status: 400 });
     }
 
     const email = body.email?.trim().toLowerCase();
     const password = body.password ?? '';
     if (!email || !password) {
-        console.warn('[auth.login] missing credentials', { requestId, hasEmail: Boolean(email) });
-        return json({ message: 'Invalid credentials' }, { status: 401 });
+        logWarn('auth.login.missing_credentials', requestId, { hasEmail: Boolean(email) });
+        return jsonWithRequestId({ message: 'Invalid credentials' }, requestId, { status: 401 });
     }
 
     try {
@@ -34,14 +44,18 @@ export const POST: RequestHandler = async ({ request, cookies, platform }) => {
             .first<{ id: string; password_hash: string | null }>();
 
         if (!user?.password_hash) {
-            console.warn('[auth.login] user not found or password auth unavailable', { requestId });
-            return json({ message: 'Invalid credentials' }, { status: 401 });
+            logWarn('auth.login.user_not_found_or_password_auth_unavailable', requestId);
+            return jsonWithRequestId({ message: 'Invalid credentials' }, requestId, {
+                status: 401
+            });
         }
 
         const valid = await verifyPassword(password, user.password_hash);
         if (!valid) {
-            console.warn('[auth.login] invalid password', { requestId, userId: user.id });
-            return json({ message: 'Invalid credentials' }, { status: 401 });
+            logWarn('auth.login.invalid_password', requestId, { userId: user.id });
+            return jsonWithRequestId({ message: 'Invalid credentials' }, requestId, {
+                status: 401
+            });
         }
 
         const sessionId = crypto.randomUUID();
@@ -59,13 +73,14 @@ export const POST: RequestHandler = async ({ request, cookies, platform }) => {
             expires: new Date(expiresAt)
         });
 
-        console.info('[auth.login] success', { requestId, userId: user.id });
-        return json({ ok: true });
+        logInfo('auth.login.success', requestId, { userId: user.id });
+        return jsonWithRequestId({ ok: true }, requestId);
     } catch (error) {
-        console.error('[auth.login] unexpected failure', {
-            requestId,
-            error: error instanceof Error ? error.message : error
+        logError('auth.login.unexpected_failure', requestId, {
+            error: error instanceof Error ? error.message : String(error)
         });
-        return json({ message: 'Service temporarily unavailable' }, { status: 503 });
+        return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, {
+            status: 503
+        });
     }
 };

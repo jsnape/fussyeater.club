@@ -6,6 +6,7 @@ import "./routes/health.tsp";
 import "./routes/households.tsp";
 import "./routes/register.tsp";
 import "./routes/invites.tsp";
+import "./routes/auth.tsp";
 import "./models.tsp";
 
 using TypeSpec.Http;

@@ -1,74 +1,98 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import { requireDb } from '$lib/server/db';
 import { FEATURE_FLAGS, isFeatureEnabled } from '$lib/server/feature-flags';
 import { redeemInviteCode } from '$lib/server/invite';
 import { getAuthContext, requireCsrf } from '$lib/server/security';
+import {
+    jsonWithRequestId,
+    logError,
+    logInfo,
+    logWarn,
+    resolveEventRequestId
+} from '$lib/server/observability';
 
-export const POST: RequestHandler = async ({ request, platform }) => {
-    const requestId = crypto.randomUUID().slice(0, 8);
-    console.info('[invites.redeem] start', { requestId, path: '/api/invites/redeem' });
+export const POST: RequestHandler = async (event) => {
+    const { request, platform } = event;
+    const requestId = resolveEventRequestId(event);
+    logInfo('invites.redeem.start', requestId, { path: '/api/invites/redeem' });
 
     if (!isFeatureEnabled(platform, FEATURE_FLAGS.registrationV2Enabled)) {
-        console.warn('[invites.redeem] registration feature disabled', { requestId });
-        return json({ message: 'Not found' }, { status: 404 });
+        logWarn('invites.redeem.feature_disabled', requestId);
+        return jsonWithRequestId({ message: 'Not found' }, requestId, { status: 404 });
     }
 
     try {
         requireCsrf(request);
     } catch {
-        console.warn('[invites.redeem] csrf verification failed', { requestId });
-        return json({ message: 'CSRF verification failed' }, { status: 403 });
+        logWarn('invites.redeem.csrf_failed', requestId);
+        return jsonWithRequestId({ message: 'CSRF verification failed' }, requestId, {
+            status: 403
+        });
     }
 
     let body: { code?: string };
     try {
         body = (await request.json()) as { code?: string };
     } catch {
-        console.warn('[invites.redeem] invalid request body', { requestId });
-        return json({ message: 'Invalid request body' }, { status: 400 });
+        logWarn('invites.redeem.invalid_body', requestId);
+        return jsonWithRequestId({ message: 'Invalid request body' }, requestId, { status: 400 });
     }
 
     const code = body.code?.trim();
     if (!code) {
-        console.warn('[invites.redeem] missing invite code', { requestId });
-        return json({ message: 'Invite code is required' }, { status: 400 });
+        logWarn('invites.redeem.missing_invite_code', requestId);
+        return jsonWithRequestId({ message: 'Invite code is required' }, requestId, {
+            status: 400
+        });
     }
 
     try {
         const db = requireDb(platform);
         const auth = await getAuthContext(request, platform);
         const result = await redeemInviteCode(db, code, auth.userId);
-        console.info('[invites.redeem] success', {
+        logInfo('invites.redeem.success', requestId, {
             requestId,
             userId: auth.userId,
             hasJoinIntentToken: Boolean(result.joinIntentToken)
         });
-        return json(result);
+        return jsonWithRequestId(result, requestId);
     } catch (error) {
         if (error instanceof Error) {
             switch (error.message) {
                 case 'INVITE_NOT_FOUND':
-                    console.warn('[invites.redeem] invite not found', { requestId });
-                    return json({ message: 'Invite not found' }, { status: 404 });
+                    logWarn('invites.redeem.invite_not_found', requestId);
+                    return jsonWithRequestId({ message: 'Invite not found' }, requestId, {
+                        status: 404
+                    });
                 case 'INVITE_NOT_JOINABLE':
-                    console.warn('[invites.redeem] invite not joinable', { requestId });
-                    return json(
+                    logWarn('invites.redeem.invite_not_joinable', requestId);
+                    return jsonWithRequestId(
                         { message: 'Invite is expired, revoked, or exhausted' },
+                        requestId,
                         { status: 410 }
                     );
                 case 'ALREADY_IN_HOUSEHOLD':
-                    console.warn('[invites.redeem] already in household', { requestId });
-                    return json({ message: 'Already in a household' }, { status: 409 });
+                    logWarn('invites.redeem.already_in_household', requestId);
+                    return jsonWithRequestId({ message: 'Already in a household' }, requestId, {
+                        status: 409
+                    });
                 default:
-                    console.error('[invites.redeem] unexpected failure', {
-                        requestId,
+                    logError('invites.redeem.unexpected_failure', requestId, {
                         error: error.message
                     });
-                    return json({ message: 'Service temporarily unavailable' }, { status: 503 });
+                    return jsonWithRequestId(
+                        { message: 'Service temporarily unavailable' },
+                        requestId,
+                        { status: 503 }
+                    );
             }
         }
 
-        console.error('[invites.redeem] failed with non-Error value', { requestId, error });
-        return json({ message: 'Service temporarily unavailable' }, { status: 503 });
+        logError('invites.redeem.unexpected_non_error_failure', requestId, {
+            error: String(error)
+        });
+        return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, {
+            status: 503
+        });
     }
 };

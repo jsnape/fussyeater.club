@@ -60,6 +60,7 @@ describe('POST /api/auth/login', () => {
         } as never);
 
         expect(response.status).toBe(200);
+        expect(response.headers.get('x-request-id')).toMatch(/^[A-Za-z0-9._-]{8,64}$/);
         await expect(response.json()).resolves.toEqual({ ok: true });
         expect(cookies.set).toHaveBeenCalledTimes(1);
     });

@@ -1,10 +1,23 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 import { hasValidCsrf } from '$lib/server/security';
 import { requireDb } from '$lib/server/db';
+import {
+    jsonWithRequestId,
+    logError,
+    logInfo,
+    logWarn,
+    resolveEventRequestId
+} from '$lib/server/observability';
 
-export const POST: RequestHandler = async ({ cookies, request, platform }) => {
+export const POST: RequestHandler = async (event) => {
+    const { cookies, request, platform } = event;
+    const requestId = resolveEventRequestId(event);
+
     if (!hasValidCsrf(request)) {
-        return json({ message: 'CSRF verification failed' }, { status: 403 });
+        logWarn('auth.logout.csrf_failed', requestId);
+        return jsonWithRequestId({ message: 'CSRF verification failed' }, requestId, {
+            status: 403
+        });
     }
 
     const db = (() => {
@@ -15,7 +28,10 @@ export const POST: RequestHandler = async ({ cookies, request, platform }) => {
         }
     })();
     if (!db) {
-        return json({ message: 'Service temporarily unavailable' }, { status: 503 });
+        logError('auth.logout.db_unavailable', requestId);
+        return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, {
+            status: 503
+        });
     }
 
     const sessionId = cookies.get('session');
@@ -26,10 +42,16 @@ export const POST: RequestHandler = async ({ cookies, request, platform }) => {
                 .bind(new Date().toISOString(), sessionId)
                 .run();
         }
-    } catch {
-        return json({ message: 'Service temporarily unavailable' }, { status: 503 });
+    } catch (error) {
+        logError('auth.logout.revoke_failed', requestId, {
+            error: error instanceof Error ? error.message : String(error)
+        });
+        return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, {
+            status: 503
+        });
     }
 
     cookies.delete('session', { path: '/' });
-    return json({ ok: true });
+    logInfo('auth.logout.success', requestId, { hadSession: Boolean(sessionId) });
+    return jsonWithRequestId({ ok: true }, requestId);
 };

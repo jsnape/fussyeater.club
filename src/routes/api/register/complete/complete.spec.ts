@@ -46,6 +46,7 @@ describe('POST /api/register/complete', () => {
         } as never);
 
         expect(response.status).toBe(404);
+        expect(response.headers.get('x-request-id')).toMatch(/^[A-Za-z0-9._-]{8,64}$/);
     });
 
     it('should enforce csrf validation', async () => {
@@ -128,7 +129,9 @@ describe('POST /api/register/complete', () => {
         } as never);
 
         expect(response.status).toBe(409);
-        await expect(response.json()).resolves.toEqual({ message: 'Duplicate request in progress' });
+        await expect(response.json()).resolves.toEqual({
+            message: 'Duplicate request in progress'
+        });
     });
 
     it('should reject mismatched confirm password', async () => {

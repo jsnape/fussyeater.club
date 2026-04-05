@@ -9,6 +9,14 @@ interface InviteRedemption {
 	redeem(@body body: InviteRedeemRequest):
 		| InviteRedeemResponse
 		| {
+				@statusCode statusCode: 400;
+				@body body: ErrorResponse;
+		  }
+		| {
+				@statusCode statusCode: 403;
+				@body body: ErrorResponse;
+		  }
+		| {
 				@statusCode statusCode: 404;
 				@body body: ErrorResponse;
 		  }

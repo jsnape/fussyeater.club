@@ -212,7 +212,9 @@ export async function completeRegistration(
         }
 
         const consume = await db
-            .prepare('UPDATE join_intents SET consumed_at = ?1 WHERE token = ?2 AND consumed_at IS NULL')
+            .prepare(
+                'UPDATE join_intents SET consumed_at = ?1 WHERE token = ?2 AND consumed_at IS NULL'
+            )
             .bind(timestamp, joinIntent.token)
             .run();
         if ((consume.meta?.changes ?? 0) !== 1) {

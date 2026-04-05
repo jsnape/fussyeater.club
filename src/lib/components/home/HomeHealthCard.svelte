@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { Badge, Button, Card } from 'flowbite-svelte';
+    import { apiFetch, ApiError } from '$lib/api';
 
     type HealthState = 'checking' | 'healthy' | 'unhealthy';
 
@@ -14,19 +15,11 @@
         statusText = 'Checking API health...';
 
         try {
-            const response = await fetch('/api/health', {
+            const body = await apiFetch<{ status?: string }>('/api/health', {
                 headers: {
                     accept: 'application/json'
                 }
             });
-
-            if (!response.ok) {
-                healthState = 'unhealthy';
-                statusText = `Health check failed (${response.status})`;
-                return;
-            }
-
-            const body = (await response.json()) as { status?: string };
             const status = body.status?.toLowerCase().trim();
 
             if (status && healthyValues.has(status)) {
@@ -36,8 +29,12 @@
                 healthState = 'unhealthy';
                 statusText = `API is unhealthy (${body.status ?? 'unknown status'})`;
             }
-        } catch {
+        } catch (error) {
             healthState = 'unhealthy';
+            if (error instanceof ApiError) {
+                statusText = `Health check failed (${error.status})`;
+                return;
+            }
             statusText = 'Unable to fetch health status';
         }
     }

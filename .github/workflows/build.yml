@@ -1,15 +1,14 @@
 name: Build & Test
 
 on:
-  workflow_dispatch
-# TODO: Re-enable automatic triggers when ready for CI
-#   pull_request:
-#     branches: [main]
-#   push:
-#     branches: [main]
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
 
 jobs:
-  frontend:
+  build:
     name: SvelteKit Build
     runs-on: ubuntu-latest
     steps:
@@ -31,5 +30,43 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Test
-        run: npm test
+  unit-tests:
+    name: Unit Tests (Server)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run server unit tests
+        run: npm run test:unit -- --run --project server
+
+  browser-tests:
+    name: Browser Tests (Chromium)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser tests
+        run: npm run test:unit -- --run --project client

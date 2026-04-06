@@ -120,7 +120,7 @@ MVP constraints:
 ├─────────────────────────────────────────────────────────────┤
 │ Active Invites                                              │
 │ Code: ABCD-EFGH                                             │
-│ Uses: 2 / 3 remaining                                       │
+│ Uses: 2 / 3                                                 │
 │ Expires: 2026-04-12                                         │
 │ [Copy Link] [Regenerate] [Revoke]                           │
 │                                                             │

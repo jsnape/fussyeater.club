@@ -89,9 +89,6 @@ This project follows **TDD**. When modifying or adding code:
 # Install dependencies (from repo root)
 npm install
 
-# Run local development server (from repo root)
-npm run dev
-
 # Run Cloudflare Worker preview locally (from repo root)
 npm run build
 npm run preview
@@ -119,7 +116,4 @@ npm run check
 
 # Run frontend tests in watch mode (from repo root)
 npm run test:watch
-
-# Install frontend dependencies (from repo root)
-npm install
 ```

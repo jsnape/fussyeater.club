@@ -143,15 +143,17 @@ export async function createHouseholdInvite(
     }
 
     if (regenerate) {
-        await db
-            .prepare(
-                `UPDATE household_invites
+        // no-op flag for current API contract; invite issuance always revokes any prior active invite
+    }
+
+    await db
+        .prepare(
+            `UPDATE household_invites
  SET status = 'revoked', revoked_at = ?1, updated_at = ?1
  WHERE household_id = ?2 AND revoked_at IS NULL AND status = 'active'`
-            )
-            .bind(nowIso(), householdId)
-            .run();
-    }
+        )
+        .bind(nowIso(), householdId)
+        .run();
 
     let code = createInviteCode();
     for (let attempt = 0; attempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS; attempt += 1) {
@@ -167,7 +169,11 @@ export async function createHouseholdInvite(
 
     const inviteId = crypto.randomUUID();
     const expiresAt = addDaysIso(expiresInDays);
-    for (let insertAttempt = 0; insertAttempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS; insertAttempt += 1) {
+    for (
+        let insertAttempt = 0;
+        insertAttempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS;
+        insertAttempt += 1
+    ) {
         try {
             await db
                 .prepare(

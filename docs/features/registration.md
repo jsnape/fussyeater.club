@@ -380,11 +380,26 @@ Failure responses:
 
 ### GET /api/households/invites
 
-Purpose: List active and recent invites with usage status.
+Purpose: List one active invite (if present) and historical non-active invites with usage status.
 
 Success response (`200`):
 
 - `invites[]`: `{ id, codeMasked, maxUses, remainingUses, expiresAt, status }`
+
+Household invites UI behavior:
+
+- Current active invite is rendered in a dedicated **Active Invite** panel.
+- Historical list heading is **Expired Invites** and excludes active invites.
+- Historical rows show masked codes only.
+- Uses display as **used / max** (`maxUses - remainingUses` / `maxUses`).
+- Create and regenerate are mutually exclusive in the primary action area:
+    - show **Create invite** when no active invite exists
+    - show **Regenerate invite** when an active invite exists
+- Active invite actions are scoped to the active panel only:
+    - **Copy Link** copies `/register?invite=<CODE>` using the full code revealed immediately after create/regenerate
+    - **Regenerate invite**
+    - **Revoke**
+- Creating or regenerating refreshes the invite list from `GET /api/households/invites`.
 
 Failure responses:
 

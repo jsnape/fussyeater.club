@@ -86,6 +86,38 @@ describe('invite service', () => {
         expect(revokedCount?.count).toBe(1);
     });
 
+    it('should keep only one active invite after create without regenerate flag', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        const { first } = pair;
+        await first
+            .prepare(
+                "INSERT INTO users (id, name, email) VALUES ('owner-5', 'Owner', 'owner5@example.com')"
+            )
+            .run();
+        await first
+            .prepare(
+                "INSERT INTO households (id, owner_user_id, name) VALUES ('house-5', 'owner-5', 'Family Home')"
+            )
+            .run();
+
+        await createHouseholdInvite(first, 'house-5', 'owner-5', 3, 7, false);
+        await createHouseholdInvite(first, 'house-5', 'owner-5', 3, 7, false);
+
+        const activeCount = await first
+            .prepare(
+                "SELECT COUNT(*) as count FROM household_invites WHERE household_id = 'house-5' AND status = 'active'"
+            )
+            .first<{ count: number }>();
+        const revokedCount = await first
+            .prepare(
+                "SELECT COUNT(*) as count FROM household_invites WHERE household_id = 'house-5' AND status = 'revoked'"
+            )
+            .first<{ count: number }>();
+        expect(activeCount?.count).toBe(1);
+        expect(revokedCount?.count).toBe(1);
+    });
+
     it('should list only active invite plus up to 20 recent historical invites', async () => {
         const pair = createTestDbPair();
         pairs.push(pair);

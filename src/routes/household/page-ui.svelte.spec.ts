@@ -36,6 +36,7 @@ describe('household page ui', () => {
     it('should render members and masked invites', async () => {
         render(HouseholdPage, {
             data: {
+                canManageHousehold: true,
                 sessionUser: null,
                 members: [
                     {
@@ -89,6 +90,7 @@ describe('household page ui', () => {
 
         render(HouseholdPage, {
             data: {
+                canManageHousehold: true,
                 sessionUser: null,
                 members: [],
                 invites: [],
@@ -112,6 +114,7 @@ describe('household page ui', () => {
     it('should show create invite button when no active invite exists', async () => {
         render(HouseholdPage, {
             data: {
+                canManageHousehold: true,
                 sessionUser: null,
                 members: [],
                 invites: [
@@ -159,6 +162,7 @@ describe('household page ui', () => {
 
         render(HouseholdPage, {
             data: {
+                canManageHousehold: true,
                 sessionUser: null,
                 members: [],
                 invites: [],

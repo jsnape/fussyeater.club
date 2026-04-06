@@ -76,6 +76,7 @@ This project follows **TDD**. When modifying or adding code:
 - Start every complex task in plan mode; re-plan immediately if things go sideways
 - Use subagents to keep the main context window clean and focused
 - Never mark a task complete without proving it works — run tests, check logs
+- Always run `npm run check` from repo root before finishing any task
 - Observability by default: when implementing new features, add or update meaningful logs/telemetry so runtime behavior and failures are diagnosable in production. Log in JSON format.
 - Simplicity first: make every change as simple as possible; find root causes, no temporary fixes
 
@@ -112,6 +113,9 @@ npm run dev
 
 # Run frontend tests (from repo root)
 npm test
+
+# Run full project checks before finishing (from repo root)
+npm run check
 
 # Run frontend tests in watch mode (from repo root)
 npm run test:watch

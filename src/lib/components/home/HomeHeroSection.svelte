@@ -14,9 +14,9 @@
                 build shopping lists tailored to allergies and preferences.
             </p>
         </div>
-        <!-- Hero image source attribution: Unsplash image at https://images.unsplash.com/photo-1543353071-10c8ba85a904?auto=format&fit=crop&w=1600&q=80&license=free -->
+        <!-- Hero image source attribution: Unsplash (free license), original: https://images.unsplash.com/photo-1543353071-10c8ba85a904?auto=format&fit=crop&w=1600&q=80&license=free -->
         <img
-            src="https://images.unsplash.com/photo-1543353071-10c8ba85a904?auto=format&fit=crop&w=1600&q=80&license=free"
+            src="/images/home-hero-family-meal.jpg"
             alt="Family-style meal spread on a dinner table"
             class="h-56 w-full rounded-xl object-cover sm:h-72"
             loading="lazy"

@@ -80,6 +80,13 @@ This project follows **TDD**. When modifying or adding code:
 - Observability by default: when implementing new features, add or update meaningful logs/telemetry so runtime behavior and failures are diagnosable in production. Log in JSON format.
 - Simplicity first: make every change as simple as possible; find root causes, no temporary fixes
 
+## Design Asset Policy
+
+- For design imagery, use Unsplash assets that are available under the free Unsplash license.
+- Do not hotlink external images in runtime UI components.
+- Download approved design images into `static/images/` and reference them via local paths (for example, `/images/hero.jpg`).
+- Include attribution in a nearby source comment with the original Unsplash URL and photographer details when available.
+
 ## Commands
 
 ```powershell

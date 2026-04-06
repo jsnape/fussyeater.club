@@ -48,6 +48,9 @@ FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE CASCADE
 
 CREATE INDEX IF NOT EXISTS idx_household_invites_household ON household_invites(household_id);
 CREATE INDEX IF NOT EXISTS idx_household_invites_status ON household_invites(status, expires_at, remaining_uses);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_household_invites_single_active
+ON household_invites(household_id)
+WHERE status = 'active' AND revoked_at IS NULL;
 
 CREATE TABLE IF NOT EXISTS join_intents (
 token TEXT PRIMARY KEY,

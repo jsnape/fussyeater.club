@@ -23,10 +23,14 @@ function pageErrorMessage(status: number): string {
 
 export const load: PageLoad = async ({ fetch }) => {
     try {
-        const [membersResponse, invitesResponse] = await Promise.all([
-            apiFetchWith<ListHouseholdMembersResponse>(fetch, '/api/households/members'),
-            apiFetchWith<ListHouseholdInvitesResponse>(fetch, '/api/households/invites')
-        ]);
+        const membersResponse = await apiFetchWith<ListHouseholdMembersResponse>(
+            fetch,
+            '/api/households/members'
+        );
+        const invitesResponse = await apiFetchWith<ListHouseholdInvitesResponse>(
+            fetch,
+            '/api/households/invites'
+        );
 
         return {
             members: membersResponse.members,

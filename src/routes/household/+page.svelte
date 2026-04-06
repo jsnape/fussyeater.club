@@ -39,6 +39,8 @@
         return usedCount < 0 ? 0 : usedCount;
     }
 
+    const canCopyActiveInviteLink = $derived(Boolean(revealInviteCode.trim()));
+
     function mutationErrorMessage(args: {
         status: number;
         action: 'create' | 'regenerate' | 'revoke';
@@ -269,12 +271,16 @@
                     </button>
                 {/if}
             </div>
-            {#if actionMessage}
-                <p class="mt-3 text-sm text-green-700">{actionMessage}</p>
-            {/if}
-            {#if actionError}
-                <p class="mt-3 text-sm text-red-700">{actionError}</p>
-            {/if}
+            <div aria-live="polite" role="status">
+                {#if actionMessage}
+                    <p class="mt-3 text-sm text-green-700">{actionMessage}</p>
+                {/if}
+            </div>
+            <div aria-live="polite" role="status">
+                {#if actionError}
+                    <p class="mt-3 text-sm text-red-700">{actionError}</p>
+                {/if}
+            </div>
 
             {#if activeInvite}
                 <div class="mt-4 rounded-md border border-primary-200 bg-primary-50 p-4">
@@ -293,6 +299,7 @@
                             type="button"
                             class="rounded-md border border-primary-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-900 disabled:opacity-60"
                             onclick={() => void copyActiveInviteLink()}
+                            disabled={!canCopyActiveInviteLink}
                         >
                             Copy Link
                         </button>

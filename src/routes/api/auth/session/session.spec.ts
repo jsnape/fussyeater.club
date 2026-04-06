@@ -24,7 +24,8 @@ describe('GET /api/auth/session', () => {
         expect(response.headers.get('x-request-id')).toMatch(/^[A-Za-z0-9._-]{8,64}$/);
         await expect(response.json()).resolves.toEqual({
             user: null,
-            featureFlags: { microsoftOAuthEnabled: false }
+            featureFlags: { microsoftOAuthEnabled: false },
+            canManageHousehold: false
         });
     });
 
@@ -35,6 +36,11 @@ describe('GET /api/auth/session', () => {
         await pair.first
             .prepare(
                 "INSERT INTO users (id, email, name, auth_provider) VALUES ('user-1', 'user@example.com', 'User One', 'password')"
+            )
+            .run();
+        await pair.first
+            .prepare(
+                "INSERT INTO households (id, owner_user_id, name) VALUES ('house-1', 'user-1', 'Family')"
             )
             .run();
         await pair.first
@@ -59,7 +65,8 @@ describe('GET /api/auth/session', () => {
                 name: 'User One',
                 authProvider: 'password'
             },
-            featureFlags: { microsoftOAuthEnabled: true }
+            featureFlags: { microsoftOAuthEnabled: true },
+            canManageHousehold: true
         });
     });
 
@@ -99,7 +106,8 @@ describe('GET /api/auth/session', () => {
                 name: 'User Two',
                 authProvider: 'password'
             },
-            featureFlags: { microsoftOAuthEnabled: false }
+            featureFlags: { microsoftOAuthEnabled: false },
+            canManageHousehold: false
         });
     });
 });

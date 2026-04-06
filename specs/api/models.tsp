@@ -53,6 +53,7 @@ authProvider: string;
 model AuthSessionResponse {
 user: AuthSessionUser | null;
 featureFlags: AuthSessionFeatureFlags;
+canManageHousehold: boolean;
 }
 
 model RegisterCompleteRequest {

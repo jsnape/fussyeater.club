@@ -274,13 +274,10 @@
                 {/if}
             </div>
             <div aria-live="polite" role="status">
-                {#if actionMessage}
-                    <p class="mt-3 text-sm text-green-700">{actionMessage}</p>
-                {/if}
-            </div>
-            <div aria-live="polite" role="status">
                 {#if actionError}
                     <p class="mt-3 text-sm text-red-700">{actionError}</p>
+                {:else if actionMessage}
+                    <p class="mt-3 text-sm text-green-700">{actionMessage}</p>
                 {/if}
             </div>
 

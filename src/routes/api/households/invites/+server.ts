@@ -289,6 +289,16 @@ export const POST: RequestHandler = async (event) => {
                     { status: 503 }
                 );
             }
+            if (error.message === 'ACTIVE_INVITE_CONFLICT') {
+                logWarn('households.invites.post.active_invite_conflict', requestId, {
+                    userId: auth.userId
+                });
+                return jsonWithRequestId(
+                    { message: 'Another invite was just created. Refresh and try again.' },
+                    requestId,
+                    { status: 409 }
+                );
+            }
         }
 
         logError('households.invites.post.unexpected_failure', requestId, {

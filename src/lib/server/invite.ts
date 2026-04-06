@@ -144,35 +144,37 @@ export async function createHouseholdInvite(
     }
 
     const expiresAt = addDaysIso(expiresInDays);
+    const activeInvite = await db
+        .prepare(
+            `SELECT id
+ FROM household_invites
+ WHERE household_id = ?1 AND revoked_at IS NULL AND status = 'active'
+ ORDER BY updated_at DESC, id DESC
+ LIMIT 1`
+        )
+        .bind(householdId)
+        .first<{ id: string }>();
+
+    if (activeInvite) {
+        const mutationTimestamp = nowIso();
+        await db
+            .prepare(
+                `UPDATE household_invites
+ SET status = 'revoked', revoked_at = ?1, updated_at = ?1
+ WHERE id = ?2 AND revoked_at IS NULL AND status = 'active'`
+            )
+            .bind(mutationTimestamp, activeInvite.id)
+            .run();
+    }
+
     for (
         let insertAttempt = 0;
         insertAttempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS;
         insertAttempt += 1
     ) {
-        let code = createInviteCode();
-        for (let attempt = 0; attempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS; attempt += 1) {
-            const existing = await db
-                .prepare('SELECT id FROM household_invites WHERE code = ?1')
-                .bind(code)
-                .first<{ id: string }>();
-            if (!existing) {
-                break;
-            }
-            code = createInviteCode();
-        }
-
         const inviteId = crypto.randomUUID();
-        const mutationTimestamp = nowIso();
+        const code = createInviteCode();
         try {
-            await db
-                .prepare(
-                    `UPDATE household_invites
- SET status = 'revoked', revoked_at = ?1, updated_at = ?1
- WHERE household_id = ?2 AND revoked_at IS NULL AND status = 'active'`
-                )
-                .bind(mutationTimestamp, householdId)
-                .run();
-
             await db
                 .prepare(
                     `INSERT INTO household_invites (
@@ -190,12 +192,14 @@ export async function createHouseholdInvite(
                 expiresAt
             };
         } catch (error) {
+            if (error instanceof Error && UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN.test(error.message)) {
+                continue;
+            }
             if (
                 error instanceof Error &&
-                (UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN.test(error.message) ||
-                    UNIQUE_ACTIVE_INVITE_CONSTRAINT_PATTERN.test(error.message))
+                UNIQUE_ACTIVE_INVITE_CONSTRAINT_PATTERN.test(error.message)
             ) {
-                continue;
+                throw new Error('ACTIVE_INVITE_CONFLICT');
             }
             throw error;
         }

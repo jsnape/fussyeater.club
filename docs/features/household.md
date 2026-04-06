@@ -139,7 +139,7 @@ The household page contains an invites section with two areas:
 
 Displays:
 
-- Full code **only immediately after create/regenerate**
+- Full code is available for the current active invite
 - Uses as `used / max` (`maxUses - remainingUses` / `maxUses`)
 - Expiry date
 
@@ -197,8 +197,9 @@ Used to render active and recent invites.
 
 Response shape:
 
-- `invites[]`: `{ id, codeMasked, maxUses, remainingUses, expiresAt, status }`
+- `invites[]`: `{ id, codeMasked, code?, maxUses, remainingUses, expiresAt, status }`
 - Return active invite plus up to 20 recent historical invites, ordered by most recently updated.
+- The active invite may include `code` so the UI can copy the registration link after refresh; historical invites are returned with `codeMasked` only.
 
 ### POST /api/households/invites
 

@@ -1,6 +1,6 @@
 import { page } from 'vitest/browser';
 import { render } from 'vitest-browser-svelte';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import HouseholdPage from './+page.svelte';
 import { ApiError, apiFetch } from '$lib/api';
 
@@ -31,6 +31,10 @@ describe('household page ui', () => {
             configurable: true,
             value: { writeText }
         });
+    });
+
+    afterEach(() => {
+        vi.unstubAllGlobals();
     });
 
     it('should render members and masked invites', async () => {
@@ -181,7 +185,7 @@ describe('household page ui', () => {
         await expect.element(page.getByText('Registration link copied.')).toBeInTheDocument();
     });
 
-    it('should disable copy link when full invite code is unavailable', async () => {
+    it('should enable copy link when active invite has full code', async () => {
         render(HouseholdPage, {
             data: {
                 canManageHousehold: true,
@@ -203,6 +207,29 @@ describe('household page ui', () => {
         });
 
         await expect.element(page.getByRole('button', { name: 'Copy Link' })).toBeEnabled();
+    });
+
+    it('should disable copy link when full invite code is unavailable', async () => {
+        render(HouseholdPage, {
+            data: {
+                canManageHousehold: true,
+                sessionUser: null,
+                members: [],
+                invites: [
+                    {
+                        id: 'inv-1',
+                        codeMasked: 'ABC…FGH',
+                        maxUses: 3,
+                        remainingUses: 3,
+                        expiresAt: '2026-01-10T00:00:00.000Z',
+                        status: 'active'
+                    }
+                ],
+                loadError: null
+            }
+        });
+
+        await expect.element(page.getByRole('button', { name: 'Copy Link' })).toBeDisabled();
     });
 
     it('should copy registration link for pre-existing active invite after refresh', async () => {

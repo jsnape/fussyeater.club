@@ -135,15 +135,10 @@ export async function createHouseholdInvite(
     householdId: string,
     createdByUserId: string,
     maxUses: number,
-    expiresInDays: number,
-    regenerate: boolean
+    expiresInDays: number
 ): Promise<InviteCreateResult> {
     if (maxUses < 1 || expiresInDays < 1) {
         throw new Error('INVALID_INVITE_INPUT');
-    }
-
-    if (regenerate) {
-        // no-op flag for current API contract; invite issuance always revokes any prior active invite
     }
 
     await db

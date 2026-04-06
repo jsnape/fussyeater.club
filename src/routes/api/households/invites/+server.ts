@@ -191,8 +191,7 @@ export const POST: RequestHandler = async (event) => {
                 householdId,
                 auth.userId,
                 body.maxUses as number,
-                expiresInDays,
-                Boolean(body.regenerate)
+                expiresInDays
             );
 
             const responseBody = {
@@ -241,9 +240,13 @@ export const POST: RequestHandler = async (event) => {
                     userId: auth.userId,
                     idempotencyKey: body.idempotencyKey
                 });
-                return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, {
-                    status: 503
-                });
+                return jsonWithRequestId(
+                    { message: 'Service temporarily unavailable' },
+                    requestId,
+                    {
+                        status: 503
+                    }
+                );
             }
 
             logInfo('households.invites.post.success', requestId, {

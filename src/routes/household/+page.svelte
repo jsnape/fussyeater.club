@@ -157,7 +157,7 @@
         return 'Revoke invite';
     }
 
-    function activeInviteCode(): string {
+    function displayedActiveInviteCode(): string {
         if (revealInviteCode) {
             return revealInviteCode;
         }
@@ -167,12 +167,12 @@
     async function copyActiveInviteLink(): Promise<void> {
         actionMessage = '';
         actionError = '';
-        const code = revealInviteCode.trim();
-        if (!code) {
+        if (!revealInviteCode) {
             actionError =
-                'Invite link can only be copied immediately after creation or regeneration. Regenerate to copy a new link.';
+                'Full invite code not available. Regenerate the invite to reveal and copy a new link.';
             return;
         }
+        const code = revealInviteCode.trim();
 
         try {
             const registrationUrl = new URL('/register', window.location.origin);
@@ -280,7 +280,7 @@
                 <div class="mt-4 rounded-md border border-primary-200 bg-primary-50 p-4">
                     <h3 class="text-sm font-semibold text-primary-900">Active Invite</h3>
                     <p class="mt-2 text-sm text-primary-800">
-                        Code: <span class="font-semibold">{activeInviteCode()}</span>
+                        Code: <span class="font-semibold">{displayedActiveInviteCode()}</span>
                     </p>
                     <p class="mt-1 text-sm text-primary-800">
                         Uses: {usedInviteCount(activeInvite)} / {activeInvite.maxUses}
@@ -343,9 +343,9 @@
                                 <tr class="border-b border-primary-100">
                                     <td class="py-2 pr-4">{invite.codeMasked}</td>
                                     <td class="py-2 pr-4 capitalize">{invite.status}</td>
-                                    <td class="py-2 pr-4"
-                                        >{usedInviteCount(invite)}/{invite.maxUses}</td
-                                    >
+                                    <td class="py-2 pr-4">
+                                        Uses: {usedInviteCount(invite)} / {invite.maxUses}
+                                    </td>
                                     <td class="py-2"
                                         >{new Date(invite.expiresAt).toLocaleDateString()}</td
                                     >

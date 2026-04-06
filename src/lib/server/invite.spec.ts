@@ -75,8 +75,8 @@ describe('invite service', () => {
                 "INSERT INTO households (id, owner_user_id, name) VALUES ('house-3', 'owner-3', 'Family Home')"
             )
             .run();
-        await createHouseholdInvite(first, 'house-3', 'owner-3', 2, 7, false);
-        await createHouseholdInvite(first, 'house-3', 'owner-3', 2, 7, true);
+        await createHouseholdInvite(first, 'house-3', 'owner-3', 2, 7);
+        await createHouseholdInvite(first, 'house-3', 'owner-3', 2, 7);
 
         const revokedCount = await first
             .prepare(
@@ -101,8 +101,8 @@ describe('invite service', () => {
             )
             .run();
 
-        await createHouseholdInvite(first, 'house-5', 'owner-5', 3, 7, false);
-        await createHouseholdInvite(first, 'house-5', 'owner-5', 3, 7, false);
+        await createHouseholdInvite(first, 'house-5', 'owner-5', 3, 7);
+        await createHouseholdInvite(first, 'house-5', 'owner-5', 3, 7);
 
         const activeCount = await first
             .prepare(

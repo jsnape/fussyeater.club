@@ -75,7 +75,7 @@ describe('household page ui', () => {
             .element(page.getByRole('heading', { name: 'Expired Invites' }))
             .toBeInTheDocument();
         await expect.element(page.getByText('Uses: 1 / 3')).toBeInTheDocument();
-        await expect.element(page.getByText('0/3')).toBeInTheDocument();
+        await expect.element(page.getByText('Uses: 0 / 3')).toBeInTheDocument();
         await expect
             .element(page.getByRole('button', { name: 'Regenerate invite' }))
             .toBeInTheDocument();
@@ -167,6 +167,7 @@ describe('household page ui', () => {
         });
 
         await page.getByRole('button', { name: 'Create invite' }).click();
+        await expect.element(page.getByRole('button', { name: 'Copy Link' })).toBeEnabled();
         await page.getByRole('button', { name: 'Copy Link' }).click();
 
         expect(writeText).toHaveBeenCalledTimes(1);

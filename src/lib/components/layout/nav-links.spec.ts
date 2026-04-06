@@ -5,7 +5,8 @@ describe('siteNavLinks', () => {
     it('includes the expected top-level routes', () => {
         expect(siteNavLinks).toEqual([
             { label: 'Home', href: '/' },
-            { label: 'Design', href: '/design' }
+            { label: 'Design', href: '/design' },
+            { label: 'Household', href: '/household' }
         ]);
     });
 

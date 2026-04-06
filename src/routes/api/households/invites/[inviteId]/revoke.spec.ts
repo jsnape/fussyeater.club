@@ -34,6 +34,34 @@ describe('DELETE /api/households/invites/[inviteId]', () => {
             .run();
     }
 
+    async function seedMemberSession(pair: ReturnType<typeof createTestDbPair>): Promise<void> {
+        await pair.first
+            .prepare(
+                "INSERT INTO users (id, email, name) VALUES ('owner-2', 'owner2@example.com', 'Owner Two')"
+            )
+            .run();
+        await pair.first
+            .prepare(
+                "INSERT INTO users (id, email, name) VALUES ('member-1', 'member@example.com', 'Member')"
+            )
+            .run();
+        await pair.first
+            .prepare(
+                "INSERT INTO households (id, owner_user_id, name) VALUES ('house-2', 'owner-2', 'Family Two')"
+            )
+            .run();
+        await pair.first
+            .prepare(
+                "INSERT INTO household_memberships (user_id, household_id, role) VALUES ('member-1', 'house-2', 'member')"
+            )
+            .run();
+        await pair.first
+            .prepare(
+                "INSERT INTO user_sessions (id, user_id, expires_at) VALUES ('sess-member-1', 'member-1', datetime('now', '+7 day'))"
+            )
+            .run();
+    }
+
     function authHeaders(): Record<string, string> {
         return {
             cookie: 'session=sess-1; csrf-token=test-csrf',
@@ -76,5 +104,25 @@ describe('DELETE /api/households/invites/[inviteId]', () => {
             .prepare("SELECT status FROM household_invites WHERE id = 'inv-1'")
             .first<{ status: string }>();
         expect(updated?.status).toBe('revoked');
+    });
+
+    it('should return 403 when non-owner attempts to revoke', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        await seedMemberSession(pair);
+
+        const response = await DELETE({
+            request: new Request('http://localhost/api/households/invites/inv-missing', {
+                method: 'DELETE',
+                headers: {
+                    ...authHeaders(),
+                    cookie: 'session=sess-member-1; csrf-token=test-csrf'
+                }
+            }),
+            params: { inviteId: 'inv-missing' },
+            platform: { env: { DB: pair.first, AUTH_REGISTRATION_V2_ENABLED: 'true' } }
+        } as never);
+
+        expect(response.status).toBe(403);
     });
 });

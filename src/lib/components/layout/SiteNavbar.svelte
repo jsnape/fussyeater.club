@@ -4,19 +4,11 @@
     import { page } from '$app/state';
     import { NavBrand, NavHamburger, NavLi, Navbar, NavUl } from 'flowbite-svelte';
     import { ApiError, apiFetch } from '$lib/api';
+    import { getCookieValue } from '$lib/browser/cookies';
     import { siteNavLinks } from '$lib/components/layout/nav-links';
 
     let { isAuthenticated = false, userLabel = null } = $props();
     let activeUrl = $derived(page.url.pathname);
-
-    function getCookieValue(name: string): string | null {
-        const token = document.cookie
-            .split(';')
-            .map((part) => part.trim())
-            .find((part) => part.startsWith(`${name}=`))
-            ?.slice(name.length + 1);
-        return token ? decodeURIComponent(token) : null;
-    }
 
     async function logout(): Promise<void> {
         const csrfToken = getCookieValue('csrf-token');

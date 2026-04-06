@@ -84,6 +84,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/households/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HouseholdMembers_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/invites/redeem": {
         parameters: {
             query?: never;
@@ -171,6 +187,16 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        HouseholdMember: {
+            userId: string;
+            name: string;
+            email: string;
+            role: string;
+            /** Format: date-time */
+            joinedAt: string;
+        } & {
+            [key: string]: unknown;
+        };
         HouseholdSummary: {
             id: string;
             name: string;
@@ -208,6 +234,11 @@ export interface components {
         };
         ListHouseholdInvitesResponse: {
             invites: components["schemas"]["InviteStatus"][];
+        } & {
+            [key: string]: unknown;
+        };
+        ListHouseholdMembersResponse: {
+            members: components["schemas"]["HouseholdMember"][];
         } & {
             [key: string]: unknown;
         };
@@ -485,6 +516,53 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The server cannot find the requested resource. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    HouseholdMembers_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListHouseholdMembersResponse"];
+                };
             };
             /** @description Access is forbidden. */
             403: {

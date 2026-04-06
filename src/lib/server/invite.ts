@@ -48,6 +48,8 @@ type InviteRow = {
 };
 
 const MAX_INVITE_CODE_GENERATION_ATTEMPTS = 5;
+const MAX_ACTIVE_INVITES_IN_LIST = 1;
+const MAX_HISTORICAL_INVITES_IN_LIST = 20;
 const UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN = /unique.*household_invites\.code/i;
 
 function resolveInviteStatus(
@@ -202,27 +204,39 @@ export async function listHouseholdInvites(
     db: DbLike,
     householdId: string
 ): Promise<InviteListItem[]> {
+    // Returns a bounded list for MVP: latest active invite (if any) plus up to
+    // MAX_HISTORICAL_INVITES_IN_LIST most recently updated non-active invites.
     const invites = await db
         .prepare(
-            `SELECT id, code, status, expires_at, max_uses, remaining_uses, revoked_at
- FROM household_invites
- WHERE household_id = ?1
- ORDER BY created_at DESC`
+            `SELECT id, code, status, expires_at, max_uses, remaining_uses, revoked_at, updated_at
+  FROM household_invites
+  WHERE household_id = ?1
+  -- latest updates first so the bounded list keeps the most recently modified invites
+  ORDER BY updated_at DESC, id DESC`
         )
         .bind(householdId)
-        .all<InviteRow>();
+        .all<InviteRow & { updated_at: string }>();
 
-    return (invites.results ?? []).map((invite) => {
-        const status = resolveInviteStatus(invite);
+    const mapped = (invites.results ?? []).map((invite) => {
+        const resolvedStatus = resolveInviteStatus(invite);
         return {
             id: invite.id,
             codeMasked: maskInviteCode(invite.code),
             maxUses: invite.max_uses,
             remainingUses: invite.remaining_uses,
             expiresAt: invite.expires_at,
-            status
-        };
+            status: resolvedStatus
+        } satisfies InviteListItem;
     });
+
+    // MVP bounded list: at most one active invite + the 20 most recently updated historical invites.
+    const active = mapped
+        .filter((invite) => invite.status === 'active')
+        .slice(0, MAX_ACTIVE_INVITES_IN_LIST);
+    const historical = mapped
+        .filter((invite) => invite.status !== 'active')
+        .slice(0, MAX_HISTORICAL_INVITES_IN_LIST);
+    return [...active, ...historical];
 }
 
 export async function revokeHouseholdInvite(

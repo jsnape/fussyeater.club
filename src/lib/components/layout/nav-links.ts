@@ -5,5 +5,6 @@ export type SiteNavLink = {
 
 export const siteNavLinks: SiteNavLink[] = [
     { label: 'Home', href: '/' },
-    { label: 'Design', href: '/design' }
+    { label: 'Design', href: '/design' },
+    { label: 'Household', href: '/household' }
 ];

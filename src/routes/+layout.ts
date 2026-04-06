@@ -1,5 +1,5 @@
 import type { LayoutLoad } from './$types';
-import { ApiError, apiFetchWith } from '$lib/api';
+import { apiFetchWith } from '$lib/api';
 
 type SessionUser = {
     id: string;
@@ -12,11 +12,14 @@ export const load: LayoutLoad = async ({ fetch, depends }) => {
     depends('auth:session');
 
     let sessionUser: SessionUser | null = null;
+    let canManageHousehold = false;
     try {
         const session = await apiFetchWith<{
             user?: SessionUser | null;
+            canManageHousehold?: boolean;
         }>(fetch, '/api/auth/session');
         sessionUser = session.user ?? null;
+        canManageHousehold = Boolean(session.canManageHousehold);
     } catch {
         return { sessionUser: null as SessionUser | null, canManageHousehold: false };
     }
@@ -25,13 +28,5 @@ export const load: LayoutLoad = async ({ fetch, depends }) => {
         return { sessionUser, canManageHousehold: false };
     }
 
-    try {
-        await apiFetchWith(fetch, '/api/households/members');
-        return { sessionUser, canManageHousehold: true };
-    } catch (error) {
-        if (error instanceof ApiError && error.status === 403) {
-            return { sessionUser, canManageHousehold: false };
-        }
-        return { sessionUser, canManageHousehold: false };
-    }
+    return { sessionUser, canManageHousehold };
 };

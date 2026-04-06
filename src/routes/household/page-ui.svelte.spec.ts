@@ -179,4 +179,27 @@ describe('household page ui', () => {
         expect(copiedLink).toMatch(/\/register\?invite=ABCDEFGH$/);
         await expect.element(page.getByText('Registration link copied.')).toBeInTheDocument();
     });
+
+    it('should disable copy link when full invite code is unavailable', async () => {
+        render(HouseholdPage, {
+            data: {
+                canManageHousehold: true,
+                sessionUser: null,
+                members: [],
+                invites: [
+                    {
+                        id: 'inv-1',
+                        codeMasked: 'ABC…FGH',
+                        maxUses: 3,
+                        remainingUses: 3,
+                        expiresAt: '2026-01-10T00:00:00.000Z',
+                        status: 'active'
+                    }
+                ],
+                loadError: null
+            }
+        });
+
+        await expect.element(page.getByRole('button', { name: 'Copy Link' })).toBeDisabled();
+    });
 });

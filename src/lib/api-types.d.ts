@@ -144,6 +144,7 @@ export interface components {
         AuthSessionResponse: {
             user: components["schemas"]["AuthSessionUser"] | null;
             featureFlags: components["schemas"]["AuthSessionFeatureFlags"];
+            canManageHousehold: boolean;
         } & {
             [key: string]: unknown;
         };

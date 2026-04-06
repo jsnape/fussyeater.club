@@ -51,6 +51,7 @@ const MAX_INVITE_CODE_GENERATION_ATTEMPTS = 5;
 const MAX_ACTIVE_INVITES_IN_LIST = 1;
 const MAX_HISTORICAL_INVITES_IN_LIST = 20;
 const UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN = /unique.*household_invites\.code/i;
+const UNIQUE_ACTIVE_INVITE_CONSTRAINT_PATTERN = /idx_household_invites_single_active/i;
 
 function resolveInviteStatus(
     invite: Pick<InviteRow, 'status' | 'expires_at' | 'remaining_uses' | 'revoked_at'>
@@ -141,40 +142,41 @@ export async function createHouseholdInvite(
         throw new Error('INVALID_INVITE_INPUT');
     }
 
-    await db
-        .prepare(
-            `UPDATE household_invites
- SET status = 'revoked', revoked_at = ?1, updated_at = ?1
- WHERE household_id = ?2 AND revoked_at IS NULL AND status = 'active'`
-        )
-        .bind(nowIso(), householdId)
-        .run();
-
-    let code = createInviteCode();
-    for (let attempt = 0; attempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS; attempt += 1) {
-        const existing = await db
-            .prepare('SELECT id FROM household_invites WHERE code = ?1')
-            .bind(code)
-            .first<{ id: string }>();
-        if (!existing) {
-            break;
-        }
-        code = createInviteCode();
-    }
-
-    const inviteId = crypto.randomUUID();
     const expiresAt = addDaysIso(expiresInDays);
     for (
         let insertAttempt = 0;
         insertAttempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS;
         insertAttempt += 1
     ) {
+        let code = createInviteCode();
+        for (let attempt = 0; attempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS; attempt += 1) {
+            const existing = await db
+                .prepare('SELECT id FROM household_invites WHERE code = ?1')
+                .bind(code)
+                .first<{ id: string }>();
+            if (!existing) {
+                break;
+            }
+            code = createInviteCode();
+        }
+
+        const inviteId = crypto.randomUUID();
+        const mutationTimestamp = nowIso();
         try {
             await db
                 .prepare(
+                    `UPDATE household_invites
+ SET status = 'revoked', revoked_at = ?1, updated_at = ?1
+ WHERE household_id = ?2 AND revoked_at IS NULL AND status = 'active'`
+                )
+                .bind(mutationTimestamp, householdId)
+                .run();
+
+            await db
+                .prepare(
                     `INSERT INTO household_invites (
-id, household_id, code, status, expires_at, max_uses, remaining_uses, created_by_user_id
- ) VALUES (?1, ?2, ?3, 'active', ?4, ?5, ?5, ?6)`
+ id, household_id, code, status, expires_at, max_uses, remaining_uses, created_by_user_id
+  ) VALUES (?1, ?2, ?3, 'active', ?4, ?5, ?5, ?6)`
                 )
                 .bind(inviteId, householdId, code, expiresAt, maxUses, createdByUserId)
                 .run();
@@ -189,9 +191,9 @@ id, household_id, code, status, expires_at, max_uses, remaining_uses, created_by
         } catch (error) {
             if (
                 error instanceof Error &&
-                UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN.test(error.message)
+                (UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN.test(error.message) ||
+                    UNIQUE_ACTIVE_INVITE_CONSTRAINT_PATTERN.test(error.message))
             ) {
-                code = createInviteCode();
                 continue;
             }
             throw error;

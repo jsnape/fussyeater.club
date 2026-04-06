@@ -58,7 +58,7 @@ This feature must also conform to shared baselines:
   -> submit
   -> server returns new code + remaining uses + expiry
   -> new invite appears in list
-  -> previous active code is invalidated when regenerate=true
+  -> previous active code is always invalidated so only one invite stays active
 ```
 
 ### Revoke Invite
@@ -130,7 +130,6 @@ MVP constraints:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-
 The household page contains an invites section with two areas:
 
 - **Active Invite** (single current invite, if one exists)
@@ -176,7 +175,7 @@ Display fields:
 - Masked code for historical invites.
 - Full code shown only immediately after creation/regeneration.
 - Status (`active`, `revoked`, `exhausted`, `expired`).
-- Remaining uses vs max uses.
+- Used uses vs max uses.
 - Expiry timestamp.
 
 Actions:
@@ -255,7 +254,7 @@ Contract source of truth:
 - `maxUses` required and `>=1`.
 - `expiresInDays` required to be `>=1` when supplied.
 - Only household owner may create or regenerate invites in MVP.
-- Regenerate operation invalidates previous active invite immediately.
+- Creating or regenerating invalidates any previous active invite immediately.
 
 ### Invite Revoke
 
@@ -281,7 +280,7 @@ Observability requirements:
 
 - Every request/response path includes request correlation via `x-request-id`.
 - Emit structured audit events for create/regenerate/revoke invite actions:
-  - `event`, `action`, `actorId`, `householdId`, `inviteId` (if available), `outcome`, `timestamp`
+    - `event`, `action`, `actorId`, `householdId`, `inviteId` (if available), `outcome`, `timestamp`
 - Emit explicit idempotency replay events for create/regenerate replays.
 
 Reliability and scalability requirements:
@@ -289,7 +288,7 @@ Reliability and scalability requirements:
 - Create/regenerate requires `idempotencyKey`.
 - Duplicate in-flight idempotency requests return deterministic `409` for create/regenerate.
 - Invite listing is bounded and index-friendly:
-  - Return active invite plus up to 20 recent historical invites sorted by `updatedAt` descending.
+    - Return active invite plus up to 20 recent historical invites sorted by `updatedAt` descending.
 
 ---
 
@@ -339,24 +338,24 @@ Contract alignment notes:
 Required checks before feature sign-off:
 
 - Contract tests:
-  - TypeSpec includes all household endpoints and error codes used by UI.
-  - Generated API types match implemented handlers.
+    - TypeSpec includes all household endpoints and error codes used by UI.
+    - Generated API types match implemented handlers.
 
 - Integration tests:
-  - Owner can list/create/regenerate/revoke invites.
-  - Non-owner receives deterministic `403` on invite mutations.
-  - Duplicate in-flight create/regenerate with same `idempotencyKey` returns deterministic `409` behavior.
-  - Revoke stale/nonexistent invite returns deterministic `404` behavior.
+    - Owner can list/create/regenerate/revoke invites.
+    - Non-owner receives deterministic `403` on invite mutations.
+    - Duplicate in-flight create/regenerate with same `idempotencyKey` returns deterministic `409` behavior.
+    - Revoke stale/nonexistent invite returns deterministic `404` behavior.
 
 - Concurrency and idempotency:
-  - Parallel create/regenerate attempts do not duplicate side effects.
-  - Replay with same `idempotencyKey` returns the same successful result.
+    - Parallel create/regenerate attempts do not duplicate side effects.
+    - Replay with same `idempotencyKey` returns the same successful result.
 
 - Security and observability regression checks:
-  - CSRF failures are enforced on mutation endpoints.
-  - Logs redact invite codes and other sensitive fields.
-  - Responses include `x-request-id` and logs include `requestId`.
-  - Audit events are emitted for create/regenerate/revoke outcomes.
+    - CSRF failures are enforced on mutation endpoints.
+    - Logs redact invite codes and other sensitive fields.
+    - Responses include `x-request-id` and logs include `requestId`.
+    - Audit events are emitted for create/regenerate/revoke outcomes.
 
 ---
 

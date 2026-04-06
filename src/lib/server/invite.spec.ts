@@ -10,7 +10,7 @@ describe('invite service', () => {
         }
     });
 
-    it('should list masked invite codes only', async () => {
+    it('should list masked invite codes and full code for active invites', async () => {
         const pair = createTestDbPair();
         pairs.push(pair);
         const { first } = pair;
@@ -33,7 +33,7 @@ describe('invite service', () => {
         const invites = await listHouseholdInvites(first, 'house-1');
         expect(invites).toHaveLength(1);
         expect(invites[0].codeMasked).toBe('ABC…FGH');
-        expect(invites[0]).not.toHaveProperty('code');
+        expect(invites[0].code).toBe('ABCDEFGH');
     });
 
     it('should fail redeem for exhausted invite', async () => {

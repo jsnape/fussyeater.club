@@ -222,6 +222,7 @@ export interface components {
         InviteStatus: {
             id: string;
             codeMasked: string;
+            code?: string;
             /** Format: int32 */
             maxUses: number;
             /** Format: int32 */

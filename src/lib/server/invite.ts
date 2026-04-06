@@ -29,6 +29,7 @@ export type InviteCreateResult = {
 export type InviteListItem = {
     id: string;
     codeMasked: string;
+    code?: string;
     maxUses: number;
     remainingUses: number;
     expiresAt: string;
@@ -225,6 +226,7 @@ export async function listHouseholdInvites(
         return {
             id: invite.id,
             codeMasked: maskInviteCode(invite.code),
+            code: resolvedStatus === 'active' ? invite.code : undefined,
             maxUses: invite.max_uses,
             remainingUses: invite.remaining_uses,
             expiresAt: invite.expires_at,

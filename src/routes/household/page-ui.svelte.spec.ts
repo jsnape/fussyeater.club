@@ -51,6 +51,7 @@ describe('household page ui', () => {
                     {
                         id: 'inv-1',
                         codeMasked: 'ABC…FGH',
+                        code: 'ABCDEFGH',
                         maxUses: 3,
                         remainingUses: 2,
                         expiresAt: '2026-01-10T00:00:00.000Z',
@@ -190,6 +191,7 @@ describe('household page ui', () => {
                     {
                         id: 'inv-1',
                         codeMasked: 'ABC…FGH',
+                        code: 'ABCDEFGH',
                         maxUses: 3,
                         remainingUses: 3,
                         expiresAt: '2026-01-10T00:00:00.000Z',
@@ -200,6 +202,35 @@ describe('household page ui', () => {
             }
         });
 
-        await expect.element(page.getByRole('button', { name: 'Copy Link' })).toBeDisabled();
+        await expect.element(page.getByRole('button', { name: 'Copy Link' })).toBeEnabled();
+    });
+
+    it('should copy registration link for pre-existing active invite after refresh', async () => {
+        render(HouseholdPage, {
+            data: {
+                canManageHousehold: true,
+                sessionUser: null,
+                members: [],
+                invites: [
+                    {
+                        id: 'inv-1',
+                        codeMasked: 'ABC…FGH',
+                        code: 'ABCDEFGH',
+                        maxUses: 3,
+                        remainingUses: 3,
+                        expiresAt: '2026-01-10T00:00:00.000Z',
+                        status: 'active'
+                    }
+                ],
+                loadError: null
+            }
+        });
+
+        await page.getByRole('button', { name: 'Copy Link' }).click();
+
+        expect(writeText).toHaveBeenCalledTimes(1);
+        const copiedLink = writeText.mock.calls[0]?.[0] ?? '';
+        expect(copiedLink).toMatch(/\/register\?invite=ABCDEFGH$/);
+        await expect.element(page.getByText('Registration link copied.')).toBeInTheDocument();
     });
 });

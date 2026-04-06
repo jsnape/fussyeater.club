@@ -134,7 +134,7 @@ describe('/api/households/invites routes', () => {
         expect(firstBody.code).toHaveLength(8);
     });
 
-    it('should list masked invite codes for owner household', async () => {
+    it('should list masked invite codes and full code for active owner invite', async () => {
         const pair = createTestDbPair();
         pairs.push(pair);
         await seedOwnerSession(pair);
@@ -158,7 +158,7 @@ describe('/api/households/invites routes', () => {
         expect(response.status).toBe(200);
         expect(body.invites).toHaveLength(1);
         expect(body.invites[0].codeMasked).toBe('ABC…FGH');
-        expect(body.invites[0].code).toBeUndefined();
+        expect(body.invites[0].code).toBe('ABCDEFGH');
     });
 
     it('should return 409 when duplicate invite idempotency request is pending', async () => {

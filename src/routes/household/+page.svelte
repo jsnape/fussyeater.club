@@ -39,7 +39,10 @@
         return usedCount < 0 ? 0 : usedCount;
     }
 
-    const canCopyActiveInviteLink = $derived(Boolean(revealInviteCode.trim()));
+    const activeInviteCode = $derived(
+        revealInviteCode.trim() || activeInvite?.code?.trim() || ''
+    );
+    const canCopyActiveInviteLink = $derived(Boolean(activeInviteCode));
 
     function mutationErrorMessage(args: {
         status: number;
@@ -169,12 +172,11 @@
     async function copyActiveInviteLink(): Promise<void> {
         actionMessage = '';
         actionError = '';
-        if (!revealInviteCode) {
-            actionError =
-                'Full invite code not available. Regenerate the invite to reveal and copy a new link.';
+        if (!activeInviteCode) {
+            actionError = 'Active invite code is unavailable right now. Try refreshing the page.';
             return;
         }
-        const code = revealInviteCode.trim();
+        const code = activeInviteCode;
 
         try {
             const registrationUrl = new URL('/register', window.location.origin);

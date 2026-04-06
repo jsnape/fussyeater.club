@@ -309,7 +309,7 @@
                             class="rounded-md border border-primary-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-900 disabled:opacity-50"
                             onclick={() => void revokeInvite(activeInvite.id)}
                             disabled={isRevokeDisabled(activeInvite)}
-                            aria-label={revokeInviteAriaLabel(activeInvite)}
+                            aria-label={`Revoke active invite ${displayedActiveInviteCode()}`}
                         >
                             {isRevokingInviteId === activeInvite.id ? 'Revoking…' : 'Revoke'}
                         </button>

@@ -125,8 +125,8 @@ MVP constraints:
 │ [Copy Link] [Regenerate] [Revoke]                           │
 │                                                             │
 │ Expired Invites                                             │
-│ Masked Code   Status     Remaining   Expires      Updated   │
-│ JKL...QRS     revoked    0 / 3       2026-04-10   yesterday │
+│ Masked Code   Status     Uses        Expires                │
+│ JKL...QRS     revoked    0 / 3       2026-04-10             │
 └─────────────────────────────────────────────────────────────┘
 ```
 

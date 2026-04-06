@@ -175,7 +175,7 @@ Display fields:
 - Masked code for historical invites.
 - Full code shown only immediately after creation/regeneration.
 - Status (`active`, `revoked`, `exhausted`, `expired`).
-- Used uses vs max uses.
+- Uses vs max uses.
 - Expiry timestamp.
 
 Actions:

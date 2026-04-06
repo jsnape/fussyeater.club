@@ -50,7 +50,7 @@ describe('/household page load', () => {
         expect(result.invites).toHaveLength(1);
     });
 
-    it('should reject non-owner members before loading invites', async () => {
+    it('should reject non-owner members even when both household requests are started', async () => {
         const fetchMock = vi.fn().mockResolvedValue(
             new Response(JSON.stringify({ message: 'Forbidden' }), {
                 status: 403,

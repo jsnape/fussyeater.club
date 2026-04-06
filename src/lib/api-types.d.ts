@@ -144,6 +144,7 @@ export interface components {
         AuthSessionResponse: {
             user: components["schemas"]["AuthSessionUser"] | null;
             featureFlags: components["schemas"]["AuthSessionFeatureFlags"];
+            canManageHousehold: boolean;
         } & {
             [key: string]: unknown;
         };
@@ -221,6 +222,7 @@ export interface components {
         InviteStatus: {
             id: string;
             codeMasked: string;
+            code?: string;
             /** Format: int32 */
             maxUses: number;
             /** Format: int32 */

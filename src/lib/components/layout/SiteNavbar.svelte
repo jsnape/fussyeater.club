@@ -5,10 +5,11 @@
     import { NavBrand, NavHamburger, NavLi, Navbar, NavUl } from 'flowbite-svelte';
     import { ApiError, apiFetch } from '$lib/api';
     import { getCookieValue } from '$lib/browser/cookies';
-    import { siteNavLinks } from '$lib/components/layout/nav-links';
+    import { getSiteNavLinks } from '$lib/components/layout/nav-links';
 
-    let { isAuthenticated = false, userLabel = null } = $props();
+    let { isAuthenticated = false, userLabel = null, canManageHousehold = false } = $props();
     let activeUrl = $derived(page.url.pathname);
+    let navLinks = $derived(getSiteNavLinks({ canManageHousehold }));
 
     async function logout(): Promise<void> {
         const csrfToken = getCookieValue('csrf-token');
@@ -37,7 +38,7 @@
         >
         <NavHamburger />
         <NavUl {activeUrl} class="text-sm font-medium text-primary-800">
-            {#each siteNavLinks as link (link.href)}
+            {#each navLinks as link (link.href)}
                 <NavLi href={link.href}>{link.label}</NavLi>
             {/each}
             {#if isAuthenticated}

@@ -1,6 +1,7 @@
 import type { PageLoad } from './$types';
 import { ApiError, apiFetchWith } from '$lib/api';
 import type { components } from '$lib/api-types';
+import { error } from '@sveltejs/kit';
 
 type HouseholdMember = components['schemas']['HouseholdMember'];
 type InviteStatus = components['schemas']['InviteStatus'];
@@ -22,22 +23,29 @@ function pageErrorMessage(status: number): string {
 
 export const load: PageLoad = async ({ fetch }) => {
     try {
-        const [membersResponse, invitesResponse] = await Promise.all([
-            apiFetchWith<ListHouseholdMembersResponse>(fetch, '/api/households/members'),
-            apiFetchWith<ListHouseholdInvitesResponse>(fetch, '/api/households/invites')
-        ]);
+        const membersResponse = await apiFetchWith<ListHouseholdMembersResponse>(
+            fetch,
+            '/api/households/members'
+        );
+        const invitesResponse = await apiFetchWith<ListHouseholdInvitesResponse>(
+            fetch,
+            '/api/households/invites'
+        );
 
         return {
             members: membersResponse.members,
             invites: invitesResponse.invites,
             loadError: null
         };
-    } catch (error) {
-        if (error instanceof ApiError) {
+    } catch (caughtError) {
+        if (caughtError instanceof ApiError) {
+            if (caughtError.status === 403) {
+                throw error(403, 'Only household owners can manage household settings.');
+            }
             return {
                 members: [] as HouseholdMember[],
                 invites: [] as InviteStatus[],
-                loadError: pageErrorMessage(error.status)
+                loadError: pageErrorMessage(caughtError.status)
             };
         }
 

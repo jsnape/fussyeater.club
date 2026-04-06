@@ -29,6 +29,20 @@
     let pendingRegenerateIdempotencyKey = $state('');
 
     const displayInvites = $derived([...invites]);
+    const activeInvite = $derived(
+        displayInvites.find((invite) => invite.status === 'active') ?? null
+    );
+    const expiredInvites = $derived(displayInvites.filter((invite) => invite.status !== 'active'));
+
+    function usedInviteCount(invite: InviteStatus): number {
+        const usedCount = invite.maxUses - invite.remainingUses;
+        return usedCount < 0 ? 0 : usedCount;
+    }
+
+    const activeInviteCode = $derived(
+        revealInviteCode.trim() || activeInvite?.code?.trim() || ''
+    );
+    const canCopyActiveInviteLink = $derived(Boolean(activeInviteCode));
 
     function mutationErrorMessage(args: {
         status: number;
@@ -78,16 +92,19 @@
                 }
                 idempotencyKey = pendingCreateIdempotencyKey;
             }
-            const response = await apiFetch<CreateHouseholdInviteResponse>('/api/households/invites', {
-                method: 'POST',
-                headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
-                body: JSON.stringify({
-                    maxUses,
-                    expiresInDays,
-                    regenerate,
-                    idempotencyKey
-                })
-            });
+            const response = await apiFetch<CreateHouseholdInviteResponse>(
+                '/api/households/invites',
+                {
+                    method: 'POST',
+                    headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
+                    body: JSON.stringify({
+                        maxUses,
+                        expiresInDays,
+                        regenerate,
+                        idempotencyKey
+                    })
+                }
+            );
             revealInviteCode = response.code;
             actionMessage = regenerate ? 'Invite regenerated.' : 'Invite created.';
             if (regenerate) {
@@ -144,6 +161,32 @@
         }
         return 'Revoke invite';
     }
+
+    function displayedActiveInviteCode(): string {
+        if (revealInviteCode) {
+            return revealInviteCode;
+        }
+        return activeInvite?.codeMasked ?? '';
+    }
+
+    async function copyActiveInviteLink(): Promise<void> {
+        actionMessage = '';
+        actionError = '';
+        if (!activeInviteCode) {
+            actionError = 'Active invite code is unavailable right now. Try refreshing the page.';
+            return;
+        }
+        const code = activeInviteCode;
+
+        try {
+            const registrationUrl = new URL('/register', window.location.origin);
+            registrationUrl.searchParams.set('invite', code);
+            await navigator.clipboard.writeText(registrationUrl.toString());
+            actionMessage = 'Registration link copied.';
+        } catch {
+            actionError = 'Unable to copy invite link right now.';
+        }
+    }
 </script>
 
 <main class="min-h-dvh bg-primary-50 px-6 py-8 md:px-10 md:py-12">
@@ -163,7 +206,9 @@
             {:else}
                 <div class="mt-4 overflow-x-auto">
                     <table class="min-w-full text-left text-sm text-primary-900">
-                        <thead class="border-b border-primary-200 text-xs uppercase tracking-wide text-primary-700">
+                        <thead
+                            class="border-b border-primary-200 text-xs tracking-wide text-primary-700 uppercase"
+                        >
                             <tr>
                                 <th class="py-2 pr-4">Name</th>
                                 <th class="py-2 pr-4">Email</th>
@@ -177,7 +222,9 @@
                                     <td class="py-2 pr-4">{member.name}</td>
                                     <td class="py-2 pr-4">{member.email}</td>
                                     <td class="py-2 pr-4 capitalize">{member.role}</td>
-                                    <td class="py-2">{new Date(member.joinedAt).toLocaleDateString()}</td>
+                                    <td class="py-2"
+                                        >{new Date(member.joinedAt).toLocaleDateString()}</td
+                                    >
                                 </tr>
                             {/each}
                         </tbody>
@@ -215,68 +262,99 @@
             </div>
 
             <div class="mt-4 flex flex-wrap gap-3">
-                <button
-                    type="button"
-                    class="rounded-md bg-primary-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
-                    onclick={() => void createInvite(false)}
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? 'Saving…' : 'Create invite'}
-                </button>
-                <button
-                    type="button"
-                    class="rounded-md border border-primary-300 bg-white px-4 py-2 text-sm font-semibold text-primary-900 disabled:opacity-60"
-                    onclick={() => void createInvite(true)}
-                    disabled={isSubmitting}
-                >
-                    Regenerate invite
-                </button>
+                {#if !activeInvite}
+                    <button
+                        type="button"
+                        class="rounded-md bg-primary-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                        onclick={() => void createInvite(false)}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Saving…' : 'Create invite'}
+                    </button>
+                {/if}
+            </div>
+            <div aria-live="polite" role="status">
+                {#if actionError}
+                    <p class="mt-3 text-sm text-red-700">{actionError}</p>
+                {:else if actionMessage}
+                    <p class="mt-3 text-sm text-green-700">{actionMessage}</p>
+                {/if}
             </div>
 
-            {#if revealInviteCode}
-                <p class="mt-3 rounded-md bg-green-50 px-3 py-2 text-sm text-green-800">
-                    New invite code: <span class="font-semibold">{revealInviteCode}</span>
-                </p>
-            {/if}
-            {#if actionMessage}
-                <p class="mt-3 text-sm text-green-700">{actionMessage}</p>
-            {/if}
-            {#if actionError}
-                <p class="mt-3 text-sm text-red-700">{actionError}</p>
+            {#if activeInvite}
+                <div class="mt-4 rounded-md border border-primary-200 bg-primary-50 p-4">
+                    <h3 class="text-sm font-semibold text-primary-900">Active Invite</h3>
+                    <p class="mt-2 text-sm text-primary-800">
+                        Code: <span class="font-semibold">{displayedActiveInviteCode()}</span>
+                    </p>
+                    <p class="mt-1 text-sm text-primary-800">
+                        Uses: {usedInviteCount(activeInvite)} / {activeInvite.maxUses}
+                    </p>
+                    <p class="mt-1 text-sm text-primary-800">
+                        Expires: {new Date(activeInvite.expiresAt).toLocaleDateString()}
+                    </p>
+                    <div class="mt-3 flex flex-wrap gap-3">
+                        <button
+                            type="button"
+                            class="rounded-md border border-primary-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-900 disabled:opacity-60"
+                            onclick={() => void copyActiveInviteLink()}
+                            disabled={!canCopyActiveInviteLink}
+                        >
+                            Copy Link
+                        </button>
+                        <button
+                            type="button"
+                            class="rounded-md border border-primary-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-900 disabled:opacity-60"
+                            onclick={() => void createInvite(true)}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Regenerating…' : 'Regenerate invite'}
+                        </button>
+                        <button
+                            type="button"
+                            class="rounded-md border border-primary-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-900 disabled:opacity-50"
+                            onclick={() => void revokeInvite(activeInvite.id)}
+                            disabled={isRevokeDisabled(activeInvite)}
+                            aria-label={`Revoke active invite ${displayedActiveInviteCode()}`}
+                        >
+                            {isRevokingInviteId === activeInvite.id ? 'Revoking…' : 'Revoke'}
+                        </button>
+                    </div>
+                    {#if revealInviteCode}
+                        <p class="mt-3 rounded-md bg-green-50 px-3 py-2 text-sm text-green-800">
+                            New invite code: <span class="font-semibold">{revealInviteCode}</span>
+                        </p>
+                    {/if}
+                </div>
             {/if}
 
-            {#if displayInvites.length === 0}
-                <p class="mt-4 text-sm text-primary-700">No invites yet.</p>
+            {#if expiredInvites.length === 0}
+                <p class="mt-4 text-sm text-primary-700">No expired invites.</p>
             {:else}
                 <div class="mt-4 overflow-x-auto">
+                    <h3 class="mb-2 text-sm font-semibold text-primary-900">Expired Invites</h3>
                     <table class="min-w-full text-left text-sm text-primary-900">
-                        <thead class="border-b border-primary-200 text-xs uppercase tracking-wide text-primary-700">
+                        <thead
+                            class="border-b border-primary-200 text-xs tracking-wide text-primary-700 uppercase"
+                        >
                             <tr>
-                                <th class="py-2 pr-4">Code</th>
+                                <th class="py-2 pr-4">Masked Code</th>
                                 <th class="py-2 pr-4">Status</th>
                                 <th class="py-2 pr-4">Uses</th>
-                                <th class="py-2 pr-4">Expires</th>
-                                <th class="py-2">Actions</th>
+                                <th class="py-2">Expires</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {#each displayInvites as invite (invite.id)}
+                            {#each expiredInvites as invite (invite.id)}
                                 <tr class="border-b border-primary-100">
                                     <td class="py-2 pr-4">{invite.codeMasked}</td>
                                     <td class="py-2 pr-4 capitalize">{invite.status}</td>
-                                    <td class="py-2 pr-4">{invite.remainingUses}/{invite.maxUses}</td>
-                                    <td class="py-2 pr-4">{new Date(invite.expiresAt).toLocaleDateString()}</td>
-                                    <td class="py-2">
-                                        <button
-                                            type="button"
-                                            class="text-sm font-medium text-primary-900 underline disabled:opacity-50"
-                                            onclick={() => void revokeInvite(invite.id)}
-                                            disabled={isRevokeDisabled(invite)}
-                                            aria-label={revokeInviteAriaLabel(invite)}
-                                        >
-                                            {isRevokingInviteId === invite.id ? 'Revoking…' : 'Revoke'}
-                                        </button>
+                                    <td class="py-2 pr-4">
+                                        Uses: {usedInviteCount(invite)} / {invite.maxUses}
                                     </td>
+                                    <td class="py-2"
+                                        >{new Date(invite.expiresAt).toLocaleDateString()}</td
+                                    >
                                 </tr>
                             {/each}
                         </tbody>

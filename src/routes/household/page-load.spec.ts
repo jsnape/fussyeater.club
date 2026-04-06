@@ -50,10 +50,22 @@ describe('/household page load', () => {
         expect(result.invites).toHaveLength(1);
     });
 
-    it('should map api errors to user-friendly load error message', async () => {
+    it('should reject non-owner members before loading invites', async () => {
         const fetchMock = vi.fn().mockResolvedValue(
             new Response(JSON.stringify({ message: 'Forbidden' }), {
                 status: 403,
+                headers: { 'content-type': 'application/json' }
+            })
+        );
+
+        await expect(load({ fetch: fetchMock } as never)).rejects.toMatchObject({ status: 403 });
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should map non-forbidden api errors to user-friendly load error message', async () => {
+        const fetchMock = vi.fn().mockResolvedValue(
+            new Response(JSON.stringify({ message: 'Busy' }), {
+                status: 429,
                 headers: { 'content-type': 'application/json' }
             })
         );
@@ -66,7 +78,7 @@ describe('/household page load', () => {
 
         expect(result.members).toEqual([]);
         expect(result.invites).toEqual([]);
-        expect(result.loadError).toBe('You do not have permission to view household details.');
+        expect(result.loadError).toBe('Too many requests right now. Please try again in a moment.');
     });
 
     it('should map unknown failures to generic load error message', async () => {

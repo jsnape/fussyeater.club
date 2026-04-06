@@ -7,6 +7,7 @@ import {
     logInfo,
     resolveEventRequestId
 } from '$lib/server/observability';
+import { requireOwnerHouseholdId } from '$lib/server/household';
 
 function getSessionCookie(request: Request): string | null {
     const cookie = request.headers.get('cookie') ?? '';
@@ -28,7 +29,7 @@ export const GET: RequestHandler = async (event) => {
     if (!sessionId) {
         logInfo('auth.session.anonymous', requestId);
         return jsonWithRequestId(
-            { user: null, featureFlags: { microsoftOAuthEnabled } },
+            { user: null, featureFlags: { microsoftOAuthEnabled }, canManageHousehold: false },
             requestId
         );
     }
@@ -56,7 +57,7 @@ export const GET: RequestHandler = async (event) => {
         if (!session) {
             logInfo('auth.session.not_found', requestId);
             return jsonWithRequestId(
-                { user: null, featureFlags: { microsoftOAuthEnabled } },
+                { user: null, featureFlags: { microsoftOAuthEnabled }, canManageHousehold: false },
                 requestId
             );
         }
@@ -65,6 +66,22 @@ export const GET: RequestHandler = async (event) => {
             userId: session.id,
             authProvider: session.authProvider
         });
+
+        let canManageHousehold = false;
+        try {
+            await requireOwnerHouseholdId(db, session.id);
+            canManageHousehold = true;
+        } catch (ownershipError) {
+            if (
+                !(
+                    ownershipError instanceof Error &&
+                    ownershipError.message === 'FORBIDDEN_NOT_OWNER'
+                )
+            ) {
+                throw ownershipError;
+            }
+        }
+
         return jsonWithRequestId(
             {
                 user: {
@@ -73,7 +90,8 @@ export const GET: RequestHandler = async (event) => {
                     name: session.name,
                     authProvider: session.authProvider
                 },
-                featureFlags: { microsoftOAuthEnabled }
+                featureFlags: { microsoftOAuthEnabled },
+                canManageHousehold
             },
             requestId
         );
@@ -82,7 +100,7 @@ export const GET: RequestHandler = async (event) => {
             error: error instanceof Error ? error.message : String(error)
         });
         return jsonWithRequestId(
-            { user: null, featureFlags: { microsoftOAuthEnabled } },
+            { user: null, featureFlags: { microsoftOAuthEnabled }, canManageHousehold: false },
             requestId
         );
     }

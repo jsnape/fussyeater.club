@@ -11,12 +11,22 @@ type SessionUser = {
 export const load: LayoutLoad = async ({ fetch, depends }) => {
     depends('auth:session');
 
+    let sessionUser: SessionUser | null = null;
+    let canManageHousehold = false;
     try {
         const session = await apiFetchWith<{
             user?: SessionUser | null;
+            canManageHousehold?: boolean;
         }>(fetch, '/api/auth/session');
-        return { sessionUser: session.user ?? null };
+        sessionUser = session.user ?? null;
+        canManageHousehold = Boolean(session.canManageHousehold);
     } catch {
-        return { sessionUser: null as SessionUser | null };
+        return { sessionUser: null as SessionUser | null, canManageHousehold: false };
     }
+
+    if (!sessionUser) {
+        return { sessionUser, canManageHousehold: false };
+    }
+
+    return { sessionUser, canManageHousehold };
 };

@@ -191,8 +191,7 @@ export const POST: RequestHandler = async (event) => {
                 householdId,
                 auth.userId,
                 body.maxUses as number,
-                expiresInDays,
-                Boolean(body.regenerate)
+                expiresInDays
             );
 
             const responseBody = {
@@ -241,9 +240,13 @@ export const POST: RequestHandler = async (event) => {
                     userId: auth.userId,
                     idempotencyKey: body.idempotencyKey
                 });
-                return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, {
-                    status: 503
-                });
+                return jsonWithRequestId(
+                    { message: 'Service temporarily unavailable' },
+                    requestId,
+                    {
+                        status: 503
+                    }
+                );
             }
 
             logInfo('households.invites.post.success', requestId, {
@@ -284,6 +287,16 @@ export const POST: RequestHandler = async (event) => {
                     { message: 'Unable to generate a unique invite code' },
                     requestId,
                     { status: 503 }
+                );
+            }
+            if (error.message === 'ACTIVE_INVITE_CONFLICT') {
+                logWarn('households.invites.post.active_invite_conflict', requestId, {
+                    userId: auth.userId
+                });
+                return jsonWithRequestId(
+                    { message: 'Another invite was just created. Refresh and try again.' },
+                    requestId,
+                    { status: 409 }
                 );
             }
         }

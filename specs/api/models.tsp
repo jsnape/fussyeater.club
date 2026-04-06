@@ -13,6 +13,7 @@ name: string;
 model InviteStatus {
 id: string;
 codeMasked: string;
+code?: string;
 maxUses: int32;
 remainingUses: int32;
 expiresAt: utcDateTime;
@@ -53,6 +54,7 @@ authProvider: string;
 model AuthSessionResponse {
 user: AuthSessionUser | null;
 featureFlags: AuthSessionFeatureFlags;
+canManageHousehold: boolean;
 }
 
 model RegisterCompleteRequest {

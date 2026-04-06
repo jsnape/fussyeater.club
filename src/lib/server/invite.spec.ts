@@ -10,7 +10,7 @@ describe('invite service', () => {
         }
     });
 
-    it('should list masked invite codes only', async () => {
+    it('should list masked invite codes and full code for active invites', async () => {
         const pair = createTestDbPair();
         pairs.push(pair);
         const { first } = pair;
@@ -33,7 +33,7 @@ describe('invite service', () => {
         const invites = await listHouseholdInvites(first, 'house-1');
         expect(invites).toHaveLength(1);
         expect(invites[0].codeMasked).toBe('ABC…FGH');
-        expect(invites[0]).not.toHaveProperty('code');
+        expect(invites[0].code).toBe('ABCDEFGH');
     });
 
     it('should fail redeem for exhausted invite', async () => {
@@ -75,14 +75,46 @@ describe('invite service', () => {
                 "INSERT INTO households (id, owner_user_id, name) VALUES ('house-3', 'owner-3', 'Family Home')"
             )
             .run();
-        await createHouseholdInvite(first, 'house-3', 'owner-3', 2, 7, false);
-        await createHouseholdInvite(first, 'house-3', 'owner-3', 2, 7, true);
+        await createHouseholdInvite(first, 'house-3', 'owner-3', 2, 7);
+        await createHouseholdInvite(first, 'house-3', 'owner-3', 2, 7);
 
         const revokedCount = await first
             .prepare(
                 "SELECT COUNT(*) as count FROM household_invites WHERE household_id = 'house-3' AND status = 'revoked'"
             )
             .first<{ count: number }>();
+        expect(revokedCount?.count).toBe(1);
+    });
+
+    it('should keep only one active invite after create without regenerate flag', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        const { first } = pair;
+        await first
+            .prepare(
+                "INSERT INTO users (id, name, email) VALUES ('owner-5', 'Owner', 'owner5@example.com')"
+            )
+            .run();
+        await first
+            .prepare(
+                "INSERT INTO households (id, owner_user_id, name) VALUES ('house-5', 'owner-5', 'Family Home')"
+            )
+            .run();
+
+        await createHouseholdInvite(first, 'house-5', 'owner-5', 3, 7);
+        await createHouseholdInvite(first, 'house-5', 'owner-5', 3, 7);
+
+        const activeCount = await first
+            .prepare(
+                "SELECT COUNT(*) as count FROM household_invites WHERE household_id = 'house-5' AND status = 'active'"
+            )
+            .first<{ count: number }>();
+        const revokedCount = await first
+            .prepare(
+                "SELECT COUNT(*) as count FROM household_invites WHERE household_id = 'house-5' AND status = 'revoked'"
+            )
+            .first<{ count: number }>();
+        expect(activeCount?.count).toBe(1);
         expect(revokedCount?.count).toBe(1);
     });
 

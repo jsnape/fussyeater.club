@@ -380,11 +380,28 @@ Failure responses:
 
 ### GET /api/households/invites
 
-Purpose: List active and recent invites with usage status.
+Purpose: List one active invite (if present) and historical non-active invites with usage status.
 
 Success response (`200`):
 
-- `invites[]`: `{ id, codeMasked, maxUses, remainingUses, expiresAt, status }`
+- `invites[]`: `{ id, codeMasked, code?, maxUses, remainingUses, expiresAt, status }`
+- `code?: string` is returned for the active invite only; non-active invites expose masked codes only.
+
+Household invites UI behavior:
+
+- Current active invite is rendered in a dedicated **Active Invite** panel.
+- Historical list heading is **Expired Invites** and excludes active invites.
+- Historical rows show masked codes only.
+- The active invite panel can use the full `code` returned by `GET /api/households/invites`; historical rows must continue to use `codeMasked`.
+- Uses display as **used / max** (`maxUses - remainingUses` / `maxUses`).
+- Create and regenerate are mutually exclusive in the primary action area:
+    - show **Create invite** when no active invite exists
+    - show **Regenerate invite** when an active invite exists
+- Active invite actions are scoped to the active panel only:
+    - **Copy Link** copies `/register?invite=<CODE>` using the full active invite `code`
+    - **Regenerate invite**
+    - **Revoke**
+- Creating or regenerating refreshes the invite list from `GET /api/households/invites`.
 
 Failure responses:
 
@@ -404,7 +421,7 @@ Failure responses:
 8. Social continuation mode does not request password re-entry and preserves provider identity.
 9. Household name uniqueness is enforced per owner only.
 10. Revoking an invite immediately blocks further redeems for that invite.
-11. Invite list endpoint never returns full raw codes after creation (masked display only).
+11. Invite list endpoint returns full `code` only for the active invite; non-active invites remain masked.
 12. Repeated submit retries with the same idempotency key do not create duplicate users, households, or invite records.
 13. Existing authenticated sessions remain valid across rollout and rollback events.
 14. New schema fields are backward-compatible and do not break legacy reads/writes.

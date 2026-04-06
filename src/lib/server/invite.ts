@@ -29,6 +29,7 @@ export type InviteCreateResult = {
 export type InviteListItem = {
     id: string;
     codeMasked: string;
+    code?: string;
     maxUses: number;
     remainingUses: number;
     expiresAt: string;
@@ -51,6 +52,7 @@ const MAX_INVITE_CODE_GENERATION_ATTEMPTS = 5;
 const MAX_ACTIVE_INVITES_IN_LIST = 1;
 const MAX_HISTORICAL_INVITES_IN_LIST = 20;
 const UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN = /unique.*household_invites\.code/i;
+const UNIQUE_ACTIVE_INVITE_CONSTRAINT_PATTERN = /idx_household_invites_single_active/i;
 
 function resolveInviteStatus(
     invite: Pick<InviteRow, 'status' | 'expires_at' | 'remaining_uses' | 'revoked_at'>
@@ -135,45 +137,49 @@ export async function createHouseholdInvite(
     householdId: string,
     createdByUserId: string,
     maxUses: number,
-    expiresInDays: number,
-    regenerate: boolean
+    expiresInDays: number
 ): Promise<InviteCreateResult> {
     if (maxUses < 1 || expiresInDays < 1) {
         throw new Error('INVALID_INVITE_INPUT');
     }
 
-    if (regenerate) {
+    const expiresAt = addDaysIso(expiresInDays);
+    const activeInvite = await db
+        .prepare(
+            `SELECT id
+ FROM household_invites
+ WHERE household_id = ?1 AND revoked_at IS NULL AND status = 'active'
+ ORDER BY updated_at DESC, id DESC
+ LIMIT 1`
+        )
+        .bind(householdId)
+        .first<{ id: string }>();
+
+    if (activeInvite) {
+        const mutationTimestamp = nowIso();
         await db
             .prepare(
                 `UPDATE household_invites
  SET status = 'revoked', revoked_at = ?1, updated_at = ?1
- WHERE household_id = ?2 AND revoked_at IS NULL AND status = 'active'`
+ WHERE id = ?2 AND revoked_at IS NULL AND status = 'active'`
             )
-            .bind(nowIso(), householdId)
+            .bind(mutationTimestamp, activeInvite.id)
             .run();
     }
 
-    let code = createInviteCode();
-    for (let attempt = 0; attempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS; attempt += 1) {
-        const existing = await db
-            .prepare('SELECT id FROM household_invites WHERE code = ?1')
-            .bind(code)
-            .first<{ id: string }>();
-        if (!existing) {
-            break;
-        }
-        code = createInviteCode();
-    }
-
-    const inviteId = crypto.randomUUID();
-    const expiresAt = addDaysIso(expiresInDays);
-    for (let insertAttempt = 0; insertAttempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS; insertAttempt += 1) {
+    for (
+        let insertAttempt = 0;
+        insertAttempt < MAX_INVITE_CODE_GENERATION_ATTEMPTS;
+        insertAttempt += 1
+    ) {
+        const inviteId = crypto.randomUUID();
+        const code = createInviteCode();
         try {
             await db
                 .prepare(
                     `INSERT INTO household_invites (
-id, household_id, code, status, expires_at, max_uses, remaining_uses, created_by_user_id
- ) VALUES (?1, ?2, ?3, 'active', ?4, ?5, ?5, ?6)`
+ id, household_id, code, status, expires_at, max_uses, remaining_uses, created_by_user_id
+  ) VALUES (?1, ?2, ?3, 'active', ?4, ?5, ?5, ?6)`
                 )
                 .bind(inviteId, householdId, code, expiresAt, maxUses, createdByUserId)
                 .run();
@@ -186,12 +192,14 @@ id, household_id, code, status, expires_at, max_uses, remaining_uses, created_by
                 expiresAt
             };
         } catch (error) {
+            if (error instanceof Error && UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN.test(error.message)) {
+                continue;
+            }
             if (
                 error instanceof Error &&
-                UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN.test(error.message)
+                UNIQUE_ACTIVE_INVITE_CONSTRAINT_PATTERN.test(error.message)
             ) {
-                code = createInviteCode();
-                continue;
+                throw new Error('ACTIVE_INVITE_CONFLICT');
             }
             throw error;
         }
@@ -222,6 +230,7 @@ export async function listHouseholdInvites(
         return {
             id: invite.id,
             codeMasked: maskInviteCode(invite.code),
+            code: resolvedStatus === 'active' ? invite.code : undefined,
             maxUses: invite.max_uses,
             remainingUses: invite.remaining_uses,
             expiresAt: invite.expires_at,

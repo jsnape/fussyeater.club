@@ -1,17 +1,24 @@
 import { describe, expect, it } from 'vitest';
-import { siteNavLinks } from './nav-links';
+import { getSiteNavLinks } from './nav-links';
 
 describe('siteNavLinks', () => {
-    it('includes the expected top-level routes', () => {
-        expect(siteNavLinks).toEqual([
+    it('includes household route for owners', () => {
+        expect(getSiteNavLinks({ canManageHousehold: true })).toEqual([
             { label: 'Home', href: '/' },
             { label: 'Design', href: '/design' },
             { label: 'Household', href: '/household' }
         ]);
     });
 
+    it('excludes household route for non-owners', () => {
+        expect(getSiteNavLinks({ canManageHousehold: false })).toEqual([
+            { label: 'Home', href: '/' },
+            { label: 'Design', href: '/design' }
+        ]);
+    });
+
     it('has unique href values', () => {
-        const hrefs = siteNavLinks.map((link) => link.href);
+        const hrefs = getSiteNavLinks({ canManageHousehold: true }).map((link) => link.href);
         expect(new Set(hrefs).size).toBe(hrefs.length);
     });
 });

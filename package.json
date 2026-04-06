@@ -7,6 +7,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "wrangler dev .svelte-kit/cloudflare/_worker.js --port 4173",
+    "preview:quiet": "wrangler dev .svelte-kit/cloudflare/_worker.js --port 4173 --log-level error",
     "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

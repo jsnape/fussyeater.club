@@ -46,6 +46,56 @@ describe('register page ui', () => {
             .toBeInTheDocument();
     });
 
+    it('should not redeem invite automatically when invite code comes from link', async () => {
+        render(RegisterPage, {
+            data: {
+                sessionUser: null,
+                inviteCode: 'ABC12345',
+                socialContinuation: false,
+                socialEmail: ''
+            }
+        });
+
+        await expect
+            .element(page.getByRole('textbox', { name: 'Invite code' }))
+            .toHaveValue('ABC12345');
+        expect(mockedApiFetch).not.toHaveBeenCalled();
+    });
+
+    it('should redeem invite only after redeem invite button is clicked', async () => {
+        mockedApiFetch.mockResolvedValueOnce({
+            joinIntentToken: 'join_token_123',
+            household: {
+                id: 'household_123',
+                name: 'Taylor Family'
+            }
+        });
+
+        render(RegisterPage, {
+            data: {
+                sessionUser: null,
+                inviteCode: 'ABC12345',
+                socialContinuation: false,
+                socialEmail: ''
+            }
+        });
+
+        expect(mockedApiFetch).not.toHaveBeenCalled();
+
+        await page.getByRole('button', { name: 'Redeem invite' }).click();
+
+        expect(mockedApiFetch).toHaveBeenCalledWith(
+            '/api/invites/redeem',
+            expect.objectContaining({
+                method: 'POST',
+                body: JSON.stringify({ code: 'ABC12345' })
+            })
+        );
+        await expect
+            .element(page.getByText('Joined invite for Taylor Family.'))
+            .toBeInTheDocument();
+    });
+
     it('should hide password and keep readonly email in social continuation mode', async () => {
         render(RegisterPage, {
             data: {

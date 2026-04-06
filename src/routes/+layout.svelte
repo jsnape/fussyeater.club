@@ -5,11 +5,18 @@
 
     let { children, data } = $props();
     let signedInLabel = $derived(data.sessionUser?.name ?? data.sessionUser?.email ?? null);
+    let canManageHousehold = $derived(
+        Boolean((data as { canManageHousehold?: boolean }).canManageHousehold)
+    );
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <div class="min-h-dvh bg-primary-50">
-    <SiteNavbar isAuthenticated={Boolean(data.sessionUser)} userLabel={signedInLabel} />
+    <SiteNavbar
+        isAuthenticated={Boolean(data.sessionUser)}
+        userLabel={signedInLabel}
+        canManageHousehold={canManageHousehold}
+    />
 
     <main>
         {@render children()}

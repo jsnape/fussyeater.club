@@ -74,7 +74,7 @@
         history.replaceState(history.state, '', `${url.pathname}${url.search}${url.hash}`);
     }
 
-    async function redeemInvite(auto = false): Promise<void> {
+    async function redeemInvite(): Promise<void> {
         if (!cleanedInviteCode) {
             inviteError = 'Enter an invite code to continue.';
             return;
@@ -85,16 +85,16 @@
         submitError = '';
         isRedeeming = true;
         try {
+            const csrfToken = getCookieValue('csrf-token');
             const result = await apiFetch<InviteRedeemResponse>('/api/invites/redeem', {
                 method: 'POST',
+                headers: csrfToken ? { 'x-csrf-token': csrfToken } : {},
                 body: JSON.stringify({ code: cleanedInviteCode })
             });
             householdAction = 'join';
             joinIntentToken = result.joinIntentToken;
             redeemedHouseholdName = result.household.name;
-            inviteMessage = auto
-                ? `Invite applied for ${result.household.name}.`
-                : `Joined invite for ${result.household.name}.`;
+            inviteMessage = `Joined invite for ${result.household.name}.`;
             cleanupInviteFromUrl();
         } catch (error) {
             if (error instanceof ApiError) {
@@ -157,13 +157,6 @@
         email = data.socialEmail ?? '';
         inviteCode = data.inviteCode ?? '';
         householdAction = data.inviteCode ? 'join' : 'create';
-        if (
-            data.inviteCode &&
-            !sessionStorage.getItem(`register:auto-redeemed:${data.inviteCode}`)
-        ) {
-            sessionStorage.setItem(`register:auto-redeemed:${data.inviteCode}`, '1');
-            void redeemInvite(true);
-        }
     });
 </script>
 
@@ -283,7 +276,7 @@
                     <button
                         type="button"
                         class="rounded-md bg-primary-800 px-3 py-2 text-sm font-medium text-white disabled:opacity-60"
-                        onclick={() => void redeemInvite(false)}
+                        onclick={() => void redeemInvite()}
                         disabled={isRedeeming}
                     >
                         {isRedeeming ? 'Redeeming…' : 'Redeem invite'}

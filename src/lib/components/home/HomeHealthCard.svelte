@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { Badge, Button, Card } from 'flowbite-svelte';
+    import { Badge, Card } from 'flowbite-svelte';
     import { apiFetch, ApiError } from '$lib/api';
 
     type HealthState = 'checking' | 'healthy' | 'unhealthy';
@@ -57,6 +57,5 @@
             {/if}
         </div>
         <p class="text-sm text-primary-800" aria-live="polite">{statusText}</p>
-        <Button color="light" onclick={() => void checkHealth()}>Run health check</Button>
     </div>
 </Card>

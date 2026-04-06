@@ -2,8 +2,8 @@
     import { Badge, Button, Card } from 'flowbite-svelte';
 </script>
 
-<Card class="border-primary-200 bg-white shadow-sm">
-    <div class="space-y-6 p-2 sm:p-4">
+<Card class="w-full max-w-none border-primary-200 bg-white shadow-sm">
+    <div class="space-y-6 p-4 sm:p-6">
         <Badge color="red" class="w-fit">Family recipes for picky eaters</Badge>
         <div class="space-y-3">
             <h1 class="text-3xl font-semibold tracking-tight text-primary-900 sm:text-4xl">
@@ -14,6 +14,13 @@
                 build shopping lists tailored to allergies and preferences.
             </p>
         </div>
+        <!-- Hero image source attribution: Unsplash image at https://images.unsplash.com/photo-1543353071-10c8ba85a904?auto=format&fit=crop&w=1600&q=80&license=free -->
+        <img
+            src="https://images.unsplash.com/photo-1543353071-10c8ba85a904?auto=format&fit=crop&w=1600&q=80&license=free"
+            alt="Family-style meal spread on a dinner table"
+            class="h-56 w-full rounded-xl object-cover sm:h-72"
+            loading="lazy"
+        />
         <div class="flex flex-wrap items-center gap-3">
             <Button color="yellow" size="lg">Start meal planning</Button>
             <Button color="light" size="lg">Browse recipes</Button>

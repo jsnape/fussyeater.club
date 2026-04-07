@@ -85,6 +85,7 @@ This project follows **TDD**. When modifying or adding code:
 - For design imagery, use Unsplash assets that are available under the free Unsplash license.
 - Do not hotlink external images in runtime UI components.
 - Download approved design images into `static/images/` and reference them via local paths (for example, `/images/hero.jpg`).
+- Recipe pages must use a committed local fallback image at `/images/recipe-no-image.jpg` when no recipe image is provided.
 - Include attribution in a nearby source comment with the original Unsplash URL and photographer details when available.
 
 ## Commands

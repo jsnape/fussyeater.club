@@ -8,7 +8,8 @@ status: new
 /
 /register
 /recipes
-/recipes/[id]
+/recipe/[id]
+/status
 /shopping
 /meals
 /store-cupboard

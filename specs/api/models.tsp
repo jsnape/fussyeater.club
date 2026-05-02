@@ -103,3 +103,49 @@ joinedAt: utcDateTime;
 model ListHouseholdMembersResponse {
 members: HouseholdMember[];
 }
+
+model RecipeTimings {
+prepMinutes?: int32;
+cookMinutes?: int32;
+}
+
+model IngredientPreparation {
+type: "text" | "recipe-link";
+text?: string;
+recipeId?: string;
+recipeLabel?: string;
+}
+
+model RecipeIngredient {
+amount?: float64;
+unit?: string;
+ingredient: string;
+ingredientGroup?: string;
+preparation?: IngredientPreparation;
+}
+
+model RecipeSourceReference {
+kind: "url" | "book";
+label: string;
+url?: string;
+bookTitle?: string;
+pageNumber?: int32;
+isbn?: string;
+}
+
+model RecipeDetail {
+id: string;
+title: string;
+description?: string;
+imageUrl?: string;
+type: "full" | "reference";
+visibility: "public" | "private";
+timings?: RecipeTimings;
+servings?: int32;
+`yield`?: string;
+tags: string[];
+ingredients: RecipeIngredient[];
+method?: string[];
+sourceReference?: RecipeSourceReference;
+notes?: string;
+}

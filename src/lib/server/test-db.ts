@@ -72,6 +72,8 @@ export function createTestDbPair(): TestDbPair {
         'migrations/0002_household_invites_single_active_index.sql'
     );
     const migration2 = readFileSync(migrationPath2, 'utf8');
+    const migrationPath3 = join(process.cwd(), 'migrations/0003_recipes.sql');
+    const migration3 = readFileSync(migrationPath3, 'utf8');
 
     const firstRaw = new DatabaseSync(databasePath);
     const secondRaw = new DatabaseSync(databasePath);
@@ -79,6 +81,7 @@ export function createTestDbPair(): TestDbPair {
     secondRaw.exec('PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 2000;');
     firstRaw.exec(migration);
     firstRaw.exec(migration2);
+    firstRaw.exec(migration3);
 
     return {
         first: new SqliteDbAdapter(firstRaw),

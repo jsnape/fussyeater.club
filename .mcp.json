@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "svelte": {
+      "url": "https://mcp.svelte.dev/mcp"
+    },
+    "flowbite-svelte": {
+      "command": "node",
+      "args": [
+        "E:\\Dev\\flowbite-svelte-mcp\\build\\server.js"
+      ]
+    },
+    "tailwindcss-server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "tailwindcss-mcp-server"
+      ]
+    }
+  }
+}

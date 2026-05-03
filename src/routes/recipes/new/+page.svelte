@@ -65,11 +65,6 @@
     let submitError = $state('');
 
     // Select component items
-    const recipeTypeItems = [
-        { value: 'full', name: 'Full recipe' },
-        { value: 'reference', name: 'Reference recipe' }
-    ];
-
     const sourceKindItems = [
         { value: 'url', name: 'URL' },
         { value: 'book', name: 'Book' }
@@ -243,14 +238,6 @@
         </p>
     {/if}
 
-    <!-- Recipe Type -->
-    <div class="mt-6">
-        <Label for="recipe-type" class="mb-1 text-sm font-medium text-primary-700"
-            >Recipe type</Label
-        >
-        <Select id="recipe-type" items={recipeTypeItems} bind:value={recipeType} />
-    </div>
-
     <!-- Basic Info -->
     <section class="mt-8">
         <h2 class="text-xl font-semibold text-primary-900">Basic information</h2>
@@ -277,6 +264,7 @@
                 placeholder="A short description of the recipe"
                 rows={3}
                 maxlength={2000}
+                class="w-full"
             />
         </div>
 
@@ -441,11 +429,21 @@
         {/if}
     </section>
 
-    <!-- Method Steps (full recipes only) -->
+    <!-- Method / Source Reference -->
+    <section class="mt-8">
+        <h2 class="text-xl font-semibold text-primary-900">Method</h2>
+        <div class="mt-3 flex gap-6">
+            <Radio name="recipe-type" value="full" bind:group={recipeType}>
+                <span class="text-sm">Write method steps</span>
+            </Radio>
+            <Radio name="recipe-type" value="reference" bind:group={recipeType}>
+                <span class="text-sm">Link to source</span>
+            </Radio>
+        </div>
+
     {#if isFullRecipe}
-        <section class="mt-8">
-            <h2 class="text-xl font-semibold text-primary-900">Method</h2>
-            <p class="mt-1 text-sm text-primary-700">Add at least one step.</p>
+        <div class="mt-4">
+            <p class="text-sm text-primary-700">Add at least one step.</p>
 
             <div class="mt-4 rounded-lg border border-primary-200 bg-white p-5">
                 <Label for="method-step" class="mb-1 text-sm font-medium text-primary-700"
@@ -457,6 +455,7 @@
                     placeholder="Describe this step"
                     rows={2}
                     aria-required="true"
+                    class="w-full"
                 />
                 <div class="mt-4">
                     <Button
@@ -493,15 +492,10 @@
                     {/each}
                 </ol>
             {/if}
-        </section>
-    {/if}
-
-    <!-- Source Reference (reference recipes only) -->
-    {#if isReferenceRecipe}
-        <section class="mt-8">
-            <h2 class="text-xl font-semibold text-primary-900">Source reference</h2>
-
-            <div class="mt-4 rounded-lg border border-primary-200 bg-white p-5">
+        </div>
+    {:else}
+        <div class="mt-4">
+            <div class="rounded-lg border border-primary-200 bg-white p-5">
                 <div>
                     <Label for="source-kind" class="mb-1 text-sm font-medium text-primary-700"
                         >Source type</Label
@@ -576,8 +570,9 @@
                     </div>
                 {/if}
             </div>
-        </section>
+        </div>
     {/if}
+    </section>
 
     <!-- Tags -->
     <section class="mt-8">
@@ -636,6 +631,7 @@
                 placeholder="Any additional notes"
                 rows={3}
                 maxlength={2000}
+                class="w-full"
             />
         </div>
     </section>
@@ -644,10 +640,10 @@
     <section class="mt-8">
         <h2 class="text-xl font-semibold text-primary-900">Visibility</h2>
         <div class="mt-4 flex gap-6">
-            <Radio name="visibility" value="private" bind:group={visibility} class="min-h-[44px]">
+            <Radio name="visibility" value="private" bind:group={visibility}>
                 Household
             </Radio>
-            <Radio name="visibility" value="public" bind:group={visibility} class="min-h-[44px]">
+            <Radio name="visibility" value="public" bind:group={visibility}>
                 Everyone
             </Radio>
         </div>

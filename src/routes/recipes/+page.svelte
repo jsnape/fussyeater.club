@@ -7,7 +7,7 @@
 
 	let { data }: { data: PageData } = $props();
 
-	let searchQuery = $state(data.q);
+	let searchQuery = $state('');
 
 	$effect(() => {
 		searchQuery = data.q;

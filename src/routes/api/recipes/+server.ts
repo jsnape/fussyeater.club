@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { requireDb } from '$lib/server/db';
-import { getAuthContext } from '$lib/server/security';
+import { getAuthContext, hasValidCsrf } from '$lib/server/security';
 import { getMembership } from '$lib/server/household';
 import { createRecipe } from '$lib/server/recipe';
 import type { RecipeRow } from '$lib/server/recipe';
@@ -343,6 +343,11 @@ export const POST: RequestHandler = async (event) => {
 	const { request, platform } = event;
 	const requestId = resolveEventRequestId(event);
 	logInfo('recipes.create.start', requestId, { path: '/api/recipes' });
+
+	if (!hasValidCsrf(request)) {
+		logWarn('recipes.create.csrf_failed', requestId);
+		return jsonWithRequestId({ message: 'CSRF verification failed' }, requestId, { status: 403 });
+	}
 
 	const auth = await getAuthContext(request, platform);
 

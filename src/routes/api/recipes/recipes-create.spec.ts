@@ -41,10 +41,19 @@ describe('POST /api/recipes', () => {
 		headers: Record<string, string> = {}
 	) {
 		const url = new URL('http://localhost/api/recipes');
+		const { cookie: extraCookie, ...otherHeaders } = headers;
+		const cookieParts = ['csrf-token=test-csrf'];
+		if (extraCookie) cookieParts.push(extraCookie);
+
 		return {
 			request: new Request(url.toString(), {
 				method: 'POST',
-				headers: { 'content-type': 'application/json', ...headers },
+				headers: {
+					'content-type': 'application/json',
+					'x-csrf-token': 'test-csrf',
+					cookie: cookieParts.join('; '),
+					...otherHeaders
+				},
 				body: JSON.stringify(body)
 			}),
 			platform: { env: { DB: db } },
@@ -106,6 +115,28 @@ describe('POST /api/recipes', () => {
 
 		const response = await POST(makeEvent(pair.first, validFullRecipe));
 		expect(response.status).toBe(401);
+	});
+
+	it('should return 403 when CSRF token is missing', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		const url = new URL('http://localhost/api/recipes');
+		const event = {
+			request: new Request(url.toString(), {
+				method: 'POST',
+				headers: { 'content-type': 'application/json', cookie: 'session=sess-1' },
+				body: JSON.stringify(validFullRecipe)
+			}),
+			platform: { env: { DB: pair.first } },
+			url,
+			params: {}
+		} as never;
+
+		const response = await POST(event);
+		expect(response.status).toBe(403);
+		const result = await response.json();
+		expect(result.message).toBe('CSRF verification failed');
 	});
 
 	it('should return 400 when title is missing', async () => {

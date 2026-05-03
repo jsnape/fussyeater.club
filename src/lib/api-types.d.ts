@@ -116,6 +116,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/recipes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Recipes_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/recipes/{id}": {
         parameters: {
             query?: never;
@@ -311,6 +327,17 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        RecipeListResponse: {
+            items: components["schemas"]["RecipeSummary"][];
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            pageSize: number;
+            /** Format: int32 */
+            total: number;
+        } & {
+            [key: string]: unknown;
+        };
         RecipeSourceReference: {
             /** @enum {string} */
             kind: "url" | "book";
@@ -320,6 +347,24 @@ export interface components {
             /** Format: int32 */
             pageNumber?: number;
             isbn?: string;
+        } & {
+            [key: string]: unknown;
+        };
+        RecipeSummary: {
+            id: string;
+            title: string;
+            description?: string;
+            imageUrl?: string;
+            /** @enum {string} */
+            type: "full" | "reference";
+            /** @enum {string} */
+            visibility: "public" | "private";
+            timings?: components["schemas"]["RecipeTimings"];
+            /** Format: int32 */
+            servings?: number;
+            yield?: string;
+            tags: string[];
+            sourceReference?: components["schemas"]["RecipeSourceReference"];
         } & {
             [key: string]: unknown;
         };
@@ -740,6 +785,50 @@ export interface operations {
             };
             /** @description Client error */
             429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    Recipes_list: {
+        parameters: {
+            query?: {
+                q?: string;
+                page?: number;
+                pageSize?: number;
+                sort?: string;
+                visibility?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeListResponse"];
+                };
+            };
+            /** @description The server could not understand the request due to invalid syntax. */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };

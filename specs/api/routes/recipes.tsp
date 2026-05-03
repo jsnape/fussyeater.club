@@ -9,6 +9,21 @@ namespace FussyEaterClub.Api;
 @tag("Recipes")
 namespace Recipes {
   @get
+  op list(
+    @query q?: string,
+    @query page?: int32,
+    @query pageSize?: int32,
+    @query sort?: string,
+    @query visibility?: string,
+  ): RecipeListResponse | {
+    @statusCode statusCode: 400;
+    @body body: ErrorResponse;
+  } | {
+    @statusCode statusCode: 503;
+    @body body: ErrorResponse;
+  };
+
+  @get
   @route("{id}")
   op getDetail(@path id: string): RecipeDetail | {
     @statusCode statusCode: 400;

@@ -5,6 +5,7 @@ describe('siteNavLinks', () => {
     it('includes household route for owners', () => {
         expect(getSiteNavLinks({ canManageHousehold: true })).toEqual([
             { label: 'Home', href: '/' },
+            { label: 'Recipes', href: '/recipes' },
             { label: 'Design', href: '/design' },
             { label: 'Household', href: '/household' }
         ]);
@@ -13,6 +14,7 @@ describe('siteNavLinks', () => {
     it('excludes household route for non-owners', () => {
         expect(getSiteNavLinks({ canManageHousehold: false })).toEqual([
             { label: 'Home', href: '/' },
+            { label: 'Recipes', href: '/recipes' },
             { label: 'Design', href: '/design' }
         ]);
     });

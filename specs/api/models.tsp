@@ -149,3 +149,24 @@ method?: string[];
 sourceReference?: RecipeSourceReference;
 notes?: string;
 }
+
+model RecipeSummary {
+id: string;
+title: string;
+description?: string;
+imageUrl?: string;
+type: "full" | "reference";
+visibility: "public" | "private";
+timings?: RecipeTimings;
+servings?: int32;
+`yield`?: string;
+tags: string[];
+sourceReference?: RecipeSourceReference;
+}
+
+model RecipeListResponse {
+items: RecipeSummary[];
+page: int32;
+pageSize: int32;
+total: int32;
+}

@@ -76,7 +76,7 @@ This feature must also conform to shared baselines:
 ```
 /recipes
   -> user selects a card
-  -> navigate to /recipe/[id]
+  -> navigate to /recipes/[id]
 ```
 
 ---
@@ -102,7 +102,7 @@ Single-page browse layout with clear search controls above result cards.
   - Visibility label (`public` or `private`)
   - Duration metadata (when available)
   - Source citation hint for `reference` recipes (for example: book/page or external link)
-  - Link to `/recipe/[id]`
+  - Link to `/recipes/[id]`
 - Empty state when no results match.
 
 Example recipe card text:
@@ -227,7 +227,7 @@ Suggested dimensions:
 3. Combined filters narrow results correctly.
 4. Invalid `page` or `pageSize` returns `400`.
 5. Empty results show empty state and no crash.
-6. Card navigation opens matching `/recipe/[id]` detail route.
+6. Card navigation opens matching `/recipes/[id]` detail route.
 7. Type filter returns only matching recipe type.
 8. `reference` result cards show citation hint without method-step content.
 9. Anonymous user only receives `public` recipes.

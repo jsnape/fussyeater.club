@@ -22,7 +22,7 @@ Recipes also have visibility:
 
 | Path | Purpose |
 | --- | --- |
-| `/recipe/[id]` | Display one recipe by unique title-based id |
+| `/recipes/[id]` | Display one recipe by unique title-based id |
 
 ---
 
@@ -72,7 +72,7 @@ This feature must also conform to shared baselines:
 ### Open Recipe Detail
 
 ```
-/recipe/[id]
+/recipes/[id]
   -> server resolves id to recipe record
   -> enforce visibility access before rendering
   -> render recipe based on content type
@@ -86,7 +86,7 @@ This feature must also conform to shared baselines:
 ### Request Nutrition (Optional)
 
 ```
-/recipe/[id]
+/recipes/[id]
   -> user expands or requests nutrition panel
   -> client calls secondary API for nutrition data
   -> render nutrition values if returned
@@ -98,7 +98,7 @@ This feature must also conform to shared baselines:
 ```
 /recipes
   -> select recipe card
-  -> navigate to /recipe/[id]
+  -> navigate to /recipes/[id]
   -> detail page renders corresponding recipe
 ```
 
@@ -232,7 +232,7 @@ Ingredient entity (JSON, API contract):
 - `{ type, text?, recipeId?, recipeLabel? }`
 - `type` is one of `text` or `recipe-link`.
 - when `type = text`, `text` is required.
-- when `type = recipe-link`, `recipeId` is required and should reference `/recipe/[id]`.
+- when `type = recipe-link`, `recipeId` is required and should reference `/recipes/[id]`.
 
 Ingredient display rules:
 
@@ -344,7 +344,7 @@ Emit structured JSON logs and metrics for:
 Suggested dimensions:
 
 - `requestId`
-- `route` (`/recipe/[id]`)
+- `route` (`/recipes/[id]`)
 - `recipeId`
 - `result` (`found|not_found`)
 - `durationMs`
@@ -363,7 +363,7 @@ Suggested dimensions:
 
 1. Slug generation converts title to lowercase hyphenated id.
 2. Duplicate title creates `-2`, `-3`, etc.
-3. `/recipe/[id]` returns correct recipe for existing id.
+3. `/recipes/[id]` returns correct recipe for existing id.
 4. Unknown id returns `404` and not-found UI state.
 5. Invalid id format returns `400`.
 6. Slug uniqueness remains safe under concurrent create requests.

@@ -6,6 +6,7 @@ export type SiteNavLink = {
 export function getSiteNavLinks(args: { canManageHousehold: boolean }): SiteNavLink[] {
     const links: SiteNavLink[] = [
         { label: 'Home', href: '/' },
+        { label: 'Recipes', href: '/recipes' },
         { label: 'Design', href: '/design' }
     ];
 

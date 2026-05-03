@@ -1,5 +1,6 @@
 -- Sample recipe seed data for local development and manual testing.
--- Assumes a household 'house-1' exists from test setup for private recipe visibility testing.
+-- All recipes are public so they work without household setup.
+-- Private-visibility access control is covered by unit tests.
 
 INSERT INTO recipes (id, title, description, image_url, type, visibility, household_id, servings, yield, prep_minutes, cook_minutes, ingredients, method, source_reference, notes, tags)
 VALUES (
@@ -28,7 +29,7 @@ VALUES (
     'A traditional slow-cooked French stew from a trusted cookbook source.',
     NULL,
     'reference',
-    'private',
+    'public',
     NULL,
     6,
     '6 pints',
@@ -48,7 +49,7 @@ VALUES (
     'Our household''s special layered lasagne recipe.',
     NULL,
     'full',
-    'private',
+    'public',
     NULL,
     8,
     '1 large dish',

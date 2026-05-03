@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { createTestDbPair } from './test-db';
-import { getRecipeBySlug, canViewRecipe } from './recipe';
-import type { RecipeRow } from './recipe';
+import { getRecipeBySlug, canViewRecipe, generateUniqueSlug, createRecipe } from './recipe';
+import type { RecipeRow, CreateRecipeInput } from './recipe';
 import type { AuthContext } from './security';
 
 describe('getRecipeBySlug', () => {
@@ -134,5 +134,180 @@ describe('canViewRecipe', () => {
 
 	it('should deny authenticated user without household access to a private recipe', () => {
 		expect(canViewRecipe(privateRecipe, authenticatedAuth, null)).toBe(false);
+	});
+});
+
+describe('generateUniqueSlug', () => {
+	const pairs: Array<ReturnType<typeof createTestDbPair>> = [];
+
+	afterEach(() => {
+		for (const pair of pairs.splice(0)) {
+			pair.cleanup();
+		}
+	});
+
+	it('should generate a slug from a title', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		const slug = await generateUniqueSlug(pair.first, 'Spaghetti Carbonara');
+		expect(slug).toBe('spaghetti-carbonara');
+	});
+
+	it('should append -2 suffix on first collision', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		await pair.first
+			.prepare(
+				`INSERT INTO recipes (id, title, type, visibility, ingredients, tags)
+				 VALUES ('spaghetti-carbonara', 'Spaghetti Carbonara', 'full', 'public', '[]', '[]')`
+			)
+			.run();
+
+		const slug = await generateUniqueSlug(pair.first, 'Spaghetti Carbonara');
+		expect(slug).toBe('spaghetti-carbonara-2');
+	});
+
+	it('should increment suffix for multiple collisions', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		for (const id of ['spaghetti-carbonara', 'spaghetti-carbonara-2']) {
+			await pair.first
+				.prepare(
+					`INSERT INTO recipes (id, title, type, visibility, ingredients, tags)
+					 VALUES (?1, 'Spaghetti Carbonara', 'full', 'public', '[]', '[]')`
+				)
+				.bind(id)
+				.run();
+		}
+
+		const slug = await generateUniqueSlug(pair.first, 'Spaghetti Carbonara');
+		expect(slug).toBe('spaghetti-carbonara-3');
+	});
+
+	it('should throw for empty slug generation', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		await expect(generateUniqueSlug(pair.first, '   ')).rejects.toThrow('EMPTY_SLUG');
+	});
+});
+
+describe('createRecipe', () => {
+	const pairs: Array<ReturnType<typeof createTestDbPair>> = [];
+
+	afterEach(() => {
+		for (const pair of pairs.splice(0)) {
+			pair.cleanup();
+		}
+	});
+
+	const baseInput: CreateRecipeInput = {
+		title: 'Test Pasta',
+		type: 'full',
+		visibility: 'public',
+		ingredients: [{ amount: 400, unit: 'g', ingredient: 'spaghetti' }],
+		method: ['Cook spaghetti.', 'Serve.'],
+		tags: ['Italian', 'Quick'],
+		householdId: null
+	};
+
+	it('should create a recipe and return it', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		const recipe = await createRecipe(pair.first, baseInput);
+
+		expect(recipe.id).toBe('test-pasta');
+		expect(recipe.title).toBe('Test Pasta');
+		expect(recipe.type).toBe('full');
+		expect(recipe.visibility).toBe('public');
+	});
+
+	it('should persist ingredients as JSON', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		const recipe = await createRecipe(pair.first, baseInput);
+		const ingredients = JSON.parse(recipe.ingredients);
+
+		expect(ingredients).toHaveLength(1);
+		expect(ingredients[0].ingredient).toBe('spaghetti');
+		expect(ingredients[0].amount).toBe(400);
+	});
+
+	it('should persist method as JSON', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		const recipe = await createRecipe(pair.first, baseInput);
+		const method = JSON.parse(recipe.method!);
+
+		expect(method).toEqual(['Cook spaghetti.', 'Serve.']);
+	});
+
+	it('should lowercase and deduplicate tags', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		const recipe = await createRecipe(pair.first, {
+			...baseInput,
+			tags: ['Italian', 'quick', 'ITALIAN', ' Quick ']
+		});
+		const tags = JSON.parse(recipe.tags);
+
+		expect(tags).toEqual(['italian', 'quick']);
+	});
+
+	it('should handle slug collision when creating', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		const first = await createRecipe(pair.first, baseInput);
+		expect(first.id).toBe('test-pasta');
+
+		const second = await createRecipe(pair.first, { ...baseInput, title: 'Test Pasta' });
+		expect(second.id).toBe('test-pasta-2');
+	});
+
+	it('should set household_id for private recipes', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		await pair.first
+			.prepare("INSERT INTO users (id, email, name) VALUES ('u1', 'u@e.com', 'U')")
+			.run();
+		await pair.first
+			.prepare("INSERT INTO households (id, owner_user_id, name) VALUES ('h1', 'u1', 'Home')")
+			.run();
+
+		const recipe = await createRecipe(pair.first, {
+			...baseInput,
+			visibility: 'private',
+			householdId: 'h1'
+		});
+
+		expect(recipe.visibility).toBe('private');
+		expect(recipe.household_id).toBe('h1');
+	});
+
+	it('should store null method for reference recipes', async () => {
+		const pair = createTestDbPair();
+		pairs.push(pair);
+
+		const recipe = await createRecipe(pair.first, {
+			...baseInput,
+			type: 'reference',
+			method: undefined,
+			sourceReference: { kind: 'book', label: 'My Cookbook', pageNumber: 42 }
+		});
+
+		expect(recipe.method).toBeNull();
+		expect(recipe.source_reference).not.toBeNull();
+		const src = JSON.parse(recipe.source_reference!);
+		expect(src.kind).toBe('book');
+		expect(src.label).toBe('My Cookbook');
 	});
 });

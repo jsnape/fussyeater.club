@@ -125,7 +125,7 @@ export interface paths {
         };
         get: operations["Recipes_list"];
         put?: never;
-        post?: never;
+        post: operations["Recipes_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -206,6 +206,29 @@ export interface components {
             remainingUses: number;
             /** Format: date-time */
             expiresAt: string;
+        } & {
+            [key: string]: unknown;
+        };
+        CreateRecipeRequest: {
+            title: string;
+            description?: string;
+            imageUrl?: string;
+            /** @enum {string} */
+            type: "full" | "reference";
+            /** @enum {string} */
+            visibility?: "public" | "private";
+            /** Format: int32 */
+            servings?: number;
+            yield?: string;
+            /** Format: int32 */
+            prepMinutes?: number;
+            /** Format: int32 */
+            cookMinutes?: number;
+            ingredients: components["schemas"]["RecipeIngredient"][];
+            method?: string[];
+            sourceReference?: components["schemas"]["RecipeSourceReference"];
+            tags?: string[];
+            notes?: string;
         } & {
             [key: string]: unknown;
         };
@@ -829,6 +852,75 @@ export interface operations {
             };
             /** @description The server could not understand the request due to invalid syntax. */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    Recipes_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRecipeRequest"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded and a new resource has been created as a result. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeDetail"];
+                };
+            };
+            /** @description The server could not understand the request due to invalid syntax. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request conflicts with the current state of the server. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

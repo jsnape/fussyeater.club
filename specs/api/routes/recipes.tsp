@@ -23,6 +23,27 @@ namespace Recipes {
     @body body: ErrorResponse;
   };
 
+  @post
+  op create(@body body: CreateRecipeRequest): {
+    @statusCode statusCode: 201;
+    @body body: RecipeDetail;
+  } | {
+    @statusCode statusCode: 400;
+    @body body: ErrorResponse;
+  } | {
+    @statusCode statusCode: 401;
+    @body body: ErrorResponse;
+  } | {
+    @statusCode statusCode: 403;
+    @body body: ErrorResponse;
+  } | {
+    @statusCode statusCode: 409;
+    @body body: ErrorResponse;
+  } | {
+    @statusCode statusCode: 503;
+    @body body: ErrorResponse;
+  };
+
   @get
   @route("{id}")
   op getDetail(@path id: string): RecipeDetail | {

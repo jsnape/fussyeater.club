@@ -138,7 +138,10 @@
 	{@render errorState()}
 {:else}
 	<main class="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-		<h1 class="text-3xl font-bold text-primary-900">Recipes</h1>
+		<div class="flex items-center justify-between">
+			<h1 class="text-3xl font-bold text-primary-900">Recipes</h1>
+			<Button href={resolve('/recipes/new')} color="primary">+ Add Recipe</Button>
+		</div>
 
 		<!-- Search bar -->
 		<form class="mt-5 flex gap-2" onsubmit={handleSearch}>

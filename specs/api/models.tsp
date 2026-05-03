@@ -170,3 +170,20 @@ page: int32;
 pageSize: int32;
 total: int32;
 }
+
+model CreateRecipeRequest {
+title: string;
+description?: string;
+imageUrl?: string;
+type: "full" | "reference";
+visibility?: "public" | "private";
+servings?: int32;
+`yield`?: string;
+prepMinutes?: int32;
+cookMinutes?: int32;
+ingredients: RecipeIngredient[];
+method?: string[];
+sourceReference?: RecipeSourceReference;
+tags?: string[];
+notes?: string;
+}

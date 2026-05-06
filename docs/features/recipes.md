@@ -20,8 +20,8 @@ Recipes also include visibility scope:
 
 ## Route
 
-| Path | Purpose |
-| --- | --- |
+| Path       | Purpose                                      |
+| ---------- | -------------------------------------------- |
 | `/recipes` | Browse all recipes and search/filter results |
 
 ---
@@ -95,14 +95,14 @@ Single-page browse layout with clear search controls above result cards.
 
 - Responsive card grid.
 - Each card includes:
-  - Recipe image
-  - Title
-  - Description snippet
-  - Type label (`full` or `reference`)
-  - Visibility label (`public` or `private`)
-  - Duration metadata (when available)
-  - Source citation hint for `reference` recipes (for example: book/page or external link)
-  - Link to `/recipes/[id]`
+    - Recipe image
+    - Title
+    - Description snippet
+    - Type label (`full` or `reference`)
+    - Visibility label (`public` or `private`)
+    - Duration metadata (when available)
+    - Source citation hint for `reference` recipes (for example: book/page or external link)
+    - Link to `/recipes/[id]`
 - Empty state when no results match.
 
 Example recipe card text:

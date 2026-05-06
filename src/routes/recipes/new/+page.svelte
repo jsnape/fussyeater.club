@@ -441,137 +441,139 @@
             </Radio>
         </div>
 
-    {#if isFullRecipe}
-        <div class="mt-4">
-            <p class="text-sm text-primary-700">Add at least one step.</p>
+        {#if isFullRecipe}
+            <div class="mt-4">
+                <p class="text-sm text-primary-700">Add at least one step.</p>
 
-            <div class="mt-4 rounded-lg border border-primary-200 bg-white p-5">
-                <Label for="method-step" class="mb-1 text-sm font-medium text-primary-700"
-                    >Step description</Label
-                >
-                <Textarea
-                    id="method-step"
-                    bind:value={methodDraft}
-                    placeholder="Describe this step"
-                    rows={2}
-                    aria-required="true"
-                    class="w-full"
-                />
-                <div class="mt-4">
-                    <Button
-                        color="alternative"
-                        onclick={addMethodStep}
-                        disabled={!methodDraft.trim()}
-                        class="min-h-[44px] min-w-[44px]"
+                <div class="mt-4 rounded-lg border border-primary-200 bg-white p-5">
+                    <Label for="method-step" class="mb-1 text-sm font-medium text-primary-700"
+                        >Step description</Label
                     >
-                        + Add step
-                    </Button>
-                </div>
-            </div>
-
-            {#if methodSteps.length > 0}
-                <ol class="mt-4 list-inside list-decimal space-y-2">
-                    {#each methodSteps as step, i (i)}
-                        <li
-                            class="flex items-start justify-between rounded-md border border-primary-200 bg-white px-4 py-3"
-                        >
-                            <span class="text-sm text-primary-900">
-                                <span class="font-semibold">{i + 1}.</span>
-                                {step}
-                            </span>
-                            <Button
-                                color="red"
-                                size="xs"
-                                onclick={() => removeMethodStep(i)}
-                                aria-label={`Remove step ${i + 1}`}
-                                class="ml-3 min-h-[44px] min-w-[44px] shrink-0"
-                            >
-                                Remove
-                            </Button>
-                        </li>
-                    {/each}
-                </ol>
-            {/if}
-        </div>
-    {:else}
-        <div class="mt-4">
-            <div class="rounded-lg border border-primary-200 bg-white p-5">
-                <div>
-                    <Label for="source-kind" class="mb-1 text-sm font-medium text-primary-700"
-                        >Source type</Label
-                    >
-                    <Select id="source-kind" items={sourceKindItems} bind:value={sourceKind} />
-                </div>
-
-                <div class="mt-4">
-                    <Label for="source-label" class="mb-1 text-sm font-medium text-primary-700"
-                        >Label</Label
-                    >
-                    <Input
-                        id="source-label"
-                        type="text"
-                        bind:value={sourceLabel}
-                        placeholder="Name or description of the source"
+                    <Textarea
+                        id="method-step"
+                        bind:value={methodDraft}
+                        placeholder="Describe this step"
+                        rows={2}
                         aria-required="true"
+                        class="w-full"
                     />
+                    <div class="mt-4">
+                        <Button
+                            color="alternative"
+                            onclick={addMethodStep}
+                            disabled={!methodDraft.trim()}
+                            class="min-h-[44px] min-w-[44px]"
+                        >
+                            + Add step
+                        </Button>
+                    </div>
                 </div>
 
-                {#if sourceKind === 'url'}
+                {#if methodSteps.length > 0}
+                    <ol class="mt-4 list-inside list-decimal space-y-2">
+                        {#each methodSteps as step, i (i)}
+                            <li
+                                class="flex items-start justify-between rounded-md border border-primary-200 bg-white px-4 py-3"
+                            >
+                                <span class="text-sm text-primary-900">
+                                    <span class="font-semibold">{i + 1}.</span>
+                                    {step}
+                                </span>
+                                <Button
+                                    color="red"
+                                    size="xs"
+                                    onclick={() => removeMethodStep(i)}
+                                    aria-label={`Remove step ${i + 1}`}
+                                    class="ml-3 min-h-[44px] min-w-[44px] shrink-0"
+                                >
+                                    Remove
+                                </Button>
+                            </li>
+                        {/each}
+                    </ol>
+                {/if}
+            </div>
+        {:else}
+            <div class="mt-4">
+                <div class="rounded-lg border border-primary-200 bg-white p-5">
+                    <div>
+                        <Label for="source-kind" class="mb-1 text-sm font-medium text-primary-700"
+                            >Source type</Label
+                        >
+                        <Select id="source-kind" items={sourceKindItems} bind:value={sourceKind} />
+                    </div>
+
                     <div class="mt-4">
-                        <Label for="source-url" class="mb-1 text-sm font-medium text-primary-700"
-                            >URL</Label
+                        <Label for="source-label" class="mb-1 text-sm font-medium text-primary-700"
+                            >Label</Label
                         >
                         <Input
-                            id="source-url"
-                            type="url"
-                            bind:value={sourceUrl}
-                            placeholder="https://example.com/recipe"
+                            id="source-label"
+                            type="text"
+                            bind:value={sourceLabel}
+                            placeholder="Name or description of the source"
                             aria-required="true"
                         />
                     </div>
-                {:else}
-                    <div class="mt-4">
-                        <Label
-                            for="source-book-title"
-                            class="mb-1 text-sm font-medium text-primary-700">Book title</Label
-                        >
-                        <Input
-                            id="source-book-title"
-                            type="text"
-                            bind:value={sourceBookTitle}
-                            placeholder="Title of the book"
-                        />
-                    </div>
-                    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
+
+                    {#if sourceKind === 'url'}
+                        <div class="mt-4">
                             <Label
-                                for="source-page"
-                                class="mb-1 text-sm font-medium text-primary-700">Page number</Label
+                                for="source-url"
+                                class="mb-1 text-sm font-medium text-primary-700">URL</Label
                             >
                             <Input
-                                id="source-page"
-                                type="number"
-                                bind:value={sourcePageNumber}
-                                min="1"
+                                id="source-url"
+                                type="url"
+                                bind:value={sourceUrl}
+                                placeholder="https://example.com/recipe"
+                                aria-required="true"
                             />
                         </div>
-                        <div>
+                    {:else}
+                        <div class="mt-4">
                             <Label
-                                for="source-isbn"
-                                class="mb-1 text-sm font-medium text-primary-700">ISBN</Label
+                                for="source-book-title"
+                                class="mb-1 text-sm font-medium text-primary-700">Book title</Label
                             >
                             <Input
-                                id="source-isbn"
+                                id="source-book-title"
                                 type="text"
-                                bind:value={sourceIsbn}
-                                placeholder="e.g. 978-0-13-468599-1"
+                                bind:value={sourceBookTitle}
+                                placeholder="Title of the book"
                             />
                         </div>
-                    </div>
-                {/if}
+                        <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <Label
+                                    for="source-page"
+                                    class="mb-1 text-sm font-medium text-primary-700"
+                                    >Page number</Label
+                                >
+                                <Input
+                                    id="source-page"
+                                    type="number"
+                                    bind:value={sourcePageNumber}
+                                    min="1"
+                                />
+                            </div>
+                            <div>
+                                <Label
+                                    for="source-isbn"
+                                    class="mb-1 text-sm font-medium text-primary-700">ISBN</Label
+                                >
+                                <Input
+                                    id="source-isbn"
+                                    type="text"
+                                    bind:value={sourceIsbn}
+                                    placeholder="e.g. 978-0-13-468599-1"
+                                />
+                            </div>
+                        </div>
+                    {/if}
+                </div>
             </div>
-        </div>
-    {/if}
+        {/if}
     </section>
 
     <!-- Tags -->
@@ -640,12 +642,8 @@
     <section class="mt-8">
         <h2 class="text-xl font-semibold text-primary-900">Visibility</h2>
         <div class="mt-4 flex gap-6">
-            <Radio name="visibility" value="private" bind:group={visibility}>
-                Household
-            </Radio>
-            <Radio name="visibility" value="public" bind:group={visibility}>
-                Everyone
-            </Radio>
+            <Radio name="visibility" value="private" bind:group={visibility}>Household</Radio>
+            <Radio name="visibility" value="public" bind:group={visibility}>Everyone</Radio>
         </div>
     </section>
 

@@ -20,8 +20,8 @@ Recipes also have visibility:
 
 ## Route
 
-| Path | Purpose |
-| --- | --- |
+| Path            | Purpose                                     |
+| --------------- | ------------------------------------------- |
 | `/recipes/[id]` | Display one recipe by unique title-based id |
 
 ---
@@ -216,11 +216,11 @@ Ingredient entity (JSON, API contract):
 
 - `ingredients[]` is an array of `RecipeIngredient` entities.
 - `RecipeIngredient` shape:
-  - `amount` (optional decimal)
-  - `unit` (optional)
-  - `ingredient` (required)
-  - `ingredientGroup` (optional)
-  - `preparation` (optional)
+    - `amount` (optional decimal)
+    - `unit` (optional)
+    - `ingredient` (required)
+    - `ingredientGroup` (optional)
+    - `preparation` (optional)
 
 `preparation` supports two forms:
 
@@ -277,7 +277,7 @@ Response shape:
 
 - `{ recipeId, nutrition? }`
 - `nutrition` example shape:
-  - `{ calories?, proteinGrams?, carbsGrams?, fatGrams?, fiberGrams?, sugarGrams?, sodiumMg? }`
+    - `{ calories?, proteinGrams?, carbsGrams?, fatGrams?, fiberGrams?, sugarGrams?, sodiumMg? }`
 
 Behavior:
 
@@ -308,7 +308,7 @@ Error responses:
 - Suggested column name: `ingredients` (type: `TEXT`) containing serialized JSON.
 - Store `amount` as decimal values in the API model and inside the serialized JSON ingredient objects in the database.
 - Example `ingredients` column value:
-  - `[{"amount":400.0,"unit":"g","ingredient":"spaghetti","ingredientGroup":"Pasta"},{"amount":1.0,"unit":null,"ingredient":"onion","ingredientGroup":"Sauce","preparation":{"type":"text","text":"finely chopped"}},{"amount":1.0,"unit":null,"ingredient":"stock base","preparation":{"type":"recipe-link","recipeId":"vegetable-stock-base","recipeLabel":"Vegetable Stock Base"}}]`
+    - `[{"amount":400.0,"unit":"g","ingredient":"spaghetti","ingredientGroup":"Pasta"},{"amount":1.0,"unit":null,"ingredient":"onion","ingredientGroup":"Sauce","preparation":{"type":"text","text":"finely chopped"}},{"amount":1.0,"unit":null,"ingredient":"stock base","preparation":{"type":"recipe-link","recipeId":"vegetable-stock-base","recipeLabel":"Vegetable Stock Base"}}]`
 - Persist `yield` as recipe output text/number as defined by the API contract.
 - Persist `servings` as portion count.
 - Persist `yield` as actual output amount/description (for example: `6 pints`).

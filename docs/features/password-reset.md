@@ -10,11 +10,11 @@ Allow users to securely reset their password when they cannot sign in, with rese
 
 ## Routes
 
-| Path | Purpose |
-| --- | --- |
-| `/forgot-password` | Request a password reset email |
-| `/reset-password` | Set a new password using a reset token |
-| `/login` | Return destination after a successful reset |
+| Path               | Purpose                                     |
+| ------------------ | ------------------------------------------- |
+| `/forgot-password` | Request a password reset email              |
+| `/reset-password`  | Set a new password using a reset token      |
+| `/login`           | Return destination after a successful reset |
 
 ---
 
@@ -166,9 +166,9 @@ Contract notes:
 
 - Token is required and must be active, unexpired, and unused.
 - New password rules:
-  - Minimum 8 characters.
-  - At least one number.
-  - Must differ from the current password.
+    - Minimum 8 characters.
+    - At least one number.
+    - Must differ from the current password.
 - Confirm password must match on the client.
 
 ### Security Controls

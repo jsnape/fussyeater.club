@@ -13,13 +13,19 @@ describe('GET /api/households/members', () => {
 
     async function seedOwnerAndMember(pair: ReturnType<typeof createTestDbPair>): Promise<void> {
         await pair.first
-            .prepare("INSERT INTO users (id, email, name) VALUES ('owner-1', 'owner@example.com', 'Owner')")
+            .prepare(
+                "INSERT INTO users (id, email, name) VALUES ('owner-1', 'owner@example.com', 'Owner')"
+            )
             .run();
         await pair.first
-            .prepare("INSERT INTO users (id, email, name) VALUES ('member-1', 'member@example.com', 'Member')")
+            .prepare(
+                "INSERT INTO users (id, email, name) VALUES ('member-1', 'member@example.com', 'Member')"
+            )
             .run();
         await pair.first
-            .prepare("INSERT INTO households (id, owner_user_id, name) VALUES ('house-1', 'owner-1', 'Family')")
+            .prepare(
+                "INSERT INTO households (id, owner_user_id, name) VALUES ('house-1', 'owner-1', 'Family')"
+            )
             .run();
         await pair.first
             .prepare(
@@ -57,7 +63,13 @@ describe('GET /api/households/members', () => {
         } as never);
 
         const body = (await response.json()) as {
-            members: Array<{ userId: string; email: string; name: string; role: string; joinedAt: string }>;
+            members: Array<{
+                userId: string;
+                email: string;
+                name: string;
+                role: string;
+                joinedAt: string;
+            }>;
         };
 
         expect(response.status).toBe(200);

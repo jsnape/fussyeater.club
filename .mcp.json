@@ -5,16 +5,11 @@
     },
     "flowbite-svelte": {
       "command": "node",
-      "args": [
-        "E:\\Dev\\flowbite-svelte-mcp\\build\\server.js"
-      ]
+      "args": ["E:\\Dev\\flowbite-svelte-mcp\\build\\server.js"]
     },
     "tailwindcss-server": {
       "command": "npx",
-      "args": [
-        "-y",
-        "tailwindcss-mcp-server"
-      ]
+      "args": ["-y", "tailwindcss-mcp-server"]
     }
   }
 }

@@ -58,7 +58,7 @@ export async function listHouseholdMembers(
 ): Promise<HouseholdMember[]> {
     const members = await db
         .prepare(
-             `SELECT
+            `SELECT
                  hm.user_id as userId,
                  u.name as name,
                  u.email as email,

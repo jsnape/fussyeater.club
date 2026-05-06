@@ -192,7 +192,10 @@ export async function createHouseholdInvite(
                 expiresAt
             };
         } catch (error) {
-            if (error instanceof Error && UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN.test(error.message)) {
+            if (
+                error instanceof Error &&
+                UNIQUE_INVITE_CODE_CONSTRAINT_PATTERN.test(error.message)
+            ) {
                 continue;
             }
             if (

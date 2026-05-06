@@ -39,9 +39,7 @@
         return usedCount < 0 ? 0 : usedCount;
     }
 
-    const activeInviteCode = $derived(
-        revealInviteCode.trim() || activeInvite?.code?.trim() || ''
-    );
+    const activeInviteCode = $derived(revealInviteCode.trim() || activeInvite?.code?.trim() || '');
     const canCopyActiveInviteLink = $derived(Boolean(activeInviteCode));
 
     function mutationErrorMessage(args: {

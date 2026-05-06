@@ -203,9 +203,13 @@ export const POST: RequestHandler = async (event) => {
                 logError('register.complete.idempotency_finalize_failed', requestId, {
                     idempotencyKey: body.idempotencyKey
                 });
-                return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, {
-                    status: 503
-                });
+                return jsonWithRequestId(
+                    { message: 'Service temporarily unavailable' },
+                    requestId,
+                    {
+                        status: 503
+                    }
+                );
             }
             logInfo('register.complete.success', requestId, {
                 requestId,

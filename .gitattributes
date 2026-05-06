@@ -1,25 +1,23 @@
-# Auto detect text files and perform LF normalization
-# http://davidlaing.com/2012/09/19/customise-your-gitattributes-to-become-a-git-ninja/
-* text=auto
+# Normalize all text files to LF in the repository
+* text=auto eol=lf
 
+# Explicitly mark source files as text
+*.ts text eol=lf
+*.js text eol=lf
+*.svelte text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.sql text eol=lf
+*.tsp text eol=lf
 
-# Custom for Visual Studio
-*.cs     diff=csharp
-*.sln    merge=union
-*.csproj merge=union
-*.vbproj merge=union
-*.fsproj merge=union
-*.dbproj merge=union
-
-
-# Standard to msysgit
-*.doc    diff=astextplain
-*.DOC    diff=astextplain
-*.docx diff=astextplain
-*.DOCX diff=astextplain
-*.dot  diff=astextplain
-*.DOT  diff=astextplain
-*.pdf  diff=astextplain
-*.PDF    diff=astextplain
-*.rtf    diff=astextplain
-*.RTF    diff=astextplain
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text eol=lf

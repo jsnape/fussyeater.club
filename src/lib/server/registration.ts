@@ -58,7 +58,11 @@ async function ensureUser(
             )
             .run();
 
-        return { userId: input.authUserId, email: input.authEmail ?? input.email ?? null, created: true };
+        return {
+            userId: input.authUserId,
+            email: input.authEmail ?? input.email ?? null,
+            created: true
+        };
     }
 
     const email = input.email?.trim().toLowerCase();
@@ -117,7 +121,10 @@ export async function completeRegistration(
                     .prepare('SELECT household_id, consumed_at FROM join_intents WHERE token = ?1')
                     .bind(input.joinIntentToken)
                     .first<{ household_id: string; consumed_at: string | null }>();
-                if (joinIntent?.consumed_at && joinIntent.household_id === existingMembership.household_id) {
+                if (
+                    joinIntent?.consumed_at &&
+                    joinIntent.household_id === existingMembership.household_id
+                ) {
                     return {
                         userId,
                         householdId: existingMembership.household_id,
@@ -148,7 +155,10 @@ export async function completeRegistration(
                     .bind(userId, householdId)
                     .run();
             } catch (error) {
-                const cleanup = await db.prepare('DELETE FROM households WHERE id = ?1').bind(householdId).run();
+                const cleanup = await db
+                    .prepare('DELETE FROM households WHERE id = ?1')
+                    .bind(householdId)
+                    .run();
                 if ((cleanup.meta?.changes ?? 0) !== 1) {
                     throw new Error('HOUSEHOLD_CLEANUP_FAILED');
                 }
@@ -215,7 +225,9 @@ export async function completeRegistration(
         }
 
         const consume = await db
-            .prepare('UPDATE join_intents SET consumed_at = ?1 WHERE token = ?2 AND consumed_at IS NULL')
+            .prepare(
+                'UPDATE join_intents SET consumed_at = ?1 WHERE token = ?2 AND consumed_at IS NULL'
+            )
             .bind(timestamp, joinIntent.token)
             .run();
         if ((consume.meta?.changes ?? 0) !== 1) {
@@ -249,7 +261,9 @@ export async function completeRegistration(
                     .first<{ id: string }>();
                 if (stillExists) {
                     const hasMembership = await db
-                        .prepare('SELECT 1 as present FROM household_memberships WHERE user_id = ?1')
+                        .prepare(
+                            'SELECT 1 as present FROM household_memberships WHERE user_id = ?1'
+                        )
                         .bind(userId)
                         .first<{ present: number }>();
                     if (!hasMembership) {

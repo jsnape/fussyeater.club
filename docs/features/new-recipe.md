@@ -12,8 +12,8 @@ Newly created recipes default to `private` visibility (household-scoped), with a
 
 ## Route
 
-| Path | Purpose |
-| --- | --- |
+| Path           | Purpose             |
+| -------------- | ------------------- |
 | `/recipes/new` | Create a new recipe |
 
 ---

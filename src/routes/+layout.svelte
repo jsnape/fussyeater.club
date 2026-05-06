@@ -14,7 +14,7 @@
     <SiteNavbar
         isAuthenticated={Boolean(data.sessionUser)}
         userLabel={signedInLabel}
-        canManageHousehold={canManageHousehold}
+        {canManageHousehold}
     />
 
     <main>

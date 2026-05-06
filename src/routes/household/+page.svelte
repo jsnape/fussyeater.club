@@ -150,16 +150,6 @@
         return isRevokingInviteId === invite.id || invite.status === 'revoked';
     }
 
-    function revokeInviteAriaLabel(invite: InviteStatus): string {
-        if (invite.status === 'revoked') {
-            return 'Invite already revoked';
-        }
-        if (isRevokingInviteId === invite.id) {
-            return 'Revoking invite';
-        }
-        return 'Revoke invite';
-    }
-
     function displayedActiveInviteCode(): string {
         if (revealInviteCode) {
             return revealInviteCode;

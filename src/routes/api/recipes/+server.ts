@@ -51,8 +51,6 @@ export const GET: RequestHandler = async (event) => {
         const membership = auth.userId ? await getMembership(db, auth.userId) : null;
         const userHouseholdId = membership?.householdId ?? null;
 
-        let countSql: string;
-        let listSql: string;
         const binds: unknown[] = [];
         let bindIndex = 1;
 
@@ -93,7 +91,7 @@ export const GET: RequestHandler = async (event) => {
         }
 
         // Count query
-        countSql = `SELECT COUNT(*) as total FROM recipes ${whereClause}`;
+        const countSql = `SELECT COUNT(*) as total FROM recipes ${whereClause}`;
         const countResult = await db
             .prepare(countSql)
             .bind(...binds)
@@ -102,7 +100,7 @@ export const GET: RequestHandler = async (event) => {
 
         // List query
         const offset = (page - 1) * pageSize;
-        listSql = `SELECT id, title, description, image_url, type, visibility,
+        const listSql = `SELECT id, title, description, image_url, type, visibility,
 			servings, yield, prep_minutes, cook_minutes, source_reference, tags
 			FROM recipes ${whereClause} ${orderClause} LIMIT ?${bindIndex} OFFSET ?${bindIndex + 1}`;
 

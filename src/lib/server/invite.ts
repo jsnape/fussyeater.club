@@ -202,7 +202,7 @@ export async function createHouseholdInvite(
                 error instanceof Error &&
                 UNIQUE_ACTIVE_INVITE_CONSTRAINT_PATTERN.test(error.message)
             ) {
-                throw new Error('ACTIVE_INVITE_CONFLICT');
+                throw new Error('ACTIVE_INVITE_CONFLICT', { cause: error });
             }
             throw error;
         }

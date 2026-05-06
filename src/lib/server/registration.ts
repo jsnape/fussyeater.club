@@ -160,7 +160,7 @@ export async function completeRegistration(
                     .bind(householdId)
                     .run();
                 if ((cleanup.meta?.changes ?? 0) !== 1) {
-                    throw new Error('HOUSEHOLD_CLEANUP_FAILED');
+                    throw new Error('HOUSEHOLD_CLEANUP_FAILED', { cause: error });
                 }
                 throw error;
             }
@@ -267,7 +267,7 @@ export async function completeRegistration(
                         .bind(userId)
                         .first<{ present: number }>();
                     if (!hasMembership) {
-                        throw new Error('USER_CLEANUP_FAILED');
+                        throw new Error('USER_CLEANUP_FAILED', { cause: error });
                     }
                 }
             }

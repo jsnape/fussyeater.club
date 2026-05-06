@@ -7,8 +7,8 @@
 
     let { data }: { data: PageData } = $props();
 
+    // eslint-disable-next-line svelte/prefer-writable-derived -- searchQuery must be writable for bind:value
     let searchQuery = $state('');
-
     $effect(() => {
         searchQuery = data.q;
     });
@@ -19,21 +19,25 @@
 
     function handleSearch(event: SubmitEvent): void {
         event.preventDefault();
+        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- non-reactive local variable
         const params = new URLSearchParams();
         if (searchQuery.trim()) params.set('q', searchQuery.trim());
+        // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used, query params appended
         void goto(`${resolve('/recipes')}?${params.toString()}`, { keepFocus: true });
     }
 
     function goToPage(page: number): void {
+        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- non-reactive local variable
         const params = new URLSearchParams();
         if (data.q) params.set('q', data.q);
         if (page > 1) params.set('page', String(page));
+        // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used, query params appended
         void goto(`${resolve('/recipes')}?${params.toString()}`);
     }
 
     function stripMarkdown(text: string): string {
         return text
-            .replace(/[#*_~`>\[\]()!|-]/g, '')
+            .replace(/[#*_~`>[\]()!|-]/g, '')
             .replace(/\n+/g, ' ')
             .trim();
     }

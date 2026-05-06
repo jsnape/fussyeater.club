@@ -149,7 +149,7 @@ describe('POST /api/recipes', () => {
 
         const response = await POST(event);
         expect(response.status).toBe(403);
-        const result = await response.json();
+        const result = (await response.json()) as { message: string };
         expect(result.message).toBe('CSRF verification failed');
     });
 
@@ -264,7 +264,7 @@ describe('POST /api/recipes', () => {
         pairs.push(pair);
         await seedUser(pair);
 
-        const { visibility: _, ...noVisibility } = validFullRecipe;
+        const { visibility: _visibility, ...noVisibility } = validFullRecipe;
         const response = await POST(
             makeEvent(pair.first, noVisibility, { cookie: 'session=sess-1' })
         );

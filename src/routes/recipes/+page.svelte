@@ -1,9 +1,12 @@
 <script lang="ts">
-    import { Badge, Button, Input } from 'flowbite-svelte';
-    import { SearchOutline } from 'flowbite-svelte-icons';
+    import { Button } from 'flowbite-svelte';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import type { PageData } from './$types';
+    import RecipeCard from '$lib/components/recipe/RecipeCard.svelte';
+    import RecipeSearchBar from '$lib/components/recipe/RecipeSearchBar.svelte';
+    import RecipePagination from '$lib/components/recipe/RecipePagination.svelte';
+    import RecipeErrorState from '$lib/components/recipe/RecipeErrorState.svelte';
 
     let { data }: { data: PageData } = $props();
 
@@ -14,14 +17,11 @@
     });
 
     let totalPages = $derived(Math.max(1, Math.ceil(data.total / data.pageSize)));
-    let isLastPage = $derived(data.page >= totalPages);
-    let isFirstPage = $derived(data.page <= 1);
 
-    function handleSearch(event: SubmitEvent): void {
-        event.preventDefault();
+    function handleSearch(query: string): void {
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- non-reactive local variable
         const params = new URLSearchParams();
-        if (searchQuery.trim()) params.set('q', searchQuery.trim());
+        if (query.trim()) params.set('q', query.trim());
         // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used, query params appended
         void goto(`${resolve('/recipes')}?${params.toString()}`, { keepFocus: true });
     }
@@ -34,112 +34,15 @@
         // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used, query params appended
         void goto(`${resolve('/recipes')}?${params.toString()}`);
     }
-
-    function stripMarkdown(text: string): string {
-        return text
-            .replace(/[#*_~`>[\]()!|-]/g, '')
-            .replace(/\n+/g, ' ')
-            .trim();
-    }
-
-    function snippet(text: string, maxLength = 100): string {
-        const plain = stripMarkdown(text);
-        if (plain.length <= maxLength) return plain;
-        return plain.slice(0, maxLength).replace(/\s+\S*$/, '') + '…';
-    }
-
-    function formatTotalTime(timings?: {
-        prepMinutes?: number;
-        cookMinutes?: number;
-    }): string | null {
-        if (!timings) return null;
-        const total = (timings.prepMinutes ?? 0) + (timings.cookMinutes ?? 0);
-        if (total <= 0) return null;
-        return `${total} min total`;
-    }
 </script>
 
-{#snippet errorState()}
-    <div class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
-        <h1 class="text-2xl font-semibold text-primary-900">Something went wrong</h1>
-        <p class="mt-3 text-primary-700">
-            We're having trouble loading recipes right now. Please try again later.
-        </p>
-        <div class="mt-6">
-            <Button href={resolve('/recipes')} color="primary">Try again</Button>
-        </div>
-    </div>
-{/snippet}
-
-{#snippet emptyState()}
-    <div class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
-        <h2 class="text-xl font-semibold text-primary-900">No recipes found</h2>
-        <p class="mt-3 text-primary-700">
-            {#if data.q}
-                No results for "<span class="font-medium">{data.q}</span>". Try different search
-                terms or browse all recipes.
-            {:else}
-                There are no recipes to show yet.
-            {/if}
-        </p>
-        {#if data.q}
-            <div class="mt-6">
-                <Button href={resolve('/recipes')} color="primary">Browse all recipes</Button>
-            </div>
-        {/if}
-    </div>
-{/snippet}
-
-{#snippet recipeCard(item: PageData['items'][number])}
-    {@const timeLabel = formatTotalTime(item.timings)}
-    <a
-        href={resolve(`/recipes/${item.id}`)}
-        class="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md"
-    >
-        <div class="overflow-hidden">
-            <img
-                src={item.imageUrl ?? '/images/recipe-no-image.jpg'}
-                alt={item.title}
-                class="aspect-video w-full object-cover transition-transform duration-200 group-hover:scale-105"
-            />
-        </div>
-
-        <div class="flex flex-1 flex-col p-4">
-            <h3 class="text-lg font-semibold text-primary-900 group-hover:text-primary-700">
-                {item.title}
-            </h3>
-
-            {#if item.description}
-                <p class="mt-1 text-sm text-primary-600">{snippet(item.description)}</p>
-            {/if}
-
-            <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-primary-600">
-                {#if timeLabel}
-                    <span class="flex items-center gap-1">
-                        <span>⏱</span>
-                        {timeLabel}
-                    </span>
-                {/if}
-                {#if item.type === 'reference'}
-                    <Badge color="gray" class="text-xs">External source</Badge>
-                {:else}
-                    <Badge color="primary" class="text-xs">Full recipe</Badge>
-                {/if}
-            </div>
-
-            {#if item.tags.length > 0}
-                <div class="mt-3 flex flex-wrap gap-1.5">
-                    {#each item.tags as tag (tag)}
-                        <Badge color="primary" class="text-xs">{tag}</Badge>
-                    {/each}
-                </div>
-            {/if}
-        </div>
-    </a>
-{/snippet}
-
 {#if data.error === 'unavailable'}
-    {@render errorState()}
+    <RecipeErrorState
+        title="Something went wrong"
+        message="We're having trouble loading recipes right now. Please try again later."
+        actionLabel="Try again"
+        actionHref={resolve('/recipes')}
+    />
 {:else}
     <main class="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         <div class="flex items-center justify-between">
@@ -147,62 +50,45 @@
             <Button href={resolve('/recipes/new')} color="primary">+ Add Recipe</Button>
         </div>
 
-        <!-- Search bar -->
-        <form class="mt-5 flex gap-2" onsubmit={handleSearch}>
-            <Input
-                type="search"
-                placeholder="Search recipes..."
-                bind:value={searchQuery}
-                class="flex-1"
-            />
-            <Button type="submit" color="primary">
-                <SearchOutline class="mr-1 h-4 w-4" />
-                Search
-            </Button>
-        </form>
+        <div class="mt-5">
+            <RecipeSearchBar bind:query={searchQuery} onSearch={handleSearch} />
+        </div>
 
         {#if data.items.length === 0}
-            {@render emptyState()}
+            <div class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
+                <h2 class="text-xl font-semibold text-primary-900">No recipes found</h2>
+                <p class="mt-3 text-primary-700">
+                    {#if data.q}
+                        No results for "<span class="font-medium">{data.q}</span>". Try different
+                        search terms or browse all recipes.
+                    {:else}
+                        There are no recipes to show yet.
+                    {/if}
+                </p>
+                {#if data.q}
+                    <div class="mt-6">
+                        <Button href={resolve('/recipes')} color="primary"
+                            >Browse all recipes</Button
+                        >
+                    </div>
+                {/if}
+            </div>
         {:else}
-            <!-- Results count -->
             <p class="mt-4 text-sm text-primary-600">
                 {data.total} recipe{data.total === 1 ? '' : 's'} found
                 {#if data.q}&mdash; showing results for "<span class="font-medium">{data.q}</span
                     >"{/if}
             </p>
 
-            <!-- Card grid -->
             <div class="mt-4 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {#each data.items as item (item.id)}
-                    {@render recipeCard(item)}
+                    <RecipeCard recipe={item} />
                 {/each}
             </div>
 
-            <!-- Pagination -->
-            {#if totalPages > 1}
-                <nav
-                    class="mt-8 flex items-center justify-between border-t border-primary-200 pt-4"
-                    aria-label="Pagination"
-                >
-                    <Button
-                        color="alternative"
-                        disabled={isFirstPage}
-                        onclick={() => goToPage(data.page - 1)}
-                    >
-                        ← Previous
-                    </Button>
-                    <span class="text-sm text-primary-700">
-                        Page {data.page} of {totalPages}
-                    </span>
-                    <Button
-                        color="alternative"
-                        disabled={isLastPage}
-                        onclick={() => goToPage(data.page + 1)}
-                    >
-                        Next →
-                    </Button>
-                </nav>
-            {/if}
+            <div class="mt-8">
+                <RecipePagination page={data.page} {totalPages} onPageChange={goToPage} />
+            </div>
         {/if}
     </main>
 {/if}

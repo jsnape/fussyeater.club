@@ -8,6 +8,7 @@
     import RecipeIngredients from '$lib/components/recipe/RecipeIngredients.svelte';
     import RecipeMethodOrSource from '$lib/components/recipe/RecipeMethodOrSource.svelte';
     import RecipeNotes from '$lib/components/recipe/RecipeNotes.svelte';
+    import RecipeSidebar from '$lib/components/recipe/RecipeSidebar.svelte';
 
     let { data }: { data: PageData } = $props();
 
@@ -30,79 +31,117 @@
         message="We're having trouble loading this recipe right now. Please try again later."
     />
 {:else if recipe}
-    <article class="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
-        <RecipeHero mode="view" imageUrl={recipe.imageUrl ?? ''} title={recipe.title} />
+    <article class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+        <RecipeHero mode="view" imageUrl={recipe.imageUrl ?? ''} title={recipe.title} recipeType={recipe.type} />
 
-        <RecipeBasicInfo mode="view" title={recipe.title} description={recipe.description ?? ''} />
+        <!-- Two-column layout: main content + sidebar -->
+        <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_280px]">
+            <!-- Main content -->
+            <div>
+                <RecipeBasicInfo mode="view" title={recipe.title} description={recipe.description ?? ''} />
 
-        {#if recipe.timings?.prepMinutes || recipe.timings?.cookMinutes || recipe.servings || recipe.yield || recipe.tags.length}
-            <div class="mt-5">
-                <RecipeMetadata
-                    mode="view"
-                    prepMinutes={String(recipe.timings?.prepMinutes ?? '')}
-                    cookMinutes={String(recipe.timings?.cookMinutes ?? '')}
-                    servings={String(recipe.servings ?? '')}
-                    yieldText={recipe.yield ?? ''}
-                />
-            </div>
-            {#if recipe.tags.length > 0}
-                <div class="mt-3">
-                    <RecipeTags mode="view" tags={recipe.tags} />
-                </div>
-            {/if}
-        {/if}
-
-        {#if recipe.ingredients.length > 0}
-            <section class="mt-10">
-                <h2 class="text-xl font-semibold text-slate-900">Ingredients</h2>
-                <RecipeIngredients mode="view" ingredients={recipe.ingredients} />
-            </section>
-        {/if}
-
-        {#if (recipe.type === 'full' && recipe.method && recipe.method.length > 0) || (recipe.type === 'reference' && recipe.sourceReference)}
-            <section class="mt-10">
-                <h2 class="text-xl font-semibold text-slate-900">
-                    {recipe.type === 'full' ? 'Method' : 'Source'}
-                </h2>
-                {#if recipe.type === 'full'}
-                    <div class="mt-4">
-                        <RecipeMethodOrSource
+                {#if recipe.timings?.prepMinutes || recipe.timings?.cookMinutes || recipe.servings || recipe.yield || recipe.tags.length}
+                    <div class="mt-5">
+                        <RecipeMetadata
                             mode="view"
-                            recipeType="full"
-                            steps={recipe.method ?? []}
-                            sourceKind="url"
-                            sourceLabel=""
-                            sourceUrl=""
-                            sourceBookTitle=""
-                            sourcePageNumber=""
-                            sourceIsbn=""
+                            prepMinutes={String(recipe.timings?.prepMinutes ?? '')}
+                            cookMinutes={String(recipe.timings?.cookMinutes ?? '')}
+                            servings={String(recipe.servings ?? '')}
+                            yieldText={recipe.yield ?? ''}
                         />
                     </div>
-                {:else if recipe.sourceReference}
-                    <div class="mt-2">
-                        <RecipeMethodOrSource
-                            mode="view"
-                            recipeType="reference"
-                            steps={[]}
-                            sourceKind={recipe.sourceReference.kind}
-                            sourceLabel={recipe.sourceReference.label}
-                            sourceUrl={recipe.sourceReference.url ?? ''}
-                            sourceBookTitle={recipe.sourceReference.bookTitle ?? ''}
-                            sourcePageNumber={String(recipe.sourceReference.pageNumber ?? '')}
-                            sourceIsbn={recipe.sourceReference.isbn ?? ''}
-                        />
-                    </div>
+                    {#if recipe.tags.length > 0}
+                        <div class="mt-4">
+                            <RecipeTags mode="view" tags={recipe.tags} />
+                        </div>
+                    {/if}
                 {/if}
-            </section>
-        {/if}
 
-        {#if recipe.notes}
-            <section class="mt-10">
-                <h2 class="text-xl font-semibold text-slate-900">Notes</h2>
-                <div class="mt-3">
-                    <RecipeNotes mode="view" notes={recipe.notes} />
+                {#if recipe.ingredients.length > 0}
+                    <section class="mt-10">
+                        <h2 class="text-xl font-semibold text-slate-900">Ingredients</h2>
+                        <div class="mt-4">
+                            <RecipeIngredients mode="view" ingredients={recipe.ingredients} servings={recipe.servings ?? 0} />
+                        </div>
+                    </section>
+                {/if}
+
+                {#if (recipe.type === 'full' && recipe.method && recipe.method.length > 0) || (recipe.type === 'reference' && recipe.sourceReference)}
+                    <section class="mt-10">
+                        <h2 class="text-xl font-semibold text-slate-900">
+                            {recipe.type === 'full' ? 'Method' : 'Source'}
+                        </h2>
+                        {#if recipe.type === 'full'}
+                            <div class="mt-4">
+                                <RecipeMethodOrSource
+                                    mode="view"
+                                    recipeType="full"
+                                    steps={recipe.method ?? []}
+                                    sourceKind="url"
+                                    sourceLabel=""
+                                    sourceUrl=""
+                                    sourceBookTitle=""
+                                    sourcePageNumber=""
+                                    sourceIsbn=""
+                                />
+                            </div>
+                        {:else if recipe.sourceReference}
+                            <div class="mt-4">
+                                <RecipeMethodOrSource
+                                    mode="view"
+                                    recipeType="reference"
+                                    steps={[]}
+                                    sourceKind={recipe.sourceReference.kind}
+                                    sourceLabel={recipe.sourceReference.label}
+                                    sourceUrl={recipe.sourceReference.url ?? ''}
+                                    sourceBookTitle={recipe.sourceReference.bookTitle ?? ''}
+                                    sourcePageNumber={String(recipe.sourceReference.pageNumber ?? '')}
+                                    sourceIsbn={recipe.sourceReference.isbn ?? ''}
+                                />
+                            </div>
+                        {/if}
+                    </section>
+                {/if}
+
+                {#if recipe.notes}
+                    <section class="mt-10">
+                        <h2 class="text-xl font-semibold text-slate-900">Notes</h2>
+                        <div class="mt-3">
+                            <RecipeNotes mode="view" notes={recipe.notes} />
+                        </div>
+                    </section>
+                {/if}
+            </div>
+
+            <!-- Sidebar (desktop) -->
+            <aside class="hidden lg:block">
+                <div class="sticky top-24">
+                    <RecipeSidebar recipeTitle={recipe.title} />
                 </div>
-            </section>
-        {/if}
+            </aside>
+        </div>
     </article>
+
+    <!-- Mobile sticky action bar -->
+    <div class="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-4 py-3 backdrop-blur-sm lg:hidden">
+        <div class="mx-auto flex max-w-lg gap-3">
+            <button
+                type="button"
+                disabled
+                class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-medium text-slate-400"
+            >
+                Add to Plan
+            </button>
+            <button
+                type="button"
+                disabled
+                class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-medium text-slate-400"
+            >
+                Add to List
+            </button>
+        </div>
+    </div>
+
+    <!-- Spacer for mobile sticky bar -->
+    <div class="h-16 lg:hidden"></div>
 {/if}

@@ -20,11 +20,32 @@
 
     let {
         mode,
-        ingredients = $bindable()
+        ingredients = $bindable(),
+        servings = 0
     }: {
         mode: 'view' | 'edit';
         ingredients: RecipeIngredient[];
+        servings?: number;
     } = $props();
+
+    let servingMultiplier = $state(1);
+    let adjustedServings = $derived(servings > 0 ? Math.round(servings * servingMultiplier) : 0);
+
+    function increaseServings(): void {
+        servingMultiplier = servingMultiplier + 0.5;
+    }
+
+    function decreaseServings(): void {
+        if (servingMultiplier > 0.5) {
+            servingMultiplier = servingMultiplier - 0.5;
+        }
+    }
+
+    function scaleAmount(amount: number | undefined): string {
+        if (amount === undefined) return '';
+        const scaled = amount * servingMultiplier;
+        return scaled % 1 === 0 ? String(scaled) : scaled.toFixed(1);
+    }
 
     let ingredientDraft = $state<IngredientDraft>({
         amount: '',
@@ -92,7 +113,7 @@
 </script>
 
 {#snippet ingredientLine(ing: RecipeIngredient)}
-    {@const amount = ing.amount ? String(ing.amount) : ''}
+    {@const amount = mode === 'view' ? scaleAmount(ing.amount) : (ing.amount ? String(ing.amount) : '')}
     {@const unit = ing.unit ?? ''}
     {@const qty = [amount, unit].filter(Boolean).join('')}
     <span>
@@ -217,6 +238,36 @@
         </ul>
     {/if}
 {:else if ingredients.length > 0}
+    {#if servings > 0}
+        <div class="mb-4 flex items-center gap-3">
+            <span class="text-sm font-medium text-slate-600">Serves</span>
+            <div class="flex items-center gap-1">
+                <button
+                    type="button"
+                    class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-40"
+                    onclick={decreaseServings}
+                    disabled={servingMultiplier <= 0.5}
+                    aria-label="Decrease servings"
+                >
+                    −
+                </button>
+                <span class="min-w-[2rem] text-center text-sm font-semibold text-slate-900">
+                    {adjustedServings}
+                </span>
+                <button
+                    type="button"
+                    class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50"
+                    onclick={increaseServings}
+                    aria-label="Increase servings"
+                >
+                    +
+                </button>
+            </div>
+            {#if servingMultiplier !== 1}
+                <span class="text-xs text-slate-400">({servingMultiplier}×)</span>
+            {/if}
+        </div>
+    {/if}
     {#each ingredientGroups as group (group.name)}
         {#if ingredientGroups.length > 1}
             <h3 class="mt-4 text-sm font-semibold tracking-wide text-slate-500 uppercase">

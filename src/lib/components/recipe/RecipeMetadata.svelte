@@ -56,21 +56,31 @@
         </div>
     </div>
 {:else if hasAny}
-    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-600">
+    <div class="flex flex-wrap items-center gap-3 text-sm text-slate-600">
         {#if hasPrep}
-            <span>Prep: {prepNum} min</span>
+            <span class="flex items-center gap-1.5 rounded-lg bg-slate-50 px-3 py-1.5">
+                <span class="text-slate-400">🕐</span> Prep: {prepNum} min
+            </span>
         {/if}
         {#if hasCook}
-            <span>{hasPrep ? '·' : ''} Cook: {cookNum} min</span>
+            <span class="flex items-center gap-1.5 rounded-lg bg-slate-50 px-3 py-1.5">
+                <span class="text-slate-400">🔥</span> Cook: {cookNum} min
+            </span>
         {/if}
         {#if totalMinutes > 0 && hasPrep && hasCook}
-            <span>· Total: {totalMinutes} min</span>
+            <span class="flex items-center gap-1.5 rounded-lg bg-primary-50 px-3 py-1.5 font-medium text-primary-700">
+                Total: {totalMinutes} min
+            </span>
         {/if}
         {#if hasServings}
-            <span>· Serves {servingsNum}</span>
+            <span class="flex items-center gap-1.5 rounded-lg bg-slate-50 px-3 py-1.5">
+                <span class="text-slate-400">🍽</span> Serves {servingsNum}
+            </span>
         {/if}
         {#if hasYield}
-            <span>· {yieldText}</span>
+            <span class="rounded-lg bg-slate-50 px-3 py-1.5">
+                {yieldText}
+            </span>
         {/if}
     </div>
 {/if}

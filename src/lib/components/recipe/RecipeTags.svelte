@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Badge, Button, Input } from 'flowbite-svelte';
+    import { resolve } from '$app/paths';
 
     let {
         mode,
@@ -71,7 +72,13 @@
 {:else if tags.length > 0}
     <div class="flex flex-wrap gap-2">
         {#each tags as tag (tag)}
-            <Badge color="primary">{tag}</Badge>
+            <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() used, query params appended -->
+            <a
+                href={`${resolve('/recipes')}?tag=${encodeURIComponent(tag)}`}
+                class="rounded-full bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700 transition-colors hover:bg-primary-100"
+            >
+                {tag}
+            </a>
         {/each}
     </div>
 {/if}

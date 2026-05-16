@@ -21,6 +21,71 @@ interface HouseholdMembers {
 		  };
 }
 
+@tag("HouseholdProfiles")
+@route("/api/households/profiles")
+interface HouseholdProfiles {
+	@get
+	list():
+		| ListProfilesResponse
+		| {
+				@statusCode statusCode: 403;
+				@body body: ErrorResponse;
+		  }
+		| {
+				@statusCode statusCode: 503;
+				@body body: ErrorResponse;
+		  };
+
+	@put
+	@route("/{userId}")
+	save(@path userId: string, @body body: SaveProfileRequest):
+		| SaveProfileResponse
+		| {
+				@statusCode statusCode: 400;
+				@body body: ErrorResponse;
+		  }
+		| {
+				@statusCode statusCode: 403;
+				@body body: ErrorResponse;
+		  }
+		| {
+				@statusCode statusCode: 404;
+				@body body: ErrorResponse;
+		  }
+		| {
+				@statusCode statusCode: 503;
+				@body body: ErrorResponse;
+		  };
+}
+
+@tag("HouseholdSettings")
+@route("/api/households/settings")
+interface HouseholdSettings {
+	@get
+	get():
+		| HouseholdSettingsResponse
+		| {
+				@statusCode statusCode: 403;
+				@body body: ErrorResponse;
+		  }
+		| {
+				@statusCode statusCode: 503;
+				@body body: ErrorResponse;
+		  };
+
+	@put
+	update(@body body: HouseholdSettingsRequest):
+		| HouseholdSettingsResponse
+		| {
+				@statusCode statusCode: 403;
+				@body body: ErrorResponse;
+		  }
+		| {
+				@statusCode statusCode: 503;
+				@body body: ErrorResponse;
+		  };
+}
+
 @tag("HouseholdInvites")
 @route("/api/households/invites")
 interface HouseholdInvites {

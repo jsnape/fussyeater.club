@@ -100,6 +100,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/households/profiles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HouseholdProfiles_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/households/profiles/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["HouseholdProfiles_save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/households/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HouseholdSettings_get"];
+        put: operations["HouseholdSettings_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/invites/redeem": {
         parameters: {
             query?: never;
@@ -168,6 +216,16 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @enum {string} */
+        AgeRange: "child-0-3" | "child-4-6" | "child-7-12" | "teen" | "adult";
+        AllergyEntry: {
+            ingredient: string;
+            severity: components["schemas"]["AllergySeverity"];
+        } & {
+            [key: string]: unknown;
+        };
+        /** @enum {string} */
+        AllergySeverity: "severe" | "moderate" | "mild";
         AuthSessionFeatureFlags: {
             microsoftOAuthEnabled: boolean;
         } & {
@@ -253,6 +311,16 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        HouseholdSettingsRequest: {
+            syncProfilesEnabled: boolean;
+        } & {
+            [key: string]: unknown;
+        };
+        HouseholdSettingsResponse: {
+            syncProfilesEnabled: boolean;
+        } & {
+            [key: string]: unknown;
+        };
         HouseholdSummary: {
             id: string;
             name: string;
@@ -308,6 +376,12 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        ListProfilesResponse: {
+            profiles: components["schemas"]["MemberProfile"][];
+            syncEnabled: boolean;
+        } & {
+            [key: string]: unknown;
+        };
         LoginRequest: {
             email: string;
             password: string;
@@ -316,6 +390,18 @@ export interface components {
         };
         LoginResponse: {
             ok: boolean;
+        } & {
+            [key: string]: unknown;
+        };
+        MemberProfile: {
+            userId: string;
+            name: string;
+            role: string;
+            ageRange: components["schemas"]["AgeRange"];
+            allergies: components["schemas"]["AllergyEntry"][];
+            textures: string[];
+            safeFoods: string[];
+            dislikes: string[];
         } & {
             [key: string]: unknown;
         };
@@ -417,6 +503,20 @@ export interface components {
             householdId: string;
             /** @enum {string} */
             actionApplied: "create" | "join";
+        } & {
+            [key: string]: unknown;
+        };
+        SaveProfileRequest: {
+            ageRange: components["schemas"]["AgeRange"];
+            allergies: components["schemas"]["AllergyEntry"][];
+            textures: string[];
+            safeFoods: string[];
+            dislikes: string[];
+        } & {
+            [key: string]: unknown;
+        };
+        SaveProfileResponse: {
+            ok: boolean;
         } & {
             [key: string]: unknown;
         };
@@ -721,6 +821,186 @@ export interface operations {
             };
             /** @description The server cannot find the requested resource. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    HouseholdProfiles_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListProfilesResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    HouseholdProfiles_save: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SaveProfileResponse"];
+                };
+            };
+            /** @description The server could not understand the request due to invalid syntax. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The server cannot find the requested resource. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    HouseholdSettings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HouseholdSettingsResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    HouseholdSettings_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HouseholdSettingsRequest"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HouseholdSettingsResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };

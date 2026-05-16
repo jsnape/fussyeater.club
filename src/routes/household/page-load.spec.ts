@@ -37,20 +37,30 @@ describe('/household page load', () => {
                     }),
                     { status: 200, headers: { 'content-type': 'application/json' } }
                 )
+            )
+            .mockResolvedValueOnce(
+                new Response(
+                    JSON.stringify({ profiles: [], syncEnabled: false }),
+                    { status: 200, headers: { 'content-type': 'application/json' } }
+                )
             );
 
         const result = (await load({ fetch: fetchMock } as never)) as {
             members: unknown[];
             invites: unknown[];
+            profiles: unknown[];
+            syncEnabled: boolean;
             loadError: string | null;
         };
 
         expect(result.loadError).toBeNull();
         expect(result.members).toHaveLength(1);
         expect(result.invites).toHaveLength(1);
+        expect(result.profiles).toEqual([]);
+        expect(result.syncEnabled).toBe(false);
     });
 
-    it('should reject non-owner members before loading invites', async () => {
+    it('should reject non-owner members when all requests return 403', async () => {
         const fetchMock = vi.fn().mockResolvedValue(
             new Response(JSON.stringify({ message: 'Forbidden' }), {
                 status: 403,
@@ -59,7 +69,7 @@ describe('/household page load', () => {
         );
 
         await expect(load({ fetch: fetchMock } as never)).rejects.toMatchObject({ status: 403 });
-        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(fetchMock).toHaveBeenCalledTimes(3);
     });
 
     it('should map non-forbidden api errors to user-friendly load error message', async () => {

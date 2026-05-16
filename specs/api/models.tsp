@@ -187,3 +187,60 @@ sourceReference?: RecipeSourceReference;
 tags?: string[];
 notes?: string;
 }
+
+// ── Dietary Profiles ─────────────────────────────────────────
+
+enum AgeRange {
+  child0to3: "child-0-3",
+  child4to6: "child-4-6",
+  child7to12: "child-7-12",
+  teen: "teen",
+  adult: "adult",
+}
+
+enum AllergySeverity {
+  severe: "severe",
+  moderate: "moderate",
+  mild: "mild",
+}
+
+model AllergyEntry {
+  ingredient: string;
+  severity: AllergySeverity;
+}
+
+model MemberProfile {
+  userId: string;
+  name: string;
+  role: string;
+  ageRange: AgeRange;
+  allergies: AllergyEntry[];
+  textures: string[];
+  safeFoods: string[];
+  dislikes: string[];
+}
+
+model ListProfilesResponse {
+  profiles: MemberProfile[];
+  syncEnabled: boolean;
+}
+
+model SaveProfileRequest {
+  ageRange: AgeRange;
+  allergies: AllergyEntry[];
+  textures: string[];
+  safeFoods: string[];
+  dislikes: string[];
+}
+
+model SaveProfileResponse {
+  ok: boolean;
+}
+
+model HouseholdSettingsRequest {
+  syncProfilesEnabled: boolean;
+}
+
+model HouseholdSettingsResponse {
+  syncProfilesEnabled: boolean;
+}

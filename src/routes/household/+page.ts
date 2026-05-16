@@ -5,8 +5,10 @@ import { error } from '@sveltejs/kit';
 
 type HouseholdMember = components['schemas']['HouseholdMember'];
 type InviteStatus = components['schemas']['InviteStatus'];
+type MemberProfile = components['schemas']['MemberProfile'];
 type ListHouseholdMembersResponse = components['schemas']['ListHouseholdMembersResponse'];
 type ListHouseholdInvitesResponse = components['schemas']['ListHouseholdInvitesResponse'];
+type ListProfilesResponse = components['schemas']['ListProfilesResponse'];
 
 function pageErrorMessage(status: number): string {
     switch (status) {
@@ -23,18 +25,17 @@ function pageErrorMessage(status: number): string {
 
 export const load: PageLoad = async ({ fetch }) => {
     try {
-        const membersResponse = await apiFetchWith<ListHouseholdMembersResponse>(
-            fetch,
-            '/api/households/members'
-        );
-        const invitesResponse = await apiFetchWith<ListHouseholdInvitesResponse>(
-            fetch,
-            '/api/households/invites'
-        );
+        const [membersResponse, invitesResponse, profilesResponse] = await Promise.all([
+            apiFetchWith<ListHouseholdMembersResponse>(fetch, '/api/households/members'),
+            apiFetchWith<ListHouseholdInvitesResponse>(fetch, '/api/households/invites'),
+            apiFetchWith<ListProfilesResponse>(fetch, '/api/households/profiles')
+        ]);
 
         return {
             members: membersResponse.members,
             invites: invitesResponse.invites,
+            profiles: profilesResponse.profiles,
+            syncEnabled: profilesResponse.syncEnabled,
             loadError: null
         };
     } catch (caughtError) {
@@ -45,6 +46,8 @@ export const load: PageLoad = async ({ fetch }) => {
             return {
                 members: [] as HouseholdMember[],
                 invites: [] as InviteStatus[],
+                profiles: [] as MemberProfile[],
+                syncEnabled: false,
                 loadError: pageErrorMessage(caughtError.status)
             };
         }
@@ -52,6 +55,8 @@ export const load: PageLoad = async ({ fetch }) => {
         return {
             members: [] as HouseholdMember[],
             invites: [] as InviteStatus[],
+            profiles: [] as MemberProfile[],
+            syncEnabled: false,
             loadError: 'Unable to load household details right now.'
         };
     }

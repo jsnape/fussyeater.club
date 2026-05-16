@@ -2,7 +2,7 @@
 -- All recipes are public so they work without household setup.
 -- Private-visibility access control is covered by unit tests.
 
-INSERT INTO recipes (id, title, description, image_url, type, visibility, household_id, servings, yield, prep_minutes, cook_minutes, ingredients, method, source_reference, notes, tags)
+INSERT OR IGNORE INTO recipes (id, title, description, image_url, type, visibility, household_id, servings, yield, prep_minutes, cook_minutes, ingredients, method, source_reference, notes, tags)
 VALUES (
     'spaghetti-carbonara',
     'Spaghetti Carbonara',
@@ -22,7 +22,7 @@ VALUES (
     '["italian","quick","family-favorite"]'
 );
 
-INSERT INTO recipes (id, title, description, image_url, type, visibility, household_id, servings, yield, prep_minutes, cook_minutes, ingredients, method, source_reference, notes, tags)
+INSERT OR IGNORE INTO recipes (id, title, description, image_url, type, visibility, household_id, servings, yield, prep_minutes, cook_minutes, ingredients, method, source_reference, notes, tags)
 VALUES (
     'classic-beef-bourguignon',
     'Classic Beef Bourguignon',
@@ -42,7 +42,7 @@ VALUES (
     '["french","slow-cook","comfort-food"]'
 );
 
-INSERT INTO recipes (id, title, description, image_url, type, visibility, household_id, servings, yield, prep_minutes, cook_minutes, ingredients, method, source_reference, notes, tags)
+INSERT OR IGNORE INTO recipes (id, title, description, image_url, type, visibility, household_id, servings, yield, prep_minutes, cook_minutes, ingredients, method, source_reference, notes, tags)
 VALUES (
     'secret-family-lasagne',
     'Secret Family Lasagne',

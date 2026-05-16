@@ -70,7 +70,7 @@ describe('household page ui', () => {
                         status: 'revoked'
                     }
                 ],
-                loadError: null
+                profiles: [], syncEnabled: false, loadError: null
             }
         });
 
@@ -99,7 +99,7 @@ describe('household page ui', () => {
                 sessionUser: null,
                 members: [],
                 invites: [],
-                loadError: null
+                profiles: [], syncEnabled: false, loadError: null
             }
         });
 
@@ -132,7 +132,7 @@ describe('household page ui', () => {
                         status: 'expired'
                     }
                 ],
-                loadError: null
+                profiles: [], syncEnabled: false, loadError: null
             }
         });
 
@@ -171,7 +171,7 @@ describe('household page ui', () => {
                 sessionUser: null,
                 members: [],
                 invites: [],
-                loadError: null
+                profiles: [], syncEnabled: false, loadError: null
             }
         });
 
@@ -202,7 +202,7 @@ describe('household page ui', () => {
                         status: 'active'
                     }
                 ],
-                loadError: null
+                profiles: [], syncEnabled: false, loadError: null
             }
         });
 
@@ -225,7 +225,7 @@ describe('household page ui', () => {
                         status: 'active'
                     }
                 ],
-                loadError: null
+                profiles: [], syncEnabled: false, loadError: null
             }
         });
 
@@ -249,7 +249,7 @@ describe('household page ui', () => {
                         status: 'active'
                     }
                 ],
-                loadError: null
+                profiles: [], syncEnabled: false, loadError: null
             }
         });
 

@@ -190,4 +190,17 @@ describe('GET /api/recipes', () => {
         expect(body.items).toHaveLength(0);
         expect(body.total).toBe(2);
     });
+
+    it('should sort alphabetically when sort=alphabetical', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        await seedRecipes(pair);
+
+        const response = await GET(makeEvent(pair.first, 'sort=alphabetical'));
+        const body = (await response.json()) as { items: Array<{ id: string }> };
+
+        expect(response.status).toBe(200);
+        expect(body.items[0].id).toBe('pasta-bake');
+        expect(body.items[1].id).toBe('slow-stew');
+    });
 });

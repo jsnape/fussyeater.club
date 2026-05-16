@@ -84,6 +84,9 @@ export const GET: RequestHandler = async (event) => {
                 orderClause =
                     'ORDER BY (COALESCE(prep_minutes, 0) + COALESCE(cook_minutes, 0)) ASC, title ASC';
                 break;
+            case 'alphabetical':
+                orderClause = 'ORDER BY title ASC';
+                break;
             case 'latest':
             default:
                 orderClause = 'ORDER BY created_at DESC, title ASC';

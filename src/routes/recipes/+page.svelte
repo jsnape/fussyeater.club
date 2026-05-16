@@ -1,11 +1,12 @@
 <script lang="ts">
-    import { Button } from 'flowbite-svelte';
     import { BookOpenOutline } from 'flowbite-svelte-icons';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import type { PageData } from './$types';
+    import type { RecipeSort } from './+page';
     import RecipeCard from '$lib/components/recipe/RecipeCard.svelte';
     import RecipeSearchBar from '$lib/components/recipe/RecipeSearchBar.svelte';
+    import RecipeFilterBar from '$lib/components/recipe/RecipeFilterBar.svelte';
     import RecipePagination from '$lib/components/recipe/RecipePagination.svelte';
     import RecipeErrorState from '$lib/components/recipe/RecipeErrorState.svelte';
     import EmptyState from '$lib/components/ui/EmptyState.svelte';
@@ -19,22 +20,43 @@
     });
 
     let totalPages = $derived(Math.max(1, Math.ceil(data.total / data.pageSize)));
+    let hasActiveFilters = $derived(Boolean(data.q) || data.sort !== 'latest');
+    let activeFilterCount = $derived((data.q ? 1 : 0) + (data.sort !== 'latest' ? 1 : 0));
 
-    function handleSearch(query: string): void {
+    function buildUrl(overrides: { q?: string; sort?: RecipeSort; page?: number } = {}): string {
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- non-reactive local variable
         const params = new URLSearchParams();
-        if (query.trim()) params.set('q', query.trim());
-        // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used, query params appended
-        void goto(`${resolve('/recipes')}?${params.toString()}`, { keepFocus: true });
+        const q = overrides.q ?? data.q;
+        const sort = overrides.sort ?? data.sort;
+        const page = overrides.page ?? 1;
+
+        if (q.trim()) params.set('q', q.trim());
+        if (sort !== 'latest') params.set('sort', sort);
+        if (page > 1) params.set('page', String(page));
+
+        const qs = params.toString();
+        return qs ? `${resolve('/recipes')}?${qs}` : resolve('/recipes');
+    }
+
+    function handleSearch(query: string): void {
+        // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used inside buildUrl
+        void goto(buildUrl({ q: query }), { keepFocus: true });
+    }
+
+    function handleSortChange(sort: RecipeSort): void {
+        // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used inside buildUrl
+        void goto(buildUrl({ sort }));
+    }
+
+    function handleClearFilters(): void {
+        searchQuery = '';
+        // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used
+        void goto(resolve('/recipes'));
     }
 
     function goToPage(page: number): void {
-        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- non-reactive local variable
-        const params = new URLSearchParams();
-        if (data.q) params.set('q', data.q);
-        if (page > 1) params.set('page', String(page));
-        // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used, query params appended
-        void goto(`${resolve('/recipes')}?${params.toString()}`);
+        // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used inside buildUrl
+        void goto(buildUrl({ page }));
     }
 </script>
 
@@ -46,44 +68,65 @@
         actionHref={resolve('/recipes')}
     />
 {:else}
-    <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+        <!-- Page header -->
         <div class="flex items-center justify-between">
-            <h1 class="text-3xl font-bold text-slate-900">Recipes</h1>
-            <Button href={resolve('/recipes/new')} color="primary">+ Add Recipe</Button>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900">Recipes</h1>
+                <p class="mt-1 text-sm text-slate-500">
+                    {data.total} recipe{data.total === 1 ? '' : 's'} available
+                </p>
+            </div>
+            <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() used -->
+            <a
+                href={resolve('/recipes/new')}
+                class="inline-flex items-center gap-1.5 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary-700"
+            >
+                + Add Recipe
+            </a>
         </div>
 
-        <div class="mt-5">
+        <!-- Search + Filter bar -->
+        <div class="mt-5 space-y-3">
             <RecipeSearchBar bind:query={searchQuery} onSearch={handleSearch} />
+            <RecipeFilterBar
+                sort={data.sort}
+                onSortChange={handleSortChange}
+                {activeFilterCount}
+                onClearFilters={handleClearFilters}
+            />
         </div>
 
         {#if data.items.length === 0}
             <EmptyState
                 heading="No recipes found"
-                description={data.q
-                    ? `No results for "${data.q}". Try different search terms or browse all recipes.`
-                    : 'There are no recipes to show yet. Add your first recipe to get started!'}
-                actionLabel={data.q ? 'Browse all recipes' : 'Add a recipe'}
-                actionHref={data.q ? resolve('/recipes') : resolve('/recipes/new')}
+                description={hasActiveFilters
+                    ? 'No recipes match your current filters.'
+                    : "Your household hasn't added any recipes yet."}
+                actionLabel={hasActiveFilters ? 'Clear Filters' : 'Add Your First Recipe'}
+                actionHref={hasActiveFilters ? resolve('/recipes') : resolve('/recipes/new')}
             >
                 {#snippet icon()}
                     <BookOpenOutline class="h-12 w-12 text-primary-400" />
                 {/snippet}
             </EmptyState>
         {:else}
-            <p class="mt-4 text-sm text-slate-500">
-                {data.total} recipe{data.total === 1 ? '' : 's'} found
-                {#if data.q}&mdash; showing results for "<span class="font-medium">{data.q}</span
-                    >"{/if}
-            </p>
-
-            <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div
+                class="mt-6 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4"
+            >
                 {#each data.items as item (item.id)}
                     <RecipeCard recipe={item} />
                 {/each}
             </div>
 
             <div class="mt-8">
-                <RecipePagination page={data.page} {totalPages} onPageChange={goToPage} />
+                <RecipePagination
+                    page={data.page}
+                    {totalPages}
+                    total={data.total}
+                    pageSize={data.pageSize}
+                    onPageChange={goToPage}
+                />
             </div>
         {/if}
     </main>

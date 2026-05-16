@@ -1,0 +1,77 @@
+# FussyEater Club — Website Design Brief
+## What is this site?
+FussyEater Club (fussyeater.club) is a web application for families with fussy (picky) eaters. It helps parents and caregivers discover recipes their family will actually eat, build weekly meal plans, and generate shopping lists that respect every family member's food preferences and allergies.
+The site is live and functional today with a core recipe and household feature set. Meal planning and shopping list generation are planned next.
+---
+## Who uses it?
+**Primary audience:** Parents and caregivers (mostly ages 25–45) who are stressed about feeding children with limited food preferences, sensory sensitivities, or food allergies. They typically plan meals on their phone in the evening or at the supermarket.
+**Secondary audience:** Family members who are invited to the same "household" and contribute or browse recipes together.
+**Tone they respond to:** Warm, practical, reassuring, low-pressure. Not preachy or clinical. Think "helpful friend who gets it" rather than "nutrition expert lecturing you."
+---
+## Pages and features (current)
+### 1. Home / Landing page
+- Hero section with headline, subtitle, and hero image (a family meal)
+- Three value-proposition highlights: allergy-aware filtering, fast weekly planning, auto-generated grocery lists
+- Feature grid (3 cards): Recipe library, Weekly planning, Shopping list
+- Trust / CTA panel with register button for unauthenticated visitors
+- Health-check card (developer tool, can be hidden in production)
+### 2. Recipes — Browse (`/recipes`)
+- Search bar with text search
+- Paginated grid of recipe cards (responsive: 1 → 2 → 3 columns)
+- Each card shows: image (or fallback placeholder), title, description snippet, total time, recipe type badge ("Full recipe" / "External source"), and tags
+- "+ Add Recipe" button
+### 3. Recipe — Detail view (`/recipes/[id]`)
+- Hero image with title overlay
+- Description
+- Metadata row: prep time, cook time, servings, yield
+- Tags
+- Ingredients list (with optional groups and preparation notes)
+- Method steps (numbered) — or source reference (URL or book citation) for "reference" type recipes
+- Notes section
+- Error states for not-found, forbidden, and service-unavailable
+### 4. Recipe — Create new (`/recipes/new`)
+- Multi-section form: basic info (title, description, image URL), timings & servings, ingredients (add/remove rows), method steps or external source reference, tags, notes, visibility (public/private)
+- Two recipe types: "full" (with inline method steps) and "reference" (pointing to an external URL or book)
+- Submit and cancel actions
+### 5. Login (`/login`)
+- Email + password form
+- Invite code detection from URL query parameter
+- "Continue with Microsoft" button (feature-flagged, currently disabled)
+- Link to registration
+### 6. Register (`/register`)
+- Full name, email, password, confirm password
+- Household choice: "Create a new household" or "Join with an invite code"
+- Invite code redemption flow with inline status feedback
+- Social continuation path (Microsoft OAuth — fields adapt when active)
+### 7. Household management (`/household`)
+- Members table: name, email, role, joined date
+- Invite management: create invite with max uses and expiry, view active invite code, copy registration link, regenerate, revoke
+- Expired invites history table
+### 8. Design system reference (`/design`) — internal
+- Showcases current colour tokens, typography, spacing, elevation, form inputs
+- This page is a developer reference; it is not user-facing
+---
+## Planned features (not yet built)
+These will need pages and UI eventually — please factor them into the overall information architecture and navigation design:
+1. **Meal planner** — drag-and-drop weekly calendar where users assign recipes to days/meals
+2. **Shopping list** — auto-generated grocery list from a meal plan, consolidated by ingredient, filterable by family member preferences and allergies
+3. **Family member profiles** — per-member food preferences, allergies, likes/dislikes that drive recipe filtering and shopping list generation
+4. **Recipe editing** — edit an existing recipe (currently only creation exists)
+5. **Recipe sharing / discovery** — browse public recipes from other households
+---
+## What I need from you
+You have complete creative freedom on everything visual:
+- **Brand identity:** Name treatment / wordmark / logo concept for "FussyEater Club" (or suggest a rebrand if you feel strongly)
+- **Colour palette:** Choose whatever palette suits the audience and mood
+- **Typography:** Font pairing (headings + body)
+- **Visual style:** Illustration style, photography treatment, iconography, textures, layout patterns
+- **Layout and page structure:** Rearrange, restructure, or reimagine any page
+- **Micro-interactions and motion:** Hover states, transitions, loading indicators
+- **Tone of UI copy:** Suggest headline and body copy rewrites if the current text doesn't match your creative direction
+### Deliverables I'd like
+1. **Design system / style guide** — colour palette (with semantic roles: primary, secondary, accent, success, warning, error, surface, text), typography scale, spacing scale, elevation/shadow tokens, border radius tokens
+2. **Page-by-page design direction** — for each page listed above, describe the layout, key visual elements, and any component-level styling notes. Wireframes or high-fidelity descriptions are both welcome
+3. **Component patterns** — button styles (primary, secondary, ghost/text), card styles, form input styles, badge/tag styles, navigation, and any new components you recommend (e.g., toast notifications, modals, empty states)
+4. **Responsive strategy** — how the design adapts across phone, tablet, and desktop
+5. **Future-readiness** — how your design system accommodates the planned meal planner, shopping list, and family member profile features
+Treat this as a blank slate. No existing branding decisions carry forward.

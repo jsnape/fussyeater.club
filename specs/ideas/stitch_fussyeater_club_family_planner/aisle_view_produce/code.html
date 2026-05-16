@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,wght@0,400..900;1,400..900&amp;family=Quicksand:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fff8f4",
+                    "tertiary-fixed-dim": "#ffb4a4",
+                    "on-surface": "#1f1b17",
+                    "on-primary-fixed-variant": "#713704",
+                    "tertiary": "#9c432f",
+                    "on-secondary-fixed": "#042110",
+                    "secondary-fixed-dim": "#aeceb4",
+                    "on-background": "#1f1b17",
+                    "on-error-container": "#93000a",
+                    "on-surface-variant": "#53443a",
+                    "on-primary-container": "#743a07",
+                    "surface-container-highest": "#eae1da",
+                    "surface-container-low": "#fbf2eb",
+                    "secondary-container": "#caebcf",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#f0e6e0",
+                    "tertiary-container": "#ffa18c",
+                    "secondary": "#48654f",
+                    "primary-container": "#f9a66c",
+                    "on-secondary-fixed-variant": "#314d39",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#f5ece6",
+                    "on-primary-fixed": "#311400",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffdcc6",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdad3",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#34302b",
+                    "surface-dim": "#e1d8d2",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#f8efe8",
+                    "surface-variant": "#eae1da",
+                    "on-secondary-container": "#4e6b55",
+                    "surface-tint": "#8e4e1c",
+                    "primary-fixed-dim": "#ffb786",
+                    "outline-variant": "#d8c2b6",
+                    "background": "#fff8f4",
+                    "on-tertiary-container": "#802f1d",
+                    "outline": "#867369",
+                    "inverse-primary": "#ffb786",
+                    "secondary-fixed": "#caebcf",
+                    "on-tertiary-fixed-variant": "#7d2c1b",
+                    "surface": "#fff8f4",
+                    "primary": "#8e4e1c",
+                    "on-tertiary-fixed": "#3d0600"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "section-gap-desktop": "80px",
+                    "gutter": "16px",
+                    "container-margin": "24px",
+                    "section-gap-mobile": "40px",
+                    "card-padding": "24px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Literata"],
+                    "headline-md": ["Literata"],
+                    "label-sm": ["Quicksand"],
+                    "label-md": ["Quicksand"],
+                    "body-lg": ["Quicksand"],
+                    "display-lg": ["Literata"],
+                    "body-md": ["Quicksand"],
+                    "display-lg-mobile": ["Literata"]
+            },
+            "fontSize": {
+                    "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fff8f4;
+            color: #1f1b17;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md selection:bg-primary-container">
+<!-- Header / TopAppBar -->
+<header class="w-full sticky top-0 z-50 bg-surface-bright dark:bg-surface-dim">
+<div class="flex justify-between items-center px-gutter py-4 w-full max-w-screen-xl mx-auto">
+<h1 class="font-headline-md text-headline-md-mobile md:text-headline-md font-bold text-primary dark:text-primary-fixed-dim">FussyEater Club</h1>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-full active:scale-95 duration-200">filter_list</button>
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-full active:scale-95 duration-200">account_circle</button>
+</div>
+</div>
+</header>
+<main class="min-h-screen pb-32">
+<!-- Aisle Navigation (Quick Selector) -->
+<div class="px-gutter pt-4 overflow-x-auto whitespace-nowrap scrollbar-hide flex gap-3 mb-6">
+<button class="bg-secondary-container text-on-secondary-container px-6 py-2 rounded-full font-label-md flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">kitchen</span> Dairy &amp; Eggs
+            </button>
+<button class="bg-surface-container-high text-on-surface-variant px-6 py-2 rounded-full font-label-md flex items-center gap-2 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined">bakery_dining</span> Bakery
+            </button>
+<button class="bg-surface-container-high text-on-surface-variant px-6 py-2 rounded-full font-label-md flex items-center gap-2 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined">eco</span> Produce
+            </button>
+<button class="bg-surface-container-high text-on-surface-variant px-6 py-2 rounded-full font-label-md flex items-center gap-2 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined">icecream</span> Frozen
+            </button>
+</div>
+<!-- Focused Aisle View Canvas -->
+<section class="max-w-screen-xl mx-auto px-gutter grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Quick Add Panel -->
+<div class="md:col-span-4 lg:col-span-3 space-y-6">
+<div class="bg-surface-container-low p-6 rounded-3xl shadow-sm border-[1.5px] border-outline-variant/30">
+<h2 class="font-headline-sm text-headline-sm-mobile md:text-headline-sm mb-4 text-primary">Quick Add</h2>
+<p class="text-on-surface-variant font-body-md mb-6 leading-relaxed">Forgot something? Add staples to your list instantly.</p>
+<div class="space-y-3">
+<div class="relative">
+<input class="w-full h-14 pl-4 pr-12 rounded-xl bg-surface-bright border-outline text-on-surface focus:ring-primary focus:border-primary placeholder:text-outline-variant font-label-md" placeholder="Type item name..." type="text"/>
+<button class="absolute right-3 top-3 bg-primary text-on-primary p-2 rounded-lg material-symbols-outlined active:scale-90 transition-transform">add</button>
+</div>
+<div class="flex flex-wrap gap-2 pt-2">
+<button class="bg-tertiary-container/30 text-on-tertiary-container px-4 py-2 rounded-xl font-label-sm border border-tertiary-container/50 hover:bg-tertiary-container/50 transition-colors">+ Milk</button>
+<button class="bg-tertiary-container/30 text-on-tertiary-container px-4 py-2 rounded-xl font-label-sm border border-tertiary-container/50 hover:bg-tertiary-container/50 transition-colors">+ Bread</button>
+<button class="bg-tertiary-container/30 text-on-tertiary-container px-4 py-2 rounded-xl font-label-sm border border-tertiary-container/50 hover:bg-tertiary-container/50 transition-colors">+ Eggs</button>
+<button class="bg-tertiary-container/30 text-on-tertiary-container px-4 py-2 rounded-xl font-label-sm border border-tertiary-container/50 hover:bg-tertiary-container/50 transition-colors">+ Butter</button>
+</div>
+</div>
+</div>
+<div class="relative h-48 rounded-3xl overflow-hidden group">
+<img alt="Groceries" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A warm and inviting photograph of fresh organic milk bottles and farm-fresh brown eggs arranged on a rustic wooden table. The lighting is soft and golden, suggesting a cozy morning kitchen atmosphere. The color palette is composed of creamy whites, warm wood tones, and soft sage greens, creating a reassuring and artisanal vibe consistent with a high-end family health app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm3WJZdW4Ce5c25-Hf71uCiDhTpCsoi9FjctVkJ0JJuYeQfQWT23pkN_H-kZvMGz5uJC4osqUjDoNhzZCNIq2NwF37e2HC8Ds4QMPNsMkqZ3crjFb27PfH62Kkn487ZRTvRJufDL4ugk0A-Eh-_IgBOO6UhgSk5kP_DHSQH6R1nCW2cMod0aOPaHgnDEtO7ySQVMah2Wpyl8JSfaincrCPieeKDQ-8nbs8PjXAh6_6V-V5TOGVTATzz3Hju6cH1EC7ORFJOU3iXLGC"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+<span class="text-white font-headline-sm text-sm">Shopping Inspiration</span>
+</div>
+</div>
+</div>
+<!-- Focused Checklist (Asymmetric Bento Grid) -->
+<div class="md:col-span-8 lg:col-span-9 space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm-mobile md:text-headline-sm text-on-surface">Dairy &amp; Eggs <span class="text-on-surface-variant font-label-md ml-2 font-normal">(4 items left)</span></h3>
+<div class="h-1 bg-surface-container-highest flex-1 mx-6 rounded-full overflow-hidden">
+<div class="w-1/3 h-full bg-secondary rounded-full"></div>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<!-- Checkable Item Card -->
+<div class="bg-surface-container group flex items-center p-4 rounded-3xl border-2 border-transparent hover:border-primary-container hover:bg-surface-container-lowest transition-all cursor-pointer">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-on-secondary-container mr-4">
+<span class="material-symbols-outlined">water_drop</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-on-surface">Whole Milk</p>
+<p class="font-label-sm text-on-surface-variant">2 Gallons</p>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-outline-variant flex items-center justify-center group-hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-primary text-xl hidden group-active:block">check</span>
+</div>
+</div>
+<!-- Item Card (Active/Checked) -->
+<div class="bg-secondary-container/20 flex items-center p-4 rounded-3xl border-2 border-secondary transition-all opacity-70">
+<div class="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-on-secondary mr-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">egg</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-on-surface line-through">Organic Eggs</p>
+<p class="font-label-sm text-on-surface-variant">1 Dozen</p>
+</div>
+<div class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-on-secondary">
+<span class="material-symbols-outlined text-xl">check</span>
+</div>
+</div>
+<div class="bg-surface-container group flex items-center p-4 rounded-3xl border-2 border-transparent hover:border-primary-container hover:bg-surface-container-lowest transition-all cursor-pointer">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-on-secondary-container mr-4">
+<span class="material-symbols-outlined">nutrition</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-on-surface">Greek Yogurt</p>
+<p class="font-label-sm text-on-surface-variant">32 oz, Plain</p>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-outline-variant flex items-center justify-center"></div>
+</div>
+<div class="bg-surface-container group flex items-center p-4 rounded-3xl border-2 border-transparent hover:border-primary-container hover:bg-surface-container-lowest transition-all cursor-pointer">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-on-secondary-container mr-4">
+<span class="material-symbols-outlined">bakery_dining</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-on-surface">Unsalted Butter</p>
+<p class="font-label-sm text-on-surface-variant">2 Sticks</p>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-outline-variant flex items-center justify-center"></div>
+</div>
+<div class="bg-surface-container group flex items-center p-4 rounded-3xl border-2 border-transparent hover:border-primary-container hover:bg-surface-container-lowest transition-all cursor-pointer">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-on-secondary-container mr-4">
+<span class="material-symbols-outlined">local_pizza</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-on-surface">Cheddar Cheese</p>
+<p class="font-label-sm text-on-surface-variant">Block, 8 oz</p>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-outline-variant flex items-center justify-center"></div>
+</div>
+</div>
+<!-- Guidance Note -->
+<div class="mt-8 bg-tertiary-fixed/20 p-6 rounded-[2rem] flex gap-4 items-start">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-3xl">lightbulb</span>
+<div>
+<p class="font-label-md text-on-tertiary-fixed-variant mb-1">Picky Eater Tip</p>
+<p class="font-body-md text-on-tertiary-fixed-variant leading-relaxed">Buying full-fat dairy? Some little ones find the creamier texture more palatable when trying new foods. Stick to the same brand for consistency!</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface-container-low dark:bg-surface-container-low rounded-t-xl shadow-[0_-4px_12px_rgba(107,101,96,0.08)]">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 hover:text-primary dark:hover:text-primary-fixed-dim active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">kitchen</span>
+<span class="font-label-md text-label-md">Kitchen</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 hover:text-primary dark:hover:text-primary-fixed-dim active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-md text-label-md">Recipes</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-secondary-container dark:bg-on-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed rounded-full px-5 py-1 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shopping_basket</span>
+<span class="font-label-md text-label-md">List</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 hover:text-primary dark:hover:text-primary-fixed-dim active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">auto_graph</span>
+<span class="font-label-md text-label-md">Progress</span>
+</div>
+</nav>
+<!-- FAB (Contextual for Shopping List) -->
+<button class="fixed right-6 bottom-24 bg-primary text-on-primary w-14 h-14 rounded-2xl shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-40">
+<span class="material-symbols-outlined text-3xl">shopping_cart_checkout</span>
+</button>
+</body></html>

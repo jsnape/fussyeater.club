@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shopping List Settings - FussyEater Club</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Literata:wght@600;700&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fff8f4",
+                    "tertiary-fixed-dim": "#ffb4a4",
+                    "on-surface": "#1f1b17",
+                    "on-primary-fixed-variant": "#713704",
+                    "tertiary": "#9c432f",
+                    "on-secondary-fixed": "#042110",
+                    "secondary-fixed-dim": "#aeceb4",
+                    "on-background": "#1f1b17",
+                    "on-error-container": "#93000a",
+                    "on-surface-variant": "#53443a",
+                    "on-primary-container": "#743a07",
+                    "surface-container-highest": "#eae1da",
+                    "surface-container-low": "#fbf2eb",
+                    "secondary-container": "#caebcf",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#f0e6e0",
+                    "tertiary-container": "#ffa18c",
+                    "secondary": "#48654f",
+                    "primary-container": "#f9a66c",
+                    "on-secondary-fixed-variant": "#314d39",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#f5ece6",
+                    "on-primary-fixed": "#311400",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffdcc6",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdad3",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#34302b",
+                    "surface-dim": "#e1d8d2",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#f8efe8",
+                    "surface-variant": "#eae1da",
+                    "on-secondary-container": "#4e6b55",
+                    "surface-tint": "#8e4e1c",
+                    "primary-fixed-dim": "#ffb786",
+                    "outline-variant": "#d8c2b6",
+                    "background": "#fff8f4",
+                    "on-tertiary-container": "#802f1d",
+                    "outline": "#867369",
+                    "inverse-primary": "#ffb786",
+                    "secondary-fixed": "#caebcf",
+                    "on-tertiary-fixed-variant": "#7d2c1b",
+                    "surface": "#fff8f4",
+                    "primary": "#8e4e1c",
+                    "on-tertiary-fixed": "#3d0600"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "section-gap-desktop": "80px",
+                    "gutter": "16px",
+                    "container-margin": "24px",
+                    "section-gap-mobile": "40px",
+                    "card-padding": "24px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Literata"],
+                    "headline-md": ["Literata"],
+                    "label-sm": ["Quicksand"],
+                    "label-md": ["Quicksand"],
+                    "body-lg": ["Quicksand"],
+                    "display-lg": ["Literata"],
+                    "body-md": ["Quicksand"],
+                    "display-lg-mobile": ["Literata"]
+            },
+            "fontSize": {
+                    "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .toggle-checkbox:checked {
+            right: 0;
+            background-color: #8e4e1c;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #f9a66c;
+        }
+    </style>
+</head>
+<body class="bg-surface-bright text-on-surface font-body-md selection:bg-primary-fixed">
+<!-- TopAppBar -->
+<header class="w-full sticky top-0 z-50 bg-surface-bright dark:bg-surface-dim">
+<div class="flex justify-between items-center px-gutter py-4 w-full max-w-screen-xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform duration-200 hover:bg-surface-container-high p-2 rounded-full">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md-mobile md:text-headline-md font-bold text-primary">FussyEater Club</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">
+<span class="material-symbols-outlined text-on-surface-variant">filter_list</span>
+</button>
+<button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">
+<span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-screen-xl mx-auto px-container-margin pb-32 pt-8">
+<!-- Hero Section -->
+<section class="mb-12">
+<h2 class="font-headline-sm text-headline-sm-mobile md:text-headline-sm text-primary mb-2">List Preferences</h2>
+<p class="text-on-surface-variant font-body-md max-w-2xl">Tailor your weekly shopping list to match your family's needs. We'll automatically swap ingredients and prioritize alternatives based on these settings.</p>
+</section>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Family Members Column -->
+<div class="md:col-span-7 space-y-6">
+<div class="bg-surface-container-low rounded-xl p-card-padding">
+<h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-6">Prioritize Needs For</h3>
+<div class="space-y-4">
+<!-- Leo -->
+<div class="flex items-center justify-between p-4 bg-surface-container rounded-lg group hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-primary-fixed flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A close-up portrait of a cheerful young toddler with soft, warm lighting in a cozy home setting. The image captures a sense of joyful innocence, using a soft-focus background and a warm color palette of apricots and creams that aligns with a gentle, empathetic parenting brand aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDC85KsiXTt5CRuf9HsF66pHdl2TDsa2ODDdbKFJbNDjs06NJrhheXVbuNpVX6ubxokA4TmfMsPejMHnTFMqmij0zb54IB7AErmEvdQ-8i-YNDVL2L6IINove-klJeaB_mivdeHwL0uhDJlbrJK3wpHV-PZut6wzqcklVSEEHNeH-jZPN1N5ANV27tZ1-mPHlz9Mtp5g-hhlj3Wa2_pqy9AUoBjqRVVx2k4YfM7X470jV-OdfV7G09d2uNalwYSL59Iw2yJG8gm92qM"/>
+</div>
+<div>
+<p class="font-body-lg text-on-surface">Leo</p>
+<p class="font-label-sm text-on-surface-variant">Gluten-Free Priority</p>
+</div>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-transparent right-6 duration-200 ease-in-out" id="toggle-leo" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-outline-variant cursor-pointer" for="toggle-leo"></label>
+</div>
+</div>
+<!-- Maya -->
+<div class="flex items-center justify-between p-4 bg-surface-container rounded-lg group hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-secondary-fixed flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A portrait of a primary school-aged girl smiling gently, set against a backdrop of a warm, sunlit kitchen. The photography style is modern and high-key, emphasizing clean lines and a comforting atmosphere with a palette dominated by soft greens and neutral beiges to evoke a sense of health and well-being." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6D7MNdWzyrE_MwR6t2mqX5ZpOwgw20OKYrNPrd7M3Gd2SeSmZweSdnvg8ovf6318Co2jCi8VMX8Is8_V3s0jto9JBb47hI5wmVSd6lgwxvxvj-H6zVB5GR9aVOnlrhcrSHevsnrb27jg-st7Wm_dqAYH6s28gsZV-BPzAYYqexYz5ror4Y8zh1qhW5TMZwyvga5cTYXvpJYr_XOT35DG7I8pEwZdAmIHTOjsgJMoq5IIHxeBlnOn7Spm70kxfwPHG29wxi64BKQPY"/>
+</div>
+<div>
+<p class="font-body-lg text-on-surface">Maya</p>
+<p class="font-label-sm text-on-surface-variant">Nut-Free Ingredients</p>
+</div>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-transparent right-6 duration-200 ease-in-out" id="toggle-maya" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-outline-variant cursor-pointer" for="toggle-maya"></label>
+</div>
+</div>
+<!-- Dad -->
+<div class="flex items-center justify-between p-4 bg-surface-container rounded-lg group hover:bg-surface-container-high transition-colors opacity-60">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-tertiary-fixed flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A portrait of a man in his late 30s with a kind, relaxed expression. The lighting is natural and soft, coming from a nearby window in a modern, minimalist living room. The visual style is grounded and authentic, using a warm neutral color palette to create a reassuring and family-oriented atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrOy8QvV5ARq-y2biozBooRemBeA57ezv6D6n5sQ6wTcwJchA-5waAR5pXwv9G4OtcVomqUjpn_RcNt9TU2rB76KGjIdCQ8uTrFT0f12zJY5R0Iyb7drJm9fdhbfkO29aJYJ-ZySKr-j9QvI72z1KolNpOodKzcYowmN4OlTr5CwGSrOGsqNTc6h5Pudk9XPxjqZjpD9OkuT8RtrnuM-1SZHZJChg9YGM2bUuh5xpSgCszVezM5B-GQUk9uOSTsK3GlAaf1dj4eIPg"/>
+</div>
+<div>
+<p class="font-body-lg text-on-surface">Dad</p>
+<p class="font-label-sm text-on-surface-variant">No Dairy Substitutes</p>
+</div>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-transparent right-6 duration-200 ease-in-out" id="toggle-dad" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-outline-variant cursor-pointer" for="toggle-dad"></label>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-card-padding">
+<h3 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-6">Global Substitutions</h3>
+<div class="space-y-6">
+<div class="flex items-start gap-4">
+<div class="flex-shrink-0 mt-1">
+<span class="material-symbols-outlined text-secondary">eco</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-center mb-1">
+<h4 class="font-body-md text-on-surface">Prioritize Organic</h4>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-transparent right-6 duration-200 ease-in-out" id="toggle-organic" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-outline-variant cursor-pointer" for="toggle-organic"></label>
+</div>
+</div>
+<p class="font-label-sm text-on-surface-variant">Always select organic options for the 'Dirty Dozen' produce items.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="flex-shrink-0 mt-1">
+<span class="material-symbols-outlined text-secondary">inventory_2</span>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-center mb-1">
+<h4 class="font-body-md text-on-surface">Store Brand Preferred</h4>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-transparent right-6 duration-200 ease-in-out" id="toggle-store" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-outline-variant cursor-pointer" for="toggle-store"></label>
+</div>
+</div>
+<p class="font-label-sm text-on-surface-variant">Save on costs by automatically selecting generic equivalents where available.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary & Highlights Column -->
+<div class="md:col-span-5 space-y-6">
+<!-- Summary Card -->
+<div class="bg-primary-container text-on-primary-container rounded-xl p-card-padding relative overflow-hidden shadow-[0_4px_12px_rgba(107,101,96,0.08)]">
+<div class="relative z-10">
+<h3 class="font-headline-sm text-headline-sm mb-4">Current Summary</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">check_circle</span>
+<p class="font-body-md">Lists will be strictly <strong>Gluten-Free</strong></p>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">check_circle</span>
+<p class="font-body-md">Nut-based ingredients are <strong>Excluded</strong></p>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">info</span>
+<p class="font-body-md italic opacity-80">Substitutes will be suggested for 12 items</p>
+</div>
+</div>
+<button class="mt-8 w-full bg-primary text-on-primary py-3 px-6 rounded-full font-label-md hover:shadow-lg active:scale-95 transition-all duration-200">
+                            Apply to Next List
+                        </button>
+</div>
+<!-- Decorative Background Element -->
+<div class="absolute -bottom-8 -right-8 w-32 h-32 bg-on-primary-container opacity-5 rounded-full"></div>
+</div>
+<!-- Allergy Warning Box -->
+<div class="bg-surface-container-low border-2 border-outline-variant rounded-xl p-card-padding">
+<div class="flex items-center gap-2 text-tertiary mb-4">
+<span class="material-symbols-outlined">warning</span>
+<h3 class="font-label-md text-label-md uppercase tracking-wider">Saved Allergy Profile</h3>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-tertiary-container text-on-tertiary-container rounded-full font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">no_food</span> Peanuts
+                        </span>
+<span class="px-3 py-1 bg-tertiary-container text-on-tertiary-container rounded-full font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">no_food</span> Tree Nuts
+                        </span>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">priority_high</span> Wheat (Leo)
+                        </span>
+</div>
+<p class="mt-4 font-label-sm text-on-surface-variant italic">Allergy profiles are synced from Health Kit. Tap here to manage.</p>
+</div>
+<!-- Visual Tip -->
+<div class="group relative aspect-video rounded-xl overflow-hidden cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A brightly lit, aesthetically pleasing kitchen scene featuring various gluten-free flours and nut-free snacks arranged on a rustic wooden table. The lighting is warm and golden, reminiscent of a peaceful afternoon. The image uses a soft, painterly style with a focus on natural textures and a harmonious color scheme of apricot, sage, and cream." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAd0SatQlbKlM0w0fYDZsRDQ_qSPxBTv_yzB_pRsT9AkyR5J4m_oJSxIM7v0esjFSG9Ks1Cn9OT9YLlTeGDnCQI3OAFlbfbaHppVEUZH_AZS3Dble7Br-em0HLg4W_80zLaF5c7P8DmLrbcCCgvjmlki5W2P36B6Wffi9vfJarMKtQYbwhV9JOs0c9FJu6xlqQ8m8weXfE_ec5M88XzFP_2L7UVgKkWopzkwCCWYU85qkFSxICDdYMwlpIlZ88FiNeeNbBDIr09yMzc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-4">
+<span class="text-white font-label-sm uppercase tracking-widest mb-1">Kitchen Tip</span>
+<h4 class="text-white font-headline-sm text-[18px]">Swapping Wheat for Oat Flour?</h4>
+<p class="text-white/80 font-label-sm">See our guide for the perfect texture swaps.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface-container-low dark:bg-surface-container-low rounded-t-xl shadow-[0_-4px_12px_rgba(107,101,96,0.08)]">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 hover:text-primary active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">kitchen</span>
+<span class="font-label-md text-label-md">Kitchen</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 hover:text-primary active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-md text-label-md">Recipes</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-on-secondary-fixed-variant text-on-secondary-container dark:text-secondary-fixed rounded-full px-5 py-1 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">shopping_basket</span>
+<span class="font-label-md text-label-md">List</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 hover:text-primary active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">auto_graph</span>
+<span class="font-label-md text-label-md">Progress</span>
+</button>
+</nav>
+</body></html>

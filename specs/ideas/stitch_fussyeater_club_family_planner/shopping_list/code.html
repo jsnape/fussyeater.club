@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FussyEater Club - Shopping List</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Literata:wght@600;700&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #fff8f4;
+            color: #1f1b17;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#fff8f4",
+                        "tertiary-fixed-dim": "#ffb4a4",
+                        "on-surface": "#1f1b17",
+                        "on-primary-fixed-variant": "#713704",
+                        "tertiary": "#9c432f",
+                        "on-secondary-fixed": "#042110",
+                        "secondary-fixed-dim": "#aeceb4",
+                        "on-background": "#1f1b17",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#53443a",
+                        "on-primary-container": "#743a07",
+                        "surface-container-highest": "#eae1da",
+                        "surface-container-low": "#fbf2eb",
+                        "secondary-container": "#caebcf",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#f0e6e0",
+                        "tertiary-container": "#ffa18c",
+                        "secondary": "#48654f",
+                        "primary-container": "#f9a66c",
+                        "on-secondary-fixed-variant": "#314d39",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#f5ece6",
+                        "on-primary-fixed": "#311400",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#ffdcc6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffdad3",
+                        "error": "#ba1a1a",
+                        "inverse-surface": "#34302b",
+                        "surface-dim": "#e1d8d2",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f8efe8",
+                        "surface-variant": "#eae1da",
+                        "on-secondary-container": "#4e6b55",
+                        "surface-tint": "#8e4e1c",
+                        "primary-fixed-dim": "#ffb786",
+                        "outline-variant": "#d8c2b6",
+                        "background": "#fff8f4",
+                        "on-tertiary-container": "#802f1d",
+                        "outline": "#867369",
+                        "inverse-primary": "#ffb786",
+                        "secondary-fixed": "#caebcf",
+                        "on-tertiary-fixed-variant": "#7d2c1b",
+                        "surface": "#fff8f4",
+                        "primary": "#8e4e1c",
+                        "on-tertiary-fixed": "#3d0600"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "section-gap-desktop": "80px",
+                        "gutter": "16px",
+                        "container-margin": "24px",
+                        "section-gap-mobile": "40px",
+                        "card-padding": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Literata"],
+                        "headline-md": ["Literata"],
+                        "label-sm": ["Quicksand"],
+                        "label-md": ["Quicksand"],
+                        "body-lg": ["Quicksand"],
+                        "display-lg": ["Literata"],
+                        "body-md": ["Quicksand"],
+                        "display-lg-mobile": ["Literata"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface-bright min-h-screen pb-24">
+<!-- TopAppBar Component -->
+<header class="w-full sticky top-0 z-50 bg-surface-bright/95 backdrop-blur-md">
+<div class="flex justify-between items-center px-gutter py-4 w-full max-w-screen-xl mx-auto">
+<h1 class="font-headline-md text-headline-md-mobile md:text-headline-md font-bold text-primary">FussyEater Club</h1>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<span class="font-label-md text-on-surface-variant">Search your list...</span>
+</div>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="filter_list">filter_list</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-screen-xl mx-auto px-gutter md:px-container-margin py-8">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Household Filters Sidebar -->
+<aside class="md:col-span-3 space-y-6">
+<div class="bg-surface-container-low p-6 rounded-xl space-y-4">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Household</h2>
+<nav class="flex flex-wrap md:flex-col gap-2">
+<button class="flex items-center gap-3 px-4 py-2 bg-primary-container text-on-primary-container rounded-full font-label-md transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+                            Everyone
+                        </button>
+<button class="flex items-center gap-3 px-4 py-2 hover:bg-surface-container-high text-on-surface-variant rounded-full font-label-md transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="face">face</span>
+                            Leo
+                        </button>
+<button class="flex items-center gap-3 px-4 py-2 hover:bg-surface-container-high text-on-surface-variant rounded-full font-label-md transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="face_3">face_3</span>
+                            Mia
+                        </button>
+<button class="flex items-center gap-3 px-4 py-2 hover:bg-surface-container-high text-on-surface-variant rounded-full font-label-md transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+                            Mom
+                        </button>
+</nav>
+</div>
+<div class="hidden md:block relative overflow-hidden rounded-xl h-48 group">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A lush and vibrant grocery store produce section filled with fresh organic vegetables like peppers and leafy greens. The lighting is warm and natural, emphasizing the rich textures and deep colors of the food. The atmosphere is inviting and healthy, mirroring a premium organic marketplace aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbHNXpNMn1gvsJ7EKlg_YzkngOCvEhr5faCaFMGY3dYY4-MULeRjcVmh6aqyIgHT6W2rHdg6YWr4_7pEVKsYFA9Nd4BFK1MH8KBFJiUPKfsZhhcQ225hssEytky3qRHV893ZWMA850BhBnOBk-BSJ0m5cHjAK2Z78qRUbvRFNmEEiWJnyvmXNCufU0LW2MXJKyUw1HRHHtmcvTHSHIWlGeydXk0MvCsfivtNGjOsoswajf9ThcHoID5x9aPIgRSOpWajP0RFsx0Nxk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<p class="font-label-sm text-white opacity-90 uppercase tracking-widest">Tip of the week</p>
+<p class="font-headline-sm text-white text-base leading-tight">Pick peppers with 4 bumps for sweeter raw snacks.</p>
+</div>
+</div>
+</aside>
+<!-- Main Shopping List -->
+<section class="md:col-span-9 space-y-8">
+<header class="flex justify-between items-end">
+<div>
+<h2 class="font-headline-md text-headline-md-mobile md:text-headline-md text-primary">Shopping List</h2>
+<p class="font-body-md text-on-surface-variant">24 items needed for this week's meals</p>
+</div>
+<button class="hidden md:flex items-center gap-2 text-primary font-label-md hover:underline">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+                        Share List
+                    </button>
+</header>
+<!-- Category: Produce -->
+<div class="space-y-4">
+<div class="flex items-center gap-2 py-2 border-b border-outline-variant">
+<span class="material-symbols-outlined text-secondary" data-icon="eco">eco</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Produce</h3>
+</div>
+<div class="grid gap-3">
+<!-- Item -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:shadow-[0_4px_12px_rgba(107,101,96,0.08)] transition-all">
+<div class="flex items-center gap-4">
+<button class="w-6 h-6 rounded-md border-2 border-outline flex items-center justify-center hover:border-primary">
+<span class="material-symbols-outlined text-transparent" data-icon="check">check</span>
+</button>
+<div>
+<p class="font-body-lg text-on-surface">Honeycrisp Apples</p>
+<div class="flex gap-2 mt-1">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold uppercase tracking-wider">For: Afternoon Crunch</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-md text-primary">6 units</p>
+</div>
+</div>
+<!-- Item -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:shadow-[0_4px_12px_rgba(107,101,96,0.08)] transition-all">
+<div class="flex items-center gap-4">
+<button class="w-6 h-6 rounded-md border-2 border-outline flex items-center justify-center hover:border-primary">
+<span class="material-symbols-outlined text-transparent" data-icon="check">check</span>
+</button>
+<div>
+<p class="font-body-lg text-on-surface">Baby Carrots</p>
+<div class="flex gap-2 mt-1">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold uppercase tracking-wider">For: Leo's Lunchbox</span>
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold uppercase tracking-wider">For: Carrot Fingers</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-md text-primary">2 bags</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Category: Dairy & Eggs -->
+<div class="space-y-4">
+<div class="flex items-center gap-2 py-2 border-b border-outline-variant">
+<span class="material-symbols-outlined text-secondary" data-icon="egg">egg</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Dairy &amp; Eggs</h3>
+</div>
+<div class="grid gap-3">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:shadow-[0_4px_12px_rgba(107,101,96,0.08)] transition-all">
+<div class="flex items-center gap-4">
+<button class="w-6 h-6 rounded-md border-2 border-outline flex items-center justify-center hover:border-primary">
+<span class="material-symbols-outlined text-transparent" data-icon="check">check</span>
+</button>
+<div>
+<p class="font-body-lg text-on-surface">Greek Yogurt (Plain)</p>
+<div class="flex gap-2 mt-1">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold uppercase tracking-wider">For: Morning Dip</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-md text-primary">1 tub</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Category: Pantry -->
+<div class="space-y-4">
+<div class="flex items-center gap-2 py-2 border-b border-outline-variant">
+<span class="material-symbols-outlined text-secondary" data-icon="inventory_2">inventory_2</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Pantry</h3>
+</div>
+<div class="grid gap-3">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:shadow-[0_4px_12px_rgba(107,101,96,0.08)] transition-all">
+<div class="flex items-center gap-4">
+<button class="w-6 h-6 rounded-md border-2 border-outline flex items-center justify-center hover:border-primary">
+<span class="material-symbols-outlined text-transparent" data-icon="check">check</span>
+</button>
+<div>
+<p class="font-body-lg text-on-surface">Bowtie Pasta</p>
+<div class="flex gap-2 mt-1">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full text-[10px] font-bold uppercase tracking-wider">For: Magic Pasta</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-md text-primary">2 boxes</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Checked Items Section -->
+<div class="mt-12 bg-surface-container rounded-2xl overflow-hidden border border-outline-variant/30">
+<button class="w-full flex items-center justify-between p-6 hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline" data-icon="task_alt">task_alt</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface-variant">Checked Items (12)</h3>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</button>
+<div class="px-6 pb-6 space-y-3 opacity-60">
+<div class="flex items-center gap-4 py-2 border-b border-outline-variant/20">
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-md text-on-surface line-through">Whole Milk</span>
+</div>
+<div class="flex items-center gap-4 py-2 border-b border-outline-variant/20">
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-md text-on-surface line-through">Brown Rice</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar Component -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-surface-container-low flex justify-around items-center px-4 pb-4 pt-2 shadow-[0_-4px_12px_rgba(107,101,96,0.08)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:text-primary transition-colors active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="kitchen">kitchen</span>
+<span class="font-label-md text-label-md">Kitchen</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:text-primary transition-colors active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="menu_book">menu_book</span>
+<span class="font-label-md text-label-md">Recipes</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-5 py-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="shopping_basket">shopping_basket</span>
+<span class="font-label-md text-label-md">List</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:text-primary transition-colors active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="auto_graph">auto_graph</span>
+<span class="font-label-md text-label-md">Progress</span>
+</a>
+</nav>
+<!-- Contextual FAB (Only for list adding) -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-2xl shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[32px]" data-icon="add">add</span>
+</button>
+</body></html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Planner - FussyEater Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#B22222',
+                            cream: '#FDFBF7',
+                            sand: '#F5F5F5',
+                            charcoal: '#2D2D2D',
+                            mustard: '#E8B031',
+                            sage: '#8BA888'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #FDFBF7; }
+        .smooth-shadow { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); }
+        .sticker-badge { 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Drag and drop visual cues */
+        .draggable-recipe {
+            cursor: grab;
+        }
+        .draggable-recipe:active {
+            cursor: grabbing;
+        }
+        .drop-zone {
+            transition: all 0.2s ease;
+        }
+        .drop-zone.drag-over {
+            background-color: #F5F5F5; /* brand-sand */
+            border-color: #8BA888; /* brand-sage */
+            border-style: dashed;
+        }
+
+        /* Calendar Grid Lines */
+        .calendar-grid {
+            background-image: linear-gradient(to right, #F5F5F5 1px, transparent 1px),
+                              linear-gradient(to bottom, #F5F5F5 1px, transparent 1px);
+            background-size: calc(100% / 7) 100px;
+        }
+        
+        /* Tooltip styling */
+        .tooltip-trigger:hover .tooltip-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="font-sans text-brand-charcoal antialiased m-0 p-0 overflow-x-hidden min-h-screen flex flex-col relative">
+
+    <!-- Shared Navigation Header -->
+    <header id="main-header" class="w-full bg-brand-cream/90 backdrop-blur-md sticky top-0 z-50 border-b border-brand-sand shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-bowl-food text-brand-red text-2xl"></i>
+                <span class="font-serif text-2xl font-bold text-brand-red tracking-tight hidden sm:block">FussyEater Club</span>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Recipes Browse</a>
+                <a href="#" class="text-sm font-bold text-brand-red border-b-2 border-brand-red pb-1">Meal Planner</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Shopping List</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Household & Profiles</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Account & Preferences</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <button class="w-10 h-10 rounded-full bg-brand-sand flex items-center justify-center text-brand-charcoal hover:bg-gray-200 transition-colors">
+                    <i class="fa-solid fa-bell"></i>
+                </button>
+                <div class="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden cursor-pointer">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" alt="User Profile" class="w-full h-full object-cover">
+                </div>
+                <button class="md:hidden text-brand-charcoal text-xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Utility Action Bar (Sticky) -->
+    <div id="planner-action-bar" class="sticky top-20 z-40 bg-white/95 backdrop-blur-sm border-b border-brand-sand py-3 px-4 sm:px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div class="flex items-center gap-4">
+            <h2 class="font-serif text-xl font-bold text-brand-charcoal">Weekly Plan</h2>
+            <div class="flex items-center gap-2 bg-brand-sand rounded-[8px] p-1">
+                <button class="w-8 h-8 rounded-[6px] flex items-center justify-center text-gray-500 hover:bg-white hover:shadow-sm transition-all">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+                <span class="text-sm font-bold text-brand-charcoal px-2">Oct 9 - Oct 15</span>
+                <button class="w-8 h-8 rounded-[6px] flex items-center justify-center text-gray-500 hover:bg-white hover:shadow-sm transition-all">
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+            <button class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-[8px] border border-gray-200 text-xs font-medium text-brand-charcoal hover:bg-gray-50 transition-colors">
+                <i class="fa-solid fa-rotate-left text-gray-400"></i> Repeat Last Week
+            </button>
+        </div>
+        
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <button class="flex-1 sm:flex-none px-4 py-2 rounded-[12px] bg-white border border-gray-200 text-sm font-medium text-brand-charcoal hover:bg-gray-50 transition-colors shadow-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-print text-gray-400"></i> Print / Export
+            </button>
+            <button class="flex-1 sm:flex-none px-6 py-2 rounded-[12px] bg-brand-red text-white text-sm font-bold hover:bg-brand-red/90 transition-colors shadow-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-basket-shopping"></i> Generate List
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 relative z-10 flex flex-col lg:flex-row gap-6 h-[calc(100vh-140px)]">
+        
+        <!-- Sidebar: Recipes & Quick Add -->
+        <aside id="recipes-sidebar" class="w-full lg:w-[320px] shrink-0 flex flex-col gap-4 h-full">
+            
+            <!-- Search & Filter -->
+            <div class="bg-white rounded-[16px] p-4 border border-gray-100 smooth-shadow">
+                <div class="relative mb-3">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="Search saved recipes..." class="w-full pl-10 pr-4 py-2 bg-brand-sand border-none rounded-[8px] text-sm focus:ring-2 focus:ring-brand-mustard/50 outline-none text-brand-charcoal placeholder-gray-400">
+                </div>
+                
+                <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+                    <button class="px-3 py-1.5 rounded-full bg-brand-charcoal text-white text-xs font-medium whitespace-nowrap">All Saved</button>
+                    <button class="px-3 py-1.5 rounded-full bg-brand-sand text-brand-charcoal text-xs font-medium whitespace-nowrap hover:bg-gray-200">Safe Dinners</button>
+                    <button class="px-3 py-1.5 rounded-full bg-brand-sand text-brand-charcoal text-xs font-medium whitespace-nowrap hover:bg-gray-200">Quick Prep</button>
+                </div>
+            </div>
+
+            <!-- Recipe List (Draggable) -->
+            <div class="bg-white rounded-[16px] border border-gray-100 smooth-shadow flex-grow overflow-y-auto hide-scrollbar p-2">
+                <div class="p-2 space-y-3">
+                    
+                    <!-- Recipe Card 1 -->
+                    <div class="draggable-recipe bg-white border border-gray-100 rounded-[12px] p-3 shadow-sm hover:shadow-md transition-all relative group">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-sage rounded-l-[12px]"></div>
+                        <div class="flex gap-3">
+                            <div class="w-16 h-16 rounded-[8px] overflow-hidden shrink-0">
+                                <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b2af8d5ae0-1cb89b3ac9f361de2d51.png" alt="Crispy chicken tenders and buttered pasta, appetizing food photography, close up" />
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <h4 class="text-sm font-bold text-brand-charcoal truncate">Crispy Chicken & Pasta</h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[10px] font-medium text-gray-500"><i class="fa-regular fa-clock"></i> 35m</span>
+                                    <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                    <span class="text-[10px] font-medium text-brand-sage"><i class="fa-solid fa-check"></i> Safe Match</span>
+                                </div>
+                            </div>
+                            <div class="shrink-0 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">
+                                <i class="fa-solid fa-grip-vertical"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recipe Card 2 -->
+                    <div class="draggable-recipe bg-white border border-gray-100 rounded-[12px] p-3 shadow-sm hover:shadow-md transition-all relative group">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-mustard rounded-l-[12px]"></div>
+                        <div class="flex gap-3">
+                            <div class="w-16 h-16 rounded-[8px] overflow-hidden shrink-0 bg-brand-sand flex items-center justify-center">
+                                <i class="fa-solid fa-pizza-slice text-gray-400 text-xl"></i>
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <h4 class="text-sm font-bold text-brand-charcoal truncate">Deconstructed Pizza</h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[10px] font-medium text-gray-500"><i class="fa-regular fa-clock"></i> 20m</span>
+                                    <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                    <span class="text-[10px] font-medium text-brand-mustard"><i class="fa-solid fa-triangle-exclamation"></i> 1 Alert</span>
+                                </div>
+                            </div>
+                            <div class="shrink-0 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">
+                                <i class="fa-solid fa-grip-vertical"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recipe Card 3 -->
+                    <div class="draggable-recipe bg-white border border-gray-100 rounded-[12px] p-3 shadow-sm hover:shadow-md transition-all relative group">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-sage rounded-l-[12px]"></div>
+                        <div class="flex gap-3">
+                            <div class="w-16 h-16 rounded-[8px] overflow-hidden shrink-0 bg-brand-sand flex items-center justify-center">
+                                <i class="fa-solid fa-carrot text-gray-400 text-xl"></i>
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <h4 class="text-sm font-bold text-brand-charcoal truncate">Snack Plate Deluxe</h4>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[10px] font-medium text-gray-500"><i class="fa-regular fa-clock"></i> 10m</span>
+                                    <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                    <span class="text-[10px] font-medium text-brand-sage"><i class="fa-solid fa-check"></i> Safe Match</span>
+                                </div>
+                            </div>
+                            <div class="shrink-0 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">
+                                <i class="fa-solid fa-grip-vertical"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <button class="w-[calc(100%-1rem)] mx-2 mt-4 py-2 border-2 border-dashed border-gray-200 rounded-[12px] text-sm font-medium text-gray-500 hover:border-brand-mustard hover:text-brand-charcoal transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Add Custom Note
+                </button>
+            </div>
+
+            <!-- Compatibility Legend -->
+            <div class="bg-brand-sand/50 rounded-[16px] p-4 border border-brand-sand">
+                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Household Filters</h4>
+                <div class="flex items-center gap-3">
+                    <div class="flex -space-x-2">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg" alt="Alex" class="w-8 h-8 rounded-full border-2 border-white relative z-20">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-7.jpg" alt="Mia" class="w-8 h-8 rounded-full border-2 border-white relative z-10">
+                    </div>
+                    <button class="text-xs font-medium text-brand-charcoal hover:underline">Edit Selection</button>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Calendar Grid Area -->
+        <div id="calendar-main" class="flex-grow bg-white rounded-[24px] border border-gray-100 smooth-shadow overflow-hidden flex flex-col h-full">
+            
+            <!-- Days Header -->
+            <div class="grid grid-cols-7 border-b border-gray-100 bg-gray-50/50 shrink-0">
+                <!-- Repeat for 7 days -->
+                <div class="py-3 text-center border-r border-gray-100 last:border-r-0">
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Mon</p>
+                    <p class="text-lg font-serif font-bold text-brand-charcoal mt-0.5">9</p>
+                </div>
+                <div class="py-3 text-center border-r border-gray-100 last:border-r-0 bg-brand-mustard/5">
+                    <p class="text-xs font-bold text-brand-mustard uppercase tracking-wider">Tue</p>
+                    <p class="text-lg font-serif font-bold text-brand-charcoal mt-0.5">10</p>
+                    <div class="w-1 h-1 rounded-full bg-brand-mustard mx-auto mt-1"></div>
+                </div>
+                <div class="py-3 text-center border-r border-gray-100 last:border-r-0">
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Wed</p>
+                    <p class="text-lg font-serif font-bold text-brand-charcoal mt-0.5">11</p>
+                </div>
+                <div class="py-3 text-center border-r border-gray-100 last:border-r-0">
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Thu</p>
+                    <p class="text-lg font-serif font-bold text-brand-charcoal mt-0.5">12</p>
+                </div>
+                <div class="py-3 text-center border-r border-gray-100 last:border-r-0">
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Fri</p>
+                    <p class="text-lg font-serif font-bold text-brand-charcoal mt-0.5">13</p>
+                </div>
+                <div class="py-3 text-center border-r border-gray-100 last:border-r-0">
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Sat</p>
+                    <p class="text-lg font-serif font-bold text-brand-charcoal mt-0.5">14</p>
+                </div>
+                <div class="py-3 text-center border-r border-gray-100 last:border-r-0">
+                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Sun</p>
+                    <p class="text-lg font-serif font-bold text-brand-charcoal mt-0.5">15</p>
+                </div>
+            </div>
+
+            <!-- Grid Body (Scrollable) -->
+            <div class="flex-grow overflow-y-auto relative hide-scrollbar">
+                
+                <!-- Meal Rows Container -->
+                <div class="min-w-[800px] flex flex-col h-full">
+                    
+                    <!-- Breakfast Row -->
+                    <div class="flex border-b border-gray-100 min-h-[160px]">
+                        <div class="w-12 shrink-0 bg-gray-50/50 flex flex-col items-center py-4 border-r border-gray-100">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase rotate-180" style="writing-mode: vertical-rl;">Breakfast</span>
+                        </div>
+                        <div class="flex-grow grid grid-cols-7 calendar-grid">
+                            <!-- Empty Slot -->
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone relative group">
+                                <div class="absolute inset-2 border-2 border-dashed border-transparent group-hover:border-gray-200 rounded-[12px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i class="fa-solid fa-plus text-gray-300"></i>
+                                </div>
+                            </div>
+                            <!-- Filled Slot -->
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone">
+                                <div class="bg-white border border-gray-200 rounded-[12px] p-2 shadow-sm h-full flex flex-col gap-2 relative group">
+                                    <div class="absolute top-2 right-2 flex gap-1">
+                                        <!-- Tooltip Trigger -->
+                                        <div class="relative tooltip-trigger">
+                                            <div class="w-5 h-5 rounded-full bg-brand-sage/10 text-brand-sage flex items-center justify-center text-[10px]">
+                                                <i class="fa-solid fa-check"></i>
+                                            </div>
+                                            <div class="tooltip-content absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-brand-charcoal text-white text-xs rounded shadow-lg opacity-0 invisible transition-all z-50 pointer-events-none">
+                                                Safe for all selected profiles.
+                                                <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-brand-charcoal"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h5 class="text-xs font-bold text-brand-charcoal pr-6 leading-tight">Oatmeal & Berries</h5>
+                                    
+                                    <div class="mt-auto pt-2 border-t border-gray-50 flex items-center justify-between">
+                                        <div class="flex items-center gap-1 bg-gray-50 rounded px-1.5 py-0.5">
+                                            <i class="fa-solid fa-user text-[8px] text-gray-400"></i>
+                                            <span class="text-[10px] font-medium text-gray-600">4</span>
+                                        </div>
+                                        <button class="text-gray-300 hover:text-brand-charcoal"><i class="fa-solid fa-ellipsis"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Empty Slots... -->
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"><div class="w-full h-full border-2 border-dashed border-gray-100 rounded-[12px]"></div></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"><div class="w-full h-full border-2 border-dashed border-gray-100 rounded-[12px]"></div></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"><div class="w-full h-full border-2 border-dashed border-gray-100 rounded-[12px]"></div></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"><div class="w-full h-full border-2 border-dashed border-gray-100 rounded-[12px]"></div></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"><div class="w-full h-full border-2 border-dashed border-gray-100 rounded-[12px]"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Lunch Row -->
+                    <div class="flex border-b border-gray-100 min-h-[160px]">
+                        <div class="w-12 shrink-0 bg-gray-50/50 flex flex-col items-center py-4 border-r border-gray-100">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase rotate-180" style="writing-mode: vertical-rl;">Lunch</span>
+                        </div>
+                        <div class="flex-grow grid grid-cols-7 calendar-grid">
+                            <!-- Empty Slot -->
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            
+                            <!-- Filled Slot with Note -->
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone">
+                                <div class="bg-white border border-brand-mustard/30 rounded-[12px] p-2 shadow-sm h-full flex flex-col gap-2 relative group">
+                                    <div class="absolute top-0 left-0 w-1 h-full bg-brand-mustard rounded-l-[12px]"></div>
+                                    <div class="pl-2">
+                                        <div class="absolute top-2 right-2 flex gap-1">
+                                            <!-- Tooltip Trigger -->
+                                            <div class="relative tooltip-trigger">
+                                                <div class="w-5 h-5 rounded-full bg-brand-mustard/10 text-brand-mustard flex items-center justify-center text-[10px]">
+                                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                                </div>
+                                                <div class="tooltip-content absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-brand-charcoal text-white text-xs rounded shadow-lg opacity-0 invisible transition-all z-50 pointer-events-none">
+                                                    Contains Dairy (Alex's profile alert)
+                                                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-brand-charcoal"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h5 class="text-xs font-bold text-brand-charcoal pr-6 leading-tight">Cheese Quesadillas</h5>
+                                        
+                                        <!-- Inline Note -->
+                                        <div class="mt-2 bg-brand-sand/50 rounded p-1.5 flex items-start gap-1.5">
+                                            <i class="fa-solid fa-pen text-[8px] text-gray-400 mt-0.5"></i>
+                                            <p class="text-[9px] text-gray-600 leading-tight">Serve salsa strictly on the side in a separate bowl.</p>
+                                        </div>
+
+                                        <div class="mt-auto pt-2 flex items-center justify-between">
+                                            <div class="flex items-center gap-1 bg-gray-50 rounded px-1.5 py-0.5">
+                                                <i class="fa-solid fa-user text-[8px] text-gray-400"></i>
+                                                <span class="text-[10px] font-medium text-gray-600">2</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Empty Slots... -->
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                        </div>
+                    </div>
+
+                    <!-- Dinner Row (Taller for more content) -->
+                    <div class="flex border-b border-gray-100 min-h-[220px]">
+                        <div class="w-12 shrink-0 bg-gray-50/50 flex flex-col items-center py-4 border-r border-gray-100">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase rotate-180" style="writing-mode: vertical-rl;">Dinner</span>
+                        </div>
+                        <div class="flex-grow grid grid-cols-7 calendar-grid">
+                            
+                            <!-- Filled Slot: The requested Crispy Chicken -->
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone bg-brand-sage/5">
+                                <div class="bg-white border-2 border-brand-sage/20 rounded-[12px] p-2 shadow-sm h-full flex flex-col relative group">
+                                    <div class="w-full h-16 rounded-[8px] overflow-hidden mb-2">
+                                        <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b2af8d5ae0-1cb89b3ac9f361de2d51.png" alt="Crispy chicken tenders and buttered pasta, appetizing food photography, close up" />
+                                    </div>
+                                    
+                                    <div class="absolute top-3 right-3 flex gap-1">
+                                        <div class="w-5 h-5 rounded-full bg-white/90 backdrop-blur shadow-sm text-brand-sage flex items-center justify-center text-[10px]">
+                                            <i class="fa-solid fa-check"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="text-xs font-bold text-brand-charcoal leading-tight mb-1">Crispy Chicken & Buttered Pasta</h5>
+                                    
+                                    <div class="mt-auto space-y-2">
+                                        <!-- Note Input Area -->
+                                        <div class="relative">
+                                            <input type="text" placeholder="Add note..." class="w-full bg-gray-50 border border-transparent rounded-[6px] px-2 py-1 text-[10px] text-brand-charcoal focus:bg-white focus:border-brand-mustard/50 outline-none placeholder-gray-400 transition-colors">
+                                        </div>
+                                        
+                                        <div class="pt-2 border-t border-gray-50 flex items-center justify-between">
+                                            <div class="flex items-center bg-gray-50 border border-gray-200 rounded-[6px] overflow-hidden">
+                                                <button class="px-1.5 py-0.5 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-minus text-[8px]"></i></button>
+                                                <span class="text-[10px] font-bold text-brand-charcoal px-2 border-x border-gray-200">4</span>
+                                                <button class="px-1.5 py-0.5 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-plus text-[8px]"></i></button>
+                                            </div>
+                                            <button class="text-gray-300 hover:text-brand-charcoal"><i class="fa-solid fa-ellipsis"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Empty Slots... -->
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                        </div>
+                    </div>
+
+                    <!-- Snacks Row -->
+                    <div class="flex min-h-[120px]">
+                        <div class="w-12 shrink-0 bg-gray-50/50 flex flex-col items-center py-4 border-r border-gray-100">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase rotate-180" style="writing-mode: vertical-rl;">Snacks</span>
+                        </div>
+                        <div class="flex-grow grid grid-cols-7 calendar-grid">
+                            <!-- Simple Custom Item -->
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone">
+                                <div class="bg-gray-50 border border-gray-200 border-dashed rounded-[8px] p-2 h-full flex items-center justify-center text-center group hover:border-brand-mustard hover:bg-brand-mustard/5 transition-colors cursor-pointer">
+                                    <p class="text-[10px] font-medium text-gray-500 group-hover:text-brand-charcoal">Apple slices & peanut butter</p>
+                                </div>
+                            </div>
+                            <!-- Empty Slots... -->
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                            <div class="border-r border-gray-100 last:border-r-0 p-2 drop-zone"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Shared Footer -->
+    <footer id="main-footer" class="w-full py-8 text-center bg-brand-cream border-t border-brand-sand mt-auto">
+        <p class="text-xs text-gray-500">© 2024 FussyEater Club. Safe, stress-free meal planning.</p>
+    </footer>
+
+</body>
+</html>

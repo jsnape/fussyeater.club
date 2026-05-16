@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping List - FussyEater Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#B22222',
+                            cream: '#FDFBF7',
+                            sand: '#F5F5F5',
+                            charcoal: '#2D2D2D',
+                            mustard: '#E8B031',
+                            sage: '#8BA888'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #FDFBF7; }
+        .smooth-shadow { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); }
+        .soft-card {
+            background-color: #FFFFFF;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Custom Checkbox */
+        .sensory-checkbox {
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            background-color: #FFFFFF;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .sensory-checkbox:checked {
+            background-color: #8BA888;
+            border-color: #8BA888;
+        }
+        .sensory-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            width: 8px;
+            height: 14px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Tooltip styling */
+        .tooltip-trigger:hover .tooltip-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="font-sans text-brand-charcoal antialiased m-0 p-0 overflow-x-hidden min-h-screen flex flex-col relative">
+
+    <!-- Shared Navigation Header -->
+    <header id="main-header" class="w-full bg-brand-cream/90 backdrop-blur-md sticky top-0 z-50 border-b border-brand-sand shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-bowl-food text-brand-red text-2xl"></i>
+                <span class="font-serif text-2xl font-bold text-brand-red tracking-tight hidden sm:block">FussyEater Club</span>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Recipes Browse</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Meal Planner</a>
+                <a href="#" class="text-sm font-bold text-brand-red border-b-2 border-brand-red pb-1">Shopping List</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Household & Profiles</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Account & Preferences</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <button class="w-10 h-10 rounded-full bg-brand-sand flex items-center justify-center text-brand-charcoal hover:bg-gray-200 transition-colors">
+                    <i class="fa-solid fa-bell"></i>
+                </button>
+                <div class="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden cursor-pointer">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" alt="User Profile" class="w-full h-full object-cover">
+                </div>
+                <button class="md:hidden text-brand-charcoal text-xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Utility Action Bar (Sticky) -->
+    <div id="list-action-bar" class="sticky top-20 z-40 bg-white/95 backdrop-blur-sm border-b border-brand-sand py-3 px-4 sm:px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div class="flex items-center gap-4">
+            <h2 class="font-serif text-xl font-bold text-brand-charcoal">Weekly Groceries</h2>
+            <div class="flex items-center gap-2 bg-brand-sand rounded-[8px] p-1">
+                <button class="w-8 h-8 rounded-[6px] flex items-center justify-center text-gray-500 hover:bg-white hover:shadow-sm transition-all">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+                <span class="text-sm font-bold text-brand-charcoal px-2">Oct 9 - Oct 15</span>
+                <button class="w-8 h-8 rounded-[6px] flex items-center justify-center text-gray-500 hover:bg-white hover:shadow-sm transition-all">
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+            <span class="hidden lg:inline-flex px-3 py-1 bg-brand-sage/10 text-brand-sage text-xs font-bold rounded-full">
+                42 Items Total
+            </span>
+        </div>
+        
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <button class="flex-1 sm:flex-none px-4 py-2 rounded-[12px] bg-white border border-gray-200 text-sm font-medium text-brand-charcoal hover:bg-gray-50 transition-colors shadow-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus text-gray-400"></i> Add Custom
+            </button>
+            <button class="flex-1 sm:flex-none px-4 py-2 rounded-[12px] bg-white border border-gray-200 text-sm font-medium text-brand-charcoal hover:bg-gray-50 transition-colors shadow-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-print text-gray-400"></i> Export
+            </button>
+            <button class="flex-1 sm:flex-none px-6 py-2 rounded-[12px] bg-brand-sage text-white text-sm font-bold hover:bg-brand-sage/90 transition-colors shadow-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-check-double"></i> Mark Done
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 relative z-10 flex flex-col lg:flex-row gap-6">
+        
+        <!-- Sidebar: Filters & Progress -->
+        <aside id="list-sidebar" class="w-full lg:w-[320px] shrink-0 flex flex-col gap-6">
+            
+            <!-- Progress Widget -->
+            <div class="soft-card p-6 flex flex-col items-center">
+                <h3 class="text-sm font-bold text-gray-500 mb-4 w-full text-center">Shopping Progress</h3>
+                <div id="progress-chart" class="w-[180px] h-[180px] relative">
+                    <!-- Chart renders here -->
+                </div>
+                <p class="text-xs text-gray-400 mt-2">24 of 42 items collected</p>
+            </div>
+
+            <!-- Member View Filter -->
+            <div class="soft-card p-5">
+                <h3 class="text-sm font-bold text-brand-charcoal mb-4">Household View</h3>
+                <div class="space-y-3">
+                    <label class="flex items-center justify-between p-2 rounded-[12px] hover:bg-brand-sand transition-colors cursor-pointer border border-transparent hover:border-gray-200">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-brand-charcoal flex items-center justify-center text-white text-xs font-bold">All</div>
+                            <span class="text-sm font-medium text-brand-charcoal">Everyone</span>
+                        </div>
+                        <input type="radio" name="member_view" checked class="accent-brand-mustard w-4 h-4">
+                    </label>
+                    <label class="flex items-center justify-between p-2 rounded-[12px] hover:bg-brand-sand transition-colors cursor-pointer border border-transparent hover:border-gray-200">
+                        <div class="flex items-center gap-3">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg" alt="Alex" class="w-8 h-8 rounded-full border border-gray-200">
+                            <span class="text-sm font-medium text-brand-charcoal">Alex (Dairy Free)</span>
+                        </div>
+                        <input type="radio" name="member_view" class="accent-brand-mustard w-4 h-4">
+                    </label>
+                    <label class="flex items-center justify-between p-2 rounded-[12px] hover:bg-brand-sand transition-colors cursor-pointer border border-transparent hover:border-gray-200">
+                        <div class="flex items-center gap-3">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-7.jpg" alt="Mia" class="w-8 h-8 rounded-full border border-gray-200">
+                            <span class="text-sm font-medium text-brand-charcoal">Mia (Picky)</span>
+                        </div>
+                        <input type="radio" name="member_view" class="accent-brand-mustard w-4 h-4">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Smart Filters -->
+            <div class="soft-card p-5">
+                <h3 class="text-sm font-bold text-brand-charcoal mb-4">Smart Filters</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded bg-brand-mustard/10 flex items-center justify-center text-brand-mustard">
+                                <i class="fa-solid fa-triangle-exclamation text-[10px]"></i>
+                            </div>
+                            <span class="text-sm text-gray-600">Exclude Allergens</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-mustard"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded bg-gray-100 flex items-center justify-center text-gray-500">
+                                <i class="fa-solid fa-eye-slash text-[10px]"></i>
+                            </div>
+                            <span class="text-sm text-gray-600">Hide Disliked</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-mustard"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded bg-brand-sage/10 flex items-center justify-center text-brand-sage">
+                                <i class="fa-solid fa-check text-[10px]"></i>
+                            </div>
+                            <span class="text-sm text-gray-600">Show Safe Swaps</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-sage"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- List Sections -->
+        <div class="flex-grow flex flex-col gap-6">
+            
+            <!-- Produce Section -->
+            <section id="section-produce" class="soft-card overflow-hidden">
+                <div class="bg-brand-sand/30 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-[12px] bg-white shadow-sm flex items-center justify-center text-brand-sage text-lg">
+                            <i class="fa-solid fa-apple-whole"></i>
+                        </div>
+                        <h2 class="font-serif text-xl font-bold text-brand-charcoal">Produce</h2>
+                    </div>
+                    <span class="text-sm font-medium text-gray-500">8 Items</span>
+                </div>
+                
+                <div class="divide-y divide-gray-50">
+                    
+                    <!-- Item: Apple -->
+                    <div class="p-4 sm:p-6 flex items-center gap-4 hover:bg-gray-50/50 transition-colors group">
+                        <input type="checkbox" checked class="sensory-checkbox shrink-0">
+                        <div class="flex-grow min-w-0">
+                            <h4 class="text-base font-bold text-brand-charcoal truncate line-through opacity-60">Honeycrisp Apples</h4>
+                            <p class="text-xs text-gray-500 mt-1">For Snacks • 3 recipes</p>
+                        </div>
+                        <div class="flex items-center bg-gray-50 border border-gray-200 rounded-[8px] overflow-hidden shrink-0 opacity-60">
+                            <button class="px-3 py-2 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-minus text-xs"></i></button>
+                            <span class="text-sm font-bold text-brand-charcoal px-3 border-x border-gray-200 min-w-[40px] text-center">6</span>
+                            <button class="px-3 py-2 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-plus text-xs"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Item: Carrots -->
+                    <div class="p-4 sm:p-6 flex items-center gap-4 hover:bg-gray-50/50 transition-colors group">
+                        <input type="checkbox" class="sensory-checkbox shrink-0">
+                        <div class="flex-grow min-w-0">
+                            <h4 class="text-base font-bold text-brand-charcoal truncate">Baby Carrots</h4>
+                            <p class="text-xs text-gray-500 mt-1">Snack Plate Deluxe</p>
+                        </div>
+                        <div class="flex items-center bg-gray-50 border border-gray-200 rounded-[8px] overflow-hidden shrink-0">
+                            <button class="px-3 py-2 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-minus text-xs"></i></button>
+                            <span class="text-sm font-bold text-brand-charcoal px-3 border-x border-gray-200 min-w-[40px] text-center">1 bag</span>
+                            <button class="px-3 py-2 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-plus text-xs"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Dairy Section with Alert/Swap -->
+            <section id="section-dairy" class="soft-card overflow-hidden border-brand-mustard/20">
+                <div class="bg-brand-mustard/5 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-[12px] bg-white shadow-sm flex items-center justify-center text-brand-mustard text-lg">
+                            <i class="fa-solid fa-cheese"></i>
+                        </div>
+                        <h2 class="font-serif text-xl font-bold text-brand-charcoal">Dairy & Alternatives</h2>
+                    </div>
+                    <span class="text-sm font-medium text-gray-500">4 Items</span>
+                </div>
+                
+                <div class="divide-y divide-gray-50">
+                    
+                    <!-- Item: Cheese with Swap -->
+                    <div class="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 hover:bg-gray-50/50 transition-colors group bg-brand-mustard/5">
+                        <div class="flex items-center gap-4 flex-grow">
+                            <input type="checkbox" class="sensory-checkbox shrink-0">
+                            <div class="flex-grow min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="text-base font-bold text-brand-charcoal truncate">Shredded Cheddar</h4>
+                                    <span class="px-2 py-0.5 rounded bg-brand-mustard/20 text-brand-mustard text-[10px] font-bold uppercase tracking-wider">Alert</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Cheese Quesadillas • 2 recipes</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 ml-12 sm:ml-0">
+                            <!-- Safe Swap Suggestion -->
+                            <div class="bg-white border border-brand-sage/30 rounded-[8px] p-2 flex items-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-arrow-right-arrow-left text-brand-sage text-xs"></i>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] text-gray-500 uppercase font-bold">Safe Swap</span>
+                                    <span class="text-xs font-medium text-brand-charcoal">Vegan Cheddar</span>
+                                </div>
+                                <button class="ml-2 px-2 py-1 bg-brand-sage/10 text-brand-sage rounded text-xs font-bold hover:bg-brand-sage/20">Apply</button>
+                            </div>
+                            
+                            <div class="flex items-center bg-gray-50 border border-gray-200 rounded-[8px] overflow-hidden shrink-0">
+                                <button class="px-3 py-2 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-minus text-xs"></i></button>
+                                <span class="text-sm font-bold text-brand-charcoal px-3 border-x border-gray-200 min-w-[40px] text-center">2</span>
+                                <button class="px-3 py-2 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-plus text-xs"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- Item: Butter -->
+                     <div class="p-4 sm:p-6 flex items-center gap-4 hover:bg-gray-50/50 transition-colors group">
+                        <input type="checkbox" class="sensory-checkbox shrink-0">
+                        <div class="flex-grow min-w-0">
+                            <h4 class="text-base font-bold text-brand-charcoal truncate">Unsalted Butter</h4>
+                            <p class="text-xs text-gray-500 mt-1">Crispy Chicken & Pasta</p>
+                        </div>
+                        <div class="flex items-center bg-gray-50 border border-gray-200 rounded-[8px] overflow-hidden shrink-0">
+                            <button class="px-3 py-2 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-minus text-xs"></i></button>
+                            <span class="text-sm font-bold text-brand-charcoal px-3 border-x border-gray-200 min-w-[40px] text-center">1</span>
+                            <button class="px-3 py-2 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-plus text-xs"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+             <!-- Pantry Section -->
+             <section id="section-pantry" class="soft-card overflow-hidden">
+                <div class="bg-brand-sand/30 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-[12px] bg-white shadow-sm flex items-center justify-center text-brand-charcoal text-lg">
+                            <i class="fa-solid fa-jar"></i>
+                        </div>
+                        <h2 class="font-serif text-xl font-bold text-brand-charcoal">Pantry</h2>
+                    </div>
+                    <span class="text-sm font-medium text-gray-500">12 Items</span>
+                </div>
+                
+                <div class="divide-y divide-gray-50">
+                    
+                    <!-- Item: Pasta -->
+                    <div class="p-4 sm:p-6 flex items-center gap-4 hover:bg-gray-50/50 transition-colors group">
+                        <input type="checkbox" class="sensory-checkbox shrink-0">
+                        <div class="flex-grow min-w-0">
+                            <h4 class="text-base font-bold text-brand-charcoal truncate">Penne Pasta</h4>
+                            <p class="text-xs text-gray-500 mt-1">Crispy Chicken & Pasta</p>
+                        </div>
+                        <div class="flex items-center bg-gray-50 border border-gray-200 rounded-[8px] overflow-hidden shrink-0">
+                            <button class="px-3 py-2 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-minus text-xs"></i></button>
+                            <span class="text-sm font-bold text-brand-charcoal px-3 border-x border-gray-200 min-w-[40px] text-center">1 box</span>
+                            <button class="px-3 py-2 hover:bg-gray-200 text-gray-500"><i class="fa-solid fa-plus text-xs"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Shared Footer -->
+    <footer id="main-footer" class="w-full py-8 text-center bg-brand-cream border-t border-brand-sand mt-auto">
+        <p class="text-xs text-gray-500">© 2024 FussyEater Club. Safe, stress-free meal planning.</p>
+    </footer>
+
+    <script>
+        // Initialize Plotly Chart for Progress
+        function initializeCharts() {
+            try {
+                var data = [{
+                    type: "pie",
+                    values: [24, 18],
+                    labels: ["Collected", "Remaining"],
+                    textinfo: "none",
+                    hole: 0.75,
+                    marker: {
+                        colors: ["#8BA888", "#F5F5F5"]
+                    },
+                    hoverinfo: "label+percent"
+                }];
+
+                var layout = {
+                    showlegend: false,
+                    margin: { t: 0, r: 0, b: 0, l: 0 },
+                    paper_bgcolor: "transparent",
+                    plot_bgcolor: "transparent",
+                    annotations: [
+                        {
+                            font: { size: 24, family: '"Inter", sans-serif', color: '#2D2D2D', weight: 700 },
+                            showarrow: false,
+                            text: "57%",
+                            x: 0.5,
+                            y: 0.5
+                        }
+                    ]
+                };
+
+                var config = { responsive: true, displayModeBar: false };
+                Plotly.newPlot('progress-chart', data, layout, config);
+            } catch (e) {
+                console.error("Error initializing chart:", e);
+            }
+        }
+
+        window.addEventListener('load', initializeCharts);
+        setTimeout(initializeCharts, 1200);
+    </script>
+</body>
+</html>

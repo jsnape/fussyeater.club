@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Literata:wght@600;700&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fff8f4",
+                    "tertiary-fixed-dim": "#ffb4a4",
+                    "on-surface": "#1f1b17",
+                    "on-primary-fixed-variant": "#713704",
+                    "tertiary": "#9c432f",
+                    "on-secondary-fixed": "#042110",
+                    "secondary-fixed-dim": "#aeceb4",
+                    "on-background": "#1f1b17",
+                    "on-error-container": "#93000a",
+                    "on-surface-variant": "#53443a",
+                    "on-primary-container": "#743a07",
+                    "surface-container-highest": "#eae1da",
+                    "surface-container-low": "#fbf2eb",
+                    "secondary-container": "#caebcf",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#f0e6e0",
+                    "tertiary-container": "#ffa18c",
+                    "secondary": "#48654f",
+                    "primary-container": "#f9a66c",
+                    "on-secondary-fixed-variant": "#314d39",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#f5ece6",
+                    "on-primary-fixed": "#311400",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffdcc6",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdad3",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#34302b",
+                    "surface-dim": "#e1d8d2",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#f8efe8",
+                    "surface-variant": "#eae1da",
+                    "on-secondary-container": "#4e6b55",
+                    "surface-tint": "#8e4e1c",
+                    "primary-fixed-dim": "#ffb786",
+                    "outline-variant": "#d8c2b6",
+                    "background": "#fff8f4",
+                    "on-tertiary-container": "#802f1d",
+                    "outline": "#867369",
+                    "inverse-primary": "#ffb786",
+                    "secondary-fixed": "#caebcf",
+                    "on-tertiary-fixed-variant": "#7d2c1b",
+                    "surface": "#fff8f4",
+                    "primary": "#8e4e1c",
+                    "on-tertiary-fixed": "#3d0600"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "section-gap-desktop": "80px",
+                    "gutter": "16px",
+                    "container-margin": "24px",
+                    "section-gap-mobile": "40px",
+                    "card-padding": "24px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Literata"],
+                    "headline-md": ["Literata"],
+                    "label-sm": ["Quicksand"],
+                    "label-md": ["Quicksand"],
+                    "body-lg": ["Quicksand"],
+                    "display-lg": ["Literata"],
+                    "body-md": ["Quicksand"],
+                    "display-lg-mobile": ["Literata"]
+            },
+            "fontSize": {
+                    "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #f5ece6 25%, #f0e6e0 50%, #f5ece6 75%);
+            background-size: 200% 100%;
+        }
+    </style>
+</head>
+<body class="bg-surface-bright text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="w-full sticky top-0 z-50 bg-surface-bright">
+<div class="flex justify-between items-center px-gutter py-4 w-full max-w-screen-xl mx-auto">
+<h1 class="font-headline-md text-headline-md-mobile md:text-headline-md font-bold text-primary">FussyEater Club</h1>
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-on-surface-variant">filter_list</span>
+</button>
+<button class="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow flex flex-col items-center justify-center px-container-margin py-section-gap-mobile">
+<!-- Empty State Container -->
+<div class="w-full max-w-[500px] text-center space-y-8">
+<!-- Dynamic Canvas: Asymmetric Layout for Empty State -->
+<div class="relative w-full aspect-square md:aspect-video flex items-center justify-center">
+<!-- Decorative Soft Shapes -->
+<div class="absolute -top-4 -left-4 w-32 h-32 bg-secondary-container opacity-40 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-8 -right-8 w-48 h-48 bg-primary-container opacity-30 rounded-full blur-3xl"></div>
+<!-- Main Illustration -->
+<div class="relative z-10 bg-surface-container-low p-8 rounded-[40px] shadow-sm border border-outline-variant/20">
+<img alt="Cooking Pot" class="w-48 h-48 object-contain mx-auto" data-alt="A charming, soft-textured 3D illustration of a ceramic cooking pot with steam rising in gentle swirls. The pot is a warm sage green color, set against a background of soft apricot and cream tones. The lighting is diffused and comforting, creating a high-key, empathetic mood that feels supportive for parents. The overall style is modern minimalist with organic, rounded edges and a handcrafted feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1eAFU-3a2dROOWLmcKubj1X15g8nYPr2LJpFhW3974YL6jWL5pS0KPMzuyRTmht8dUDvEjb5Utw5ieLxPuQX59Rx2kmTtzPVhoEamYrDQxNLUPYUSL9g2lg8lBSqFFwtHQiyF-Mp9ljG_HSP6zMsidCOn5J_3WpWZ_5luSCjJ8XswHDr3Gvw3N2FWgsNXUdTsFft436aggGsr0O4QDqD2HYVhEnDhJy3aP_iDiAR7owN8muE4XmfJdscHbPY2yQd2qx1Kvcg5CBmU"/>
+</div>
+</div>
+<!-- Empty State Copy -->
+<div class="space-y-4">
+<h2 class="font-headline-sm text-headline-sm-mobile md:text-headline-sm text-on-surface">Your basket is waiting</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[320px] mx-auto">
+                    It looks like you haven't planned any meals for the week yet. Let's find something your little one will love.
+                </p>
+</div>
+<!-- CTA Button -->
+<div class="pt-4">
+<button class="bg-primary text-on-primary font-label-md px-8 py-4 rounded-full shadow-[0_4px_12px_rgba(142,78,28,0.15)] hover:bg-surface-tint active:scale-95 transition-all duration-200 flex items-center gap-2 mx-auto">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+                    Go to Meal Planner
+                </button>
+</div>
+</div>
+<!-- Syncing State Overlay (Hidden by default, shown for demonstration logic) -->
+<!-- In a real app, this would be toggled via state -->
+<div class="hidden fixed inset-0 z-40 bg-surface-bright/90 backdrop-blur-sm flex items-center justify-center p-gutter">
+<div class="w-full max-w-sm bg-surface-container-low p-10 rounded-[32px] shadow-lg text-center space-y-8">
+<!-- Gentle Progress Indicator -->
+<div class="relative w-24 h-24 mx-auto">
+<div class="absolute inset-0 border-4 border-secondary-container rounded-full"></div>
+<div class="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">sync</span>
+</div>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<h3 class="font-headline-sm text-on-surface">Gathering your ingredients...</h3>
+<p class="font-body-md text-on-surface-variant">We're double-checking your meal plan for allergies and dietary needs.</p>
+</div>
+<!-- Progress Bar Component -->
+<div class="w-full bg-surface-container-high h-3 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-secondary to-primary-container w-[65%] rounded-full transition-all duration-1000"></div>
+</div>
+<p class="font-label-sm text-secondary italic">Almost ready to shop!</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface-container-low rounded-t-xl shadow-[0_-4px_12px_rgba(107,101,96,0.08)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:text-primary transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">kitchen</span>
+<span class="font-label-md text-label-md">Kitchen</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:text-primary transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-md text-label-md">Recipes</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-5 py-1 active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shopping_basket</span>
+<span class="font-label-md text-label-md">List</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:text-primary transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">auto_graph</span>
+<span class="font-label-md text-label-md">Progress</span>
+</a>
+</nav>
+<!-- Optional FAB (Suppressed on this specific screen as per guidelines, but here for structural context) -->
+<!-- The prompt focuses on the empty/syncing state which is central to the "List" tab -->
+</body></html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add New Recipe - FussyEater Club</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Literata:wght@600;700&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed": "#caebcf",
+                      "surface-container": "#f5ece6",
+                      "on-tertiary-fixed-variant": "#7d2c1b",
+                      "on-background": "#1f1b17",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "secondary-container": "#caebcf",
+                      "surface-container-low": "#fbf2eb",
+                      "on-primary-container": "#743a07",
+                      "primary": "#8e4e1c",
+                      "primary-container": "#f9a66c",
+                      "on-tertiary-container": "#802f1d",
+                      "on-surface-variant": "#53443a",
+                      "inverse-on-surface": "#f8efe8",
+                      "secondary-fixed-dim": "#aeceb4",
+                      "outline": "#867369",
+                      "surface-variant": "#eae1da",
+                      "outline-variant": "#d8c2b6",
+                      "error": "#ba1a1a",
+                      "surface-container-highest": "#eae1da",
+                      "on-secondary-container": "#4e6b55",
+                      "on-error-container": "#93000a",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed": "#ffdad3",
+                      "on-secondary-fixed-variant": "#314d39",
+                      "surface-container-high": "#f0e6e0",
+                      "on-primary-fixed": "#311400",
+                      "on-primary-fixed-variant": "#713704",
+                      "tertiary-fixed-dim": "#ffb4a4",
+                      "surface-dim": "#e1d8d2",
+                      "surface-bright": "#fff8f4",
+                      "on-secondary": "#ffffff",
+                      "primary-fixed": "#ffdcc6",
+                      "on-error": "#ffffff",
+                      "background": "#fff8f4",
+                      "inverse-primary": "#ffb786",
+                      "on-tertiary-fixed": "#3d0600",
+                      "primary-fixed-dim": "#ffb786",
+                      "surface": "#fff8f4",
+                      "tertiary-container": "#ffa18c",
+                      "secondary": "#48654f",
+                      "on-surface": "#1f1b17",
+                      "on-primary": "#ffffff",
+                      "inverse-surface": "#34302b",
+                      "on-secondary-fixed": "#042110",
+                      "tertiary": "#9c432f",
+                      "surface-tint": "#8e4e1c"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "section-gap-mobile": "40px",
+                      "base": "8px",
+                      "card-padding": "24px",
+                      "section-gap-desktop": "80px",
+                      "gutter": "16px",
+                      "container-margin": "24px"
+              },
+              "fontFamily": {
+                      "body-md": ["Quicksand"],
+                      "headline-md": ["Literata"],
+                      "headline-sm": ["Literata"],
+                      "label-md": ["Quicksand"],
+                      "label-sm": ["Quicksand"],
+                      "display-lg": ["Literata"],
+                      "display-lg-mobile": ["Literata"],
+                      "body-lg": ["Quicksand"]
+              },
+              "fontSize": {
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .recipe-shadow {
+            box-shadow: 0 4px 20px rgba(107, 101, 96, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- TopAppBar Component -->
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-container-margin py-4 max-w-7xl mx-auto">
+<h1 class="font-display-lg text-headline-md md:text-display-lg text-primary">FussyEater Club</h1>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-primary border-b-2 border-primary pb-1 font-bold font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Recipes</a>
+<a class="text-on-surface-variant font-medium font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Meal Planner</a>
+<a class="text-on-surface-variant font-medium font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Shopping List</a>
+<a class="text-on-surface-variant font-medium font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Household</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant text-2xl cursor-pointer">account_circle</span>
+</div>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-container-margin py-section-gap-mobile md:py-12">
+<!-- Page Header -->
+<div class="mb-10 text-center md:text-left">
+<h2 class="font-headline-md text-headline-md text-on-background mb-2">Create New Recipe</h2>
+<p class="text-on-surface-variant font-body-md">Don't worry, you can always edit this later. Let's start with the basics.</p>
+</div>
+<form class="space-y-12">
+<!-- Section 1: Basic Info -->
+<section class="bg-surface-container-low p-card-padding rounded-xl recipe-shadow">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary">menu_book</span>
+<h3 class="font-headline-sm text-headline-sm">Basic Information</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-4 md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface-variant">Recipe Title</label>
+<input class="w-full min-h-[56px] px-4 rounded-lg border-1.5 border-outline-variant bg-surface focus:border-primary focus:ring-0 transition-colors placeholder:text-outline-variant" placeholder="e.g., Hidden Veggie Pasta Sauce" type="text"/>
+</div>
+<div class="space-y-4 md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface-variant">Description</label>
+<textarea class="w-full px-4 py-3 rounded-lg border-1.5 border-outline-variant bg-surface focus:border-primary focus:ring-0 transition-colors placeholder:text-outline-variant" placeholder="Tell us why your family loves this dish..." rows="3"></textarea>
+</div>
+<div class="md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-4">Recipe Photo</label>
+<div class="relative h-64 w-full rounded-xl overflow-hidden bg-surface-container-high border-2 border-dashed border-outline-variant flex flex-col items-center justify-center group cursor-pointer">
+<img class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity" data-alt="A warm and inviting overhead shot of a rustic kitchen table with ingredients for a home-cooked meal. Soft morning sunlight streams through a window, highlighting the textures of fresh vegetables and wooden utensils. The color palette features warm apricots and soft sages, creating a comforting and family-friendly atmosphere. A high-end food photography style with shallow depth of field emphasizes a feeling of wholesome, supportive home cooking." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9WUwYJtxrCTvhyZgFDuHzSB9uNdK9X8669QkGwhOwIR-kh4hWxJV4dcdobH4ZcKGoNvR9V_FULMb_NaPNPMGeU3xhD9Lo_TgRC3VDXE0TY4wLaIuxjSHr0rIg6X4acXXQqeKY-xOfhMYBFWsGWIx475EFIYylT-Kx1zudrZuQm2LRNAM02LBe6jABOXkdm3jX8n5EayFn_jkbNM6VY7t7ic2v2PaLtzffYBGLCa5jF2Wl6aH__K2vMT466B-wiI3C2ZtqABuRdq1p"/>
+<div class="relative z-10 text-center p-6">
+<span class="material-symbols-outlined text-4xl text-primary mb-2">add_a_photo</span>
+<p class="font-label-md text-on-surface">Click to upload or drag and drop</p>
+<p class="text-xs text-on-surface-variant mt-1">PNG, JPG up to 10MB</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Timings & Servings -->
+<section class="bg-surface-container-low p-card-padding rounded-xl recipe-shadow">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<h3 class="font-headline-sm text-headline-sm">Timings &amp; Servings</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="space-y-2">
+<label class="block font-label-md text-label-md text-on-surface-variant">Prep Time (mins)</label>
+<input class="w-full min-h-[56px] px-4 rounded-lg border-1.5 border-outline-variant bg-surface focus:border-primary focus:ring-0 transition-colors" type="number" value="15"/>
+</div>
+<div class="space-y-2">
+<label class="block font-label-md text-label-md text-on-surface-variant">Cook Time (mins)</label>
+<input class="w-full min-h-[56px] px-4 rounded-lg border-1.5 border-outline-variant bg-surface focus:border-primary focus:ring-0 transition-colors" type="number" value="30"/>
+</div>
+<div class="space-y-2">
+<label class="block font-label-md text-label-md text-on-surface-variant">Servings</label>
+<input class="w-full min-h-[56px] px-4 rounded-lg border-1.5 border-outline-variant bg-surface focus:border-primary focus:ring-0 transition-colors" type="number" value="4"/>
+</div>
+</div>
+</section>
+<!-- Section 3: Ingredients -->
+<section class="bg-surface-container-low p-card-padding rounded-xl recipe-shadow">
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">grocery</span>
+<h3 class="font-headline-sm text-headline-sm">Ingredients</h3>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex gap-4 items-center">
+<div class="flex-grow grid grid-cols-3 gap-4">
+<input class="col-span-1 min-h-[56px] px-4 rounded-lg border-1.5 border-outline-variant bg-surface focus:border-primary focus:ring-0" placeholder="Amount" type="text"/>
+<input class="col-span-2 min-h-[56px] px-4 rounded-lg border-1.5 border-outline-variant bg-surface focus:border-primary focus:ring-0" placeholder="Ingredient name" type="text"/>
+</div>
+<button class="text-error p-2 rounded-full hover:bg-error-container transition-colors" type="button">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="flex gap-4 items-center">
+<div class="flex-grow grid grid-cols-3 gap-4">
+<input class="col-span-1 min-h-[56px] px-4 rounded-lg border-1.5 border-outline-variant bg-surface focus:border-primary focus:ring-0" placeholder="Amount" type="text"/>
+<input class="col-span-2 min-h-[56px] px-4 rounded-lg border-1.5 border-outline-variant bg-surface focus:border-primary focus:ring-0" placeholder="Ingredient name" type="text"/>
+</div>
+<button class="text-error p-2 rounded-full hover:bg-error-container transition-colors" type="button">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<button class="flex items-center gap-2 text-primary font-label-md py-3 px-4 rounded-lg border-2 border-primary border-dashed w-full justify-center hover:bg-primary-fixed-dim/10 transition-colors" type="button">
+<span class="material-symbols-outlined">add</span>
+                        Add Row
+                    </button>
+</div>
+</section>
+<!-- Section 4: Method -->
+<section class="bg-surface-container-low p-card-padding rounded-xl recipe-shadow">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary">receipt_long</span>
+<h3 class="font-headline-sm text-headline-sm">Method</h3>
+</div>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">1</div>
+<div class="flex-grow space-y-2">
+<textarea class="w-full px-4 py-3 rounded-lg border-1.5 border-outline-variant bg-surface focus:border-primary focus:ring-0 transition-colors" placeholder="Step 1: Briefly describe what to do..."></textarea>
+</div>
+</div>
+<button class="flex items-center gap-2 text-primary font-label-md py-3 px-4 rounded-lg border-2 border-primary border-dashed w-full justify-center hover:bg-primary-fixed-dim/10 transition-colors" type="button">
+<span class="material-symbols-outlined">add</span>
+                        Add Step
+                    </button>
+</div>
+</section>
+<!-- Section 5: Tags & Visibility -->
+<section class="bg-surface-container-low p-card-padding rounded-xl recipe-shadow">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary">label</span>
+<h3 class="font-headline-sm text-headline-sm">Tags &amp; Visibility</h3>
+</div>
+<div class="space-y-8">
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-4">Dietary Requirements</label>
+<div class="flex flex-wrap gap-3">
+<button class="px-4 py-2 rounded-full border-1.5 border-outline-variant font-label-md hover:border-secondary hover:bg-secondary-container transition-colors" type="button">Dairy Free</button>
+<button class="px-4 py-2 rounded-full border-1.5 border-outline-variant font-label-md hover:border-secondary hover:bg-secondary-container transition-colors" type="button">Gluten Free</button>
+<button class="px-4 py-2 rounded-full bg-secondary-container border-1.5 border-secondary text-on-secondary-container font-label-md" type="button">Nut Free</button>
+<button class="px-4 py-2 rounded-full border-1.5 border-outline-variant font-label-md hover:border-secondary hover:bg-secondary-container transition-colors" type="button">Vegetarian</button>
+<button class="px-4 py-2 rounded-full border-1.5 border-outline-variant font-label-md hover:border-secondary hover:bg-secondary-container transition-colors" type="button">No Sugar</button>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface rounded-lg border-1.5 border-outline-variant">
+<div>
+<p class="font-label-md text-on-surface">Private Recipe</p>
+<p class="text-xs text-on-surface-variant">Only you and your household can see this.</p>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Form Actions -->
+<div class="flex flex-col md:flex-row items-center justify-end gap-4 pt-8 border-t border-outline-variant">
+<button class="w-full md:w-auto px-8 py-3 text-on-surface-variant font-label-md hover:text-primary transition-colors" type="button">Cancel</button>
+<button class="w-full md:w-auto px-10 py-4 bg-primary text-white rounded-full font-label-md shadow-lg shadow-primary/20 hover:scale-[0.98] transition-transform" type="submit">Save Recipe</button>
+</div>
+</form>
+</main>
+<!-- Footer Component -->
+<footer class="bg-surface-container-low border-t border-outline-variant mt-20">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-container-margin py-10 gap-base max-w-7xl mx-auto">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-headline-sm text-headline-sm text-primary">FussyEater Club</span>
+<p class="font-body-md text-body-md text-on-surface-variant text-center md:text-left">© 2024 FussyEater Club. Supporting families one meal at a time.</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-6 md:gap-10">
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary underline underline-offset-4 transition-opacity duration-200" href="#">Help Center</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary underline underline-offset-4 transition-opacity duration-200" href="#">Community</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary underline underline-offset-4 transition-opacity duration-200" href="#">Account Settings</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary underline underline-offset-4 transition-opacity duration-200" href="#">Privacy</a>
+</nav>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipes Browse - FussyEater Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#B22222',
+                            cream: '#FDFBF7',
+                            sand: '#F5F5F5',
+                            charcoal: '#2D2D2D',
+                            mustard: '#E8B031',
+                            sage: '#8BA888'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #FDFBF7; }
+        .smooth-shadow { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); }
+        .sticker-badge { 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        /* Custom scrollbar for horizontal lists */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="font-sans text-brand-charcoal antialiased m-0 p-0 overflow-x-hidden min-h-screen flex flex-col relative">
+
+    <!-- Shared Navigation Header -->
+    <header id="main-header" class="w-full bg-brand-cream/90 backdrop-blur-md sticky top-0 z-50 border-b border-brand-sand shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-bowl-food text-brand-red text-2xl"></i>
+                <span class="font-serif text-2xl font-bold text-brand-red tracking-tight hidden sm:block">FussyEater Club</span>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="#" class="text-sm font-bold text-brand-red border-b-2 border-brand-red pb-1">Recipes Browse</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Meal Planner</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Shopping List</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Household & Profiles</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Account & Preferences</a>
+            </nav>
+
+            <button class="md:hidden text-brand-charcoal text-xl">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-[1440px] mx-auto w-full px-4 sm:px-6 lg:px-12 py-8 relative z-10 flex flex-col gap-8">
+        
+        <!-- Recipe Discovery Header & Reassurance Panel -->
+        <section id="discovery-header" class="w-full flex flex-col gap-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div>
+                    <h1 class="font-serif text-3xl sm:text-4xl font-bold text-brand-charcoal mb-2">Discover Recipes</h1>
+                    <p class="text-gray-500 text-sm max-w-2xl">Find safe, sensory-friendly meals that the whole family will enjoy. Your preferences are actively filtering these results.</p>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="w-full md:w-96 relative">
+                    <input type="text" placeholder="Search recipes, ingredients..." class="w-full bg-white border border-gray-200 rounded-[12px] py-3 pl-10 pr-4 text-sm outline-none focus:border-brand-sage smooth-shadow">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+
+            <!-- Reassurance Panel -->
+            <div class="bg-brand-sage/10 border border-brand-sage/20 rounded-[16px] p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div class="bg-white w-10 h-10 rounded-full flex items-center justify-center text-brand-sage shrink-0 shadow-sm">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="flex-grow">
+                    <h3 class="text-sm font-bold text-brand-charcoal">Preference Sync Active</h3>
+                    <p class="text-xs text-gray-600 mt-1">Currently hiding recipes with <strong>Peanuts</strong> and <strong>Dairy</strong>. Prioritizing <strong>Crunchy</strong> textures and <strong>Kid-Accepted</strong> meals for Leo.</p>
+                </div>
+                <button class="text-xs font-bold text-brand-charcoal bg-white px-4 py-2 rounded-[8px] border border-gray-200 hover:border-brand-charcoal transition-colors shrink-0">
+                    Edit Profiles
+                </button>
+            </div>
+        </section>
+
+        <!-- Main Layout: Sidebar + Grid -->
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+            
+            <!-- Filter Sidebar -->
+            <aside id="filter-sidebar" class="w-full lg:w-72 shrink-0 space-y-6 lg:sticky lg:top-28">
+                
+                <div class="bg-white rounded-[16px] smooth-shadow border border-gray-100 p-6">
+                    <div class="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
+                        <h2 class="text-lg font-bold text-brand-charcoal">Filters</h2>
+                        <button class="text-xs text-gray-500 hover:text-brand-red transition-colors">Clear All</button>
+                    </div>
+
+                    <!-- Sort -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-bold text-brand-charcoal mb-3">Sort By</h3>
+                        <select class="w-full bg-brand-sand/50 border border-gray-200 rounded-[8px] py-2 px-3 text-sm outline-none focus:border-brand-sage text-gray-600">
+                            <option>Recommended (Profile Sync)</option>
+                            <option>Highest Rated</option>
+                            <option>Quickest Prep</option>
+                            <option>Recently Added</option>
+                        </select>
+                    </div>
+
+                    <!-- Allergens -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-bold text-brand-charcoal mb-3 flex items-center justify-between">
+                            Allergens to Exclude
+                            <i class="fa-solid fa-triangle-exclamation text-brand-red text-xs"></i>
+                        </h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" checked disabled class="w-4 h-4 rounded text-brand-red focus:ring-brand-red border-gray-300">
+                                <span class="text-sm text-gray-600 group-hover:text-brand-charcoal">Peanuts <span class="text-[10px] text-brand-red ml-1">(Leo's Profile)</span></span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" checked disabled class="w-4 h-4 rounded text-brand-mustard focus:ring-brand-mustard border-gray-300">
+                                <span class="text-sm text-gray-600 group-hover:text-brand-charcoal">Dairy <span class="text-[10px] text-brand-mustard ml-1">(Leo's Profile)</span></span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" class="w-4 h-4 rounded text-brand-sage focus:ring-brand-sage border-gray-300">
+                                <span class="text-sm text-gray-600 group-hover:text-brand-charcoal">Gluten</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" class="w-4 h-4 rounded text-brand-sage focus:ring-brand-sage border-gray-300">
+                                <span class="text-sm text-gray-600 group-hover:text-brand-charcoal">Eggs</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Textures -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-bold text-brand-charcoal mb-3">Textures</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="bg-brand-sage/10 text-brand-sage border border-brand-sage/20 text-xs font-bold px-3 py-1.5 rounded-[6px]">Crunchy</button>
+                            <button class="bg-white text-gray-600 border border-gray-200 hover:border-brand-charcoal text-xs font-medium px-3 py-1.5 rounded-[6px] transition-colors">Mushy</button>
+                            <button class="bg-white text-gray-600 border border-gray-200 hover:border-brand-charcoal text-xs font-medium px-3 py-1.5 rounded-[6px] transition-colors">Chewy</button>
+                            <button class="bg-brand-red/5 text-brand-red border border-brand-red/20 text-xs font-medium px-3 py-1.5 rounded-[6px] line-through">Slimy</button>
+                        </div>
+                    </div>
+
+                    <!-- Prep Time -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-bold text-brand-charcoal mb-3">Prep Time</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="time" class="w-4 h-4 text-brand-sage focus:ring-brand-sage border-gray-300">
+                                <span class="text-sm text-gray-600 group-hover:text-brand-charcoal">Under 15 mins</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="time" class="w-4 h-4 text-brand-sage focus:ring-brand-sage border-gray-300">
+                                <span class="text-sm text-gray-600 group-hover:text-brand-charcoal">Under 30 mins</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="radio" name="time" class="w-4 h-4 text-brand-sage focus:ring-brand-sage border-gray-300">
+                                <span class="text-sm text-gray-600 group-hover:text-brand-charcoal">Any Time</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Kid Accepted -->
+                    <div>
+                        <h3 class="text-sm font-bold text-brand-charcoal mb-3">Difficulty (Kid Accepted)</h3>
+                        <div class="flex items-center gap-2">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" value="" class="sr-only peer" checked>
+                                <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-mustard"></div>
+                            </label>
+                            <span class="text-sm text-gray-600">Only show "High Success Rate"</span>
+                        </div>
+                    </div>
+
+                </div>
+            </aside>
+
+            <!-- Results Area -->
+            <div class="flex-grow w-full space-y-8">
+                
+                <!-- Curated Collections Carousel -->
+                <section id="curated-collections">
+                    <h2 class="text-lg font-bold text-brand-charcoal mb-4">Curated for Leo</h2>
+                    <div class="flex overflow-x-auto gap-4 pb-4 hide-scrollbar">
+                        
+                        <div class="w-64 shrink-0 bg-white rounded-[16px] smooth-shadow border border-gray-100 overflow-hidden group cursor-pointer">
+                            <div class="h-32 bg-brand-sand relative overflow-hidden">
+                                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/3c28008c91-8099d62f3b767d4fdcb5.png" alt="crispy baked chicken nuggets on a plate, kid friendly, bright lighting" />
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                <div class="absolute bottom-3 left-3">
+                                    <span class="text-white text-sm font-bold">Crispy & Safe</span>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <p class="text-xs text-gray-500">12 recipes • Crunchy textures</p>
+                            </div>
+                        </div>
+
+                        <div class="w-64 shrink-0 bg-white rounded-[16px] smooth-shadow border border-gray-100 overflow-hidden group cursor-pointer">
+                            <div class="h-32 bg-brand-sand relative overflow-hidden">
+                                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/e04ccf980f-08f6fec9f69ae31caff1.png" alt="hidden veggie pasta sauce over penne, kid friendly, warm lighting" />
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                <div class="absolute bottom-3 left-3">
+                                    <span class="text-white text-sm font-bold">Hidden Veggies</span>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <p class="text-xs text-gray-500">8 recipes • Smooth textures</p>
+                            </div>
+                        </div>
+
+                        <div class="w-64 shrink-0 bg-white rounded-[16px] smooth-shadow border border-gray-100 overflow-hidden group cursor-pointer">
+                            <div class="h-32 bg-brand-sand relative overflow-hidden">
+                                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/d76a5297f7-1c940b363fb5b091fdb5.png" alt="colorful fruit skewers for kids, bright lighting" />
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                <div class="absolute bottom-3 left-3">
+                                    <span class="text-white text-sm font-bold">10-Minute Snacks</span>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <p class="text-xs text-gray-500">15 recipes • Quick prep</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Recipe Results Grid -->
+                <section id="recipe-grid">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-brand-charcoal">All Safe Recipes (24)</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                        
+                        <!-- Recipe Card 1 -->
+                        <div class="bg-white rounded-[16px] smooth-shadow border border-gray-100 overflow-hidden flex flex-col group">
+                            <div class="h-48 bg-brand-sand relative overflow-hidden">
+                                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/89ed6399b0-62741f3549abd33fee2d.png" alt="homemade crispy chicken tenders, golden brown, kid friendly" />
+                                <button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-gray-400 hover:text-brand-red transition-colors shadow-sm">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                                <div class="absolute top-3 left-3 bg-brand-sage text-white text-[10px] font-bold px-2 py-1 rounded-[6px] shadow-sm">
+                                    <i class="fa-solid fa-check mr-1"></i> Allergy-safe for Leo
+                                </div>
+                            </div>
+                            <div class="p-4 flex flex-col flex-grow">
+                                <div class="flex items-start justify-between gap-2 mb-2">
+                                    <h3 class="text-base font-bold text-brand-charcoal leading-tight">Crispy Baked Chicken Tenders</h3>
+                                    <div class="flex items-center gap-1 text-[11px] font-bold text-brand-mustard bg-brand-mustard/10 px-1.5 py-0.5 rounded-[4px] shrink-0">
+                                        <i class="fa-solid fa-star"></i> 4.8
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-3 line-clamp-2">A healthier take on a classic favorite. Extra crunchy exterior with tender chicken inside.</p>
+                                
+                                <!-- Metadata Pills -->
+                                <div class="flex flex-wrap gap-1.5 mb-4 mt-auto">
+                                    <span class="text-[10px] font-medium bg-brand-sand text-gray-600 px-2 py-1 rounded-[4px]">20 mins prep</span>
+                                    <span class="text-[10px] font-medium bg-brand-sand text-gray-600 px-2 py-1 rounded-[4px]">Texture: Crunchy</span>
+                                    <span class="text-[10px] font-medium bg-brand-sand text-gray-600 px-2 py-1 rounded-[4px]">High Success</span>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="flex items-center gap-2 mt-2 pt-3 border-t border-gray-100">
+                                    <button class="flex-grow bg-brand-red text-white text-xs font-bold py-2 rounded-[8px] hover:bg-brand-red/90 transition-colors">
+                                        View Details
+                                    </button>
+                                    <button class="w-10 h-10 bg-brand-sand text-brand-charcoal rounded-[8px] flex items-center justify-center hover:bg-gray-200 transition-colors" title="Add to Meal Plan">
+                                        <i class="fa-solid fa-calendar-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recipe Card 2 -->
+                        <div class="bg-white rounded-[16px] smooth-shadow border border-gray-100 overflow-hidden flex flex-col group">
+                            <div class="h-48 bg-brand-sand relative overflow-hidden">
+                                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/ce1ce13145-9abdba5776778fd606b4.png" alt="simple buttered pasta bowl, kid friendly, warm lighting" />
+                                <button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-brand-red transition-colors shadow-sm">
+                                    <i class="fa-solid fa-heart"></i>
+                                </button>
+                                <div class="absolute top-3 left-3 bg-brand-sage text-white text-[10px] font-bold px-2 py-1 rounded-[6px] shadow-sm">
+                                    <i class="fa-solid fa-check mr-1"></i> Allergy-safe for Leo
+                                </div>
+                            </div>
+                            <div class="p-4 flex flex-col flex-grow">
+                                <div class="flex items-start justify-between gap-2 mb-2">
+                                    <h3 class="text-base font-bold text-brand-charcoal leading-tight">Simple Buttered Pasta</h3>
+                                    <div class="flex items-center gap-1 text-[11px] font-bold text-brand-mustard bg-brand-mustard/10 px-1.5 py-0.5 rounded-[4px] shrink-0">
+                                        <i class="fa-solid fa-star"></i> 4.9
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-3 line-clamp-2">The ultimate safe food. Minimal ingredients, predictable texture, consistently accepted.</p>
+                                
+                                <div class="flex flex-wrap gap-1.5 mb-4 mt-auto">
+                                    <span class="text-[10px] font-medium bg-brand-sand text-gray-600 px-2 py-1 rounded-[4px]">10 mins prep</span>
+                                    <span class="text-[10px] font-medium bg-brand-sand text-gray-600 px-2 py-1 rounded-[4px]">Texture: Soft</span>
+                                    <span class="text-[10px] font-medium bg-brand-sage/20 text-brand-sage px-2 py-1 rounded-[4px]">Safe Food Match</span>
+                                </div>
+
+                                <div class="flex items-center gap-2 mt-2 pt-3 border-t border-gray-100">
+                                    <button class="flex-grow bg-brand-red text-white text-xs font-bold py-2 rounded-[8px] hover:bg-brand-red/90 transition-colors">
+                                        View Details
+                                    </button>
+                                    <button class="w-10 h-10 bg-brand-sand text-brand-charcoal rounded-[8px] flex items-center justify-center hover:bg-gray-200 transition-colors" title="Add to Meal Plan">
+                                        <i class="fa-solid fa-calendar-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recipe Card 3 -->
+                        <div class="bg-white rounded-[16px] smooth-shadow border border-gray-100 overflow-hidden flex flex-col group">
+                            <div class="h-48 bg-brand-sand relative overflow-hidden">
+                                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b1c2224e85-556aa86b691d15925468.png" alt="apple slices with sunbutter dip, healthy kid snack" />
+                                <button class="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-gray-400 hover:text-brand-red transition-colors shadow-sm">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                                <div class="absolute top-3 left-3 bg-brand-sage text-white text-[10px] font-bold px-2 py-1 rounded-[6px] shadow-sm">
+                                    <i class="fa-solid fa-check mr-1"></i> Allergy-safe for Leo
+                                </div>
+                            </div>
+                            <div class="p-4 flex flex-col flex-grow">
+                                <div class="flex items-start justify-between gap-2 mb-2">
+                                    <h3 class="text-base font-bold text-brand-charcoal leading-tight">Apple Slices & Sunbutter</h3>
+                                    <div class="flex items-center gap-1 text-[11px] font-bold text-brand-mustard bg-brand-mustard/10 px-1.5 py-0.5 rounded-[4px] shrink-0">
+                                        <i class="fa-solid fa-star"></i> 4.5
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500 mb-3 line-clamp-2">A peanut-free alternative to a classic snack. Great crunch factor.</p>
+                                
+                                <div class="flex flex-wrap gap-1.5 mb-4 mt-auto">
+                                    <span class="text-[10px] font-medium bg-brand-sand text-gray-600 px-2 py-1 rounded-[4px]">5 mins prep</span>
+                                    <span class="text-[10px] font-medium bg-brand-sand text-gray-600 px-2 py-1 rounded-[4px]">Texture: Crunchy/Smooth</span>
+                                    <span class="text-[10px] font-medium bg-brand-sand text-gray-600 px-2 py-1 rounded-[4px]">Snack</span>
+                                </div>
+
+                                <div class="flex items-center gap-2 mt-2 pt-3 border-t border-gray-100">
+                                    <button class="flex-grow bg-brand-red text-white text-xs font-bold py-2 rounded-[8px] hover:bg-brand-red/90 transition-colors">
+                                        View Details
+                                    </button>
+                                    <button class="w-10 h-10 bg-brand-sand text-brand-charcoal rounded-[8px] flex items-center justify-center hover:bg-gray-200 transition-colors" title="Add to Meal Plan">
+                                        <i class="fa-solid fa-calendar-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Load More -->
+                    <div class="flex justify-center mt-8">
+                        <button class="px-6 py-2.5 bg-white border border-gray-200 text-sm font-bold text-brand-charcoal rounded-[8px] hover:bg-gray-50 transition-colors smooth-shadow">
+                            Load More Recipes
+                        </button>
+                    </div>
+
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Shared Footer -->
+    <footer id="main-footer" class="w-full py-8 text-center bg-brand-cream border-t border-brand-sand z-10 mt-auto">
+        <p class="text-xs text-gray-500">© 2024 FussyEater Club. Safe, stress-free meal planning.</p>
+    </footer>
+
+</body>
+</html>

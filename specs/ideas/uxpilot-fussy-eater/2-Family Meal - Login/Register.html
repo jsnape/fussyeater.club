@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In / Sign Up - FussyEater Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#B22222',
+                            cream: '#FDFBF7',
+                            sand: '#F5F5F5',
+                            charcoal: '#2D2D2D',
+                            mustard: '#E8B031',
+                            sage: '#8BA888'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #FDFBF7; }
+        .smooth-shadow { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); }
+        .sticker-badge { 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="font-sans text-brand-charcoal antialiased m-0 p-0 overflow-x-hidden min-h-screen flex flex-col relative">
+
+    <!-- Auth specific header -->
+    <header id="auth-header" class="w-full bg-brand-cream/90 backdrop-blur-md sticky top-0 z-50 border-b border-brand-sand">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-center">
+            <a href="#" class="flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-bowl-food text-brand-red text-2xl"></i>
+                <span class="font-serif text-2xl font-bold text-brand-red tracking-tight">FussyEater Club</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        <!-- Auth Card Container -->
+        <div id="auth-card" class="w-full max-w-[500px] bg-white rounded-2xl smooth-shadow overflow-hidden relative">
+            
+            <!-- Tabs Header -->
+            <div class="flex border-b border-gray-200" id="auth-tabs">
+                <button onclick="switchTab('login')" id="tab-login" class="flex-1 py-5 text-sm font-bold text-brand-charcoal border-b-2 border-brand-red bg-brand-sand/30 transition-colors">
+                    Log In
+                </button>
+                <button onclick="switchTab('register')" id="tab-register" class="flex-1 py-5 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-brand-charcoal hover:bg-brand-sand/30 transition-colors">
+                    Create Account
+                </button>
+            </div>
+
+            <div class="p-8 sm:p-10">
+                
+                <!-- Social Auth Block (Shared) -->
+                <div id="social-auth" class="mb-8">
+                    <button class="w-full mb-3 flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-[4px] px-4 py-3 text-sm font-medium text-brand-charcoal hover:bg-gray-50 transition-colors shadow-sm">
+                        <i class="fa-brands fa-google text-lg"></i> Continue with Google
+                    </button>
+                    <button class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-[4px] px-4 py-3 text-sm font-medium text-brand-charcoal hover:bg-gray-50 transition-colors shadow-sm">
+                        <i class="fa-brands fa-apple text-lg"></i> Continue with Apple
+                    </button>
+                    
+                    <div class="relative mt-8 mb-6">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-200"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-4 bg-white text-gray-500 font-medium">Or continue with email</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Form -->
+                <form id="form-login" class="space-y-5 block">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">Email Address</label>
+                        <input type="email" class="w-full border border-gray-300 rounded-[4px] px-4 py-3 text-sm focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-colors" placeholder="you@example.com" required>
+                    </div>
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide">Password</label>
+                            <a href="#" class="text-xs font-bold text-brand-red hover:underline">Forgot password?</a>
+                        </div>
+                        <div class="relative">
+                            <input type="password" id="login-password" class="w-full border border-gray-300 rounded-[4px] px-4 py-3 text-sm pr-10 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-colors" placeholder="••••••••" required>
+                            <button type="button" onclick="togglePassword('login-password', 'login-eye')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-brand-charcoal">
+                                <i id="login-eye" class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="button" class="w-full bg-brand-red text-white font-bold py-3.5 rounded-[4px] mt-4 hover:bg-red-800 transition-colors shadow-md">
+                        Log In
+                    </button>
+                </form>
+
+                <!-- Registration Form -->
+                <form id="form-register" class="space-y-5 hidden">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">Caregiver Name</label>
+                        <input type="text" class="w-full border border-gray-300 rounded-[4px] px-4 py-3 text-sm focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-colors" placeholder="Jane Doe" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">Email Address</label>
+                        <input type="email" class="w-full border border-gray-300 rounded-[4px] px-4 py-3 text-sm focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-colors" placeholder="you@example.com" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">Password</label>
+                        <div class="relative">
+                            <input type="password" id="register-password" class="w-full border border-gray-300 rounded-[4px] px-4 py-3 text-sm pr-10 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-colors" placeholder="Create a strong password" required>
+                            <button type="button" onclick="togglePassword('register-password', 'register-eye')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-brand-charcoal">
+                                <i id="register-eye" class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-gray-500 mt-2 font-medium">Must be at least 8 characters with 1 number and 1 special character.</p>
+                    </div>
+
+                    <div class="mt-6 p-4 bg-brand-sand rounded-[4px] border border-gray-200">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-brand-red rounded border-gray-300 focus:ring-brand-red" required>
+                            <span class="text-xs text-gray-600 leading-relaxed">
+                                I agree to the <a href="#" class="text-brand-red font-bold hover:underline">Terms of Service</a> and <a href="#" class="text-brand-red font-bold hover:underline">Privacy Policy</a>. I understand that FussyEater Club provides suggestions, but I am solely responsible for verifying ingredients for my child's allergies.
+                            </span>
+                        </label>
+                    </div>
+
+                    <button type="button" class="w-full bg-brand-red text-white font-bold py-3.5 rounded-[4px] mt-4 hover:bg-red-800 transition-colors shadow-md">
+                        Create Account
+                    </button>
+                    <p class="text-xs text-center text-gray-500 mt-4">You'll set up your family profile next.</p>
+                </form>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Auth specific footer -->
+    <footer id="auth-footer" class="w-full py-8 text-center bg-brand-cream border-t border-brand-sand z-10">
+        <p class="text-xs text-gray-500">© 2024 FussyEater Club. Safe, stress-free meal planning.</p>
+    </footer>
+
+    <script>
+        function switchTab(tab) {
+            const loginForm = document.getElementById('form-login');
+            const registerForm = document.getElementById('form-register');
+            const loginTab = document.getElementById('tab-login');
+            const registerTab = document.getElementById('tab-register');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                loginForm.classList.add('block');
+                registerForm.classList.remove('block');
+                registerForm.classList.add('hidden');
+                
+                loginTab.classList.add('border-brand-red', 'text-brand-charcoal', 'bg-brand-sand/30');
+                loginTab.classList.remove('border-transparent', 'text-gray-500');
+                
+                registerTab.classList.remove('border-brand-red', 'text-brand-charcoal', 'bg-brand-sand/30');
+                registerTab.classList.add('border-transparent', 'text-gray-500');
+            } else {
+                registerForm.classList.remove('hidden');
+                registerForm.classList.add('block');
+                loginForm.classList.remove('block');
+                loginForm.classList.add('hidden');
+                
+                registerTab.classList.add('border-brand-red', 'text-brand-charcoal', 'bg-brand-sand/30');
+                registerTab.classList.remove('border-transparent', 'text-gray-500');
+                
+                loginTab.classList.remove('border-brand-red', 'text-brand-charcoal', 'bg-brand-sand/30');
+                loginTab.classList.add('border-transparent', 'text-gray-500');
+            }
+        }
+
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

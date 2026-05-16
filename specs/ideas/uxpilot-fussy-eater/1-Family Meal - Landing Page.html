@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FussyEater Club - Peaceful Mealtimes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#B22222',
+                            cream: '#FDFBF7',
+                            sand: '#F5F5F5',
+                            charcoal: '#2D2D2D',
+                            mustard: '#E8B031',
+                            sage: '#8BA888'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #FDFBF7; }
+        .smooth-shadow { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); }
+        .sticker-badge { 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="font-sans text-brand-charcoal antialiased m-0 p-0 overflow-x-hidden">
+
+    <!-- Top Announcement Bar -->
+    <div id="announcement-bar" class="bg-brand-red text-white py-2 text-center text-sm font-medium tracking-wide">
+        Welcome to the club. Discover stress-free meal planning for sensitive eaters.
+    </div>
+
+    <!-- Navigation (Auth/Landing focused) -->
+    <nav id="main-nav" class="w-full bg-brand-cream/90 backdrop-blur-md sticky top-0 z-50 border-b border-brand-sand">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-bowl-food text-brand-red text-2xl"></i>
+                <span class="font-serif text-2xl font-bold text-brand-red tracking-tight">FussyEater Club</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#how-it-works" class="text-sm font-medium hover:text-brand-red transition-colors">How it Works</a>
+                <a href="#recipes" class="text-sm font-medium hover:text-brand-red transition-colors">Sample Recipes</a>
+                <a href="#testimonials" class="text-sm font-medium hover:text-brand-red transition-colors">Stories</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="text-sm font-medium hover:text-brand-red transition-colors px-4 py-2">Log In</button>
+                <button class="bg-brand-red text-white px-6 py-2.5 rounded-[4px] text-sm font-medium hover:bg-red-800 transition-colors shadow-sm">
+                    Create Account
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative w-full min-h-[600px] flex items-center bg-brand-cream pt-12 pb-20 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="max-w-xl z-10">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-brand-sand rounded-full text-xs font-semibold text-brand-red mb-6 uppercase tracking-wider">
+                    <i class="fa-solid fa-heart"></i> For Caregivers
+                </div>
+                <h1 class="font-serif text-5xl lg:text-6xl text-brand-charcoal leading-[1.15] mb-6">
+                    Bring peace back to <span class="text-brand-red italic">mealtime.</span>
+                </h1>
+                <p class="text-lg text-gray-600 mb-8 leading-relaxed font-light">
+                    A warm, low-pressure space to discover recipes, build allergy-aware meal plans, and generate shopping lists tailored to your child's unique sensory preferences. We take the stress out of planning so you can focus on connection.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button class="bg-brand-red text-white px-8 py-3.5 rounded-[4px] font-medium hover:bg-red-800 transition-all shadow-md text-center">
+                        Start Your Free Plan
+                    </button>
+                    <button class="bg-white border border-gray-200 text-brand-charcoal px-8 py-3.5 rounded-[4px] font-medium hover:bg-gray-50 transition-all text-center flex items-center justify-center gap-2">
+                        Browse Sample Recipes <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+                <div class="mt-8 flex items-center gap-4 text-sm text-gray-500">
+                    <div class="flex -space-x-2">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" class="w-8 h-8 rounded-full border-2 border-white object-cover" alt="Parent">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" class="w-8 h-8 rounded-full border-2 border-white object-cover" alt="Parent">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" class="w-8 h-8 rounded-full border-2 border-white object-cover" alt="Parent">
+                    </div>
+                    <p>Joined by 5,000+ relieved parents</p>
+                </div>
+            </div>
+            
+            <div class="relative h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl z-0">
+                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Calming, sensory-friendly bowl of food">
+                
+                <!-- Floating Trust Badges -->
+                <div class="absolute top-8 left-8 bg-white/95 backdrop-blur rounded-[8px] p-3 sticker-badge flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-brand-sage/20 flex items-center justify-center text-brand-sage">
+                        <i class="fa-solid fa-leaf"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-gray-800">Sensory-Friendly</p>
+                        <p class="text-[10px] text-gray-500">Texture & color filters</p>
+                    </div>
+                </div>
+                
+                <div class="absolute bottom-8 right-8 bg-white/95 backdrop-blur rounded-[8px] p-3 sticker-badge flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-brand-mustard/20 flex items-center justify-center text-brand-mustard">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-gray-800">Allergy-Aware</p>
+                        <p class="text-[10px] text-gray-500">Strict ingredient tracking</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Quote / Social Proof -->
+    <section class="py-16 bg-white border-y border-gray-100">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <p class="font-serif text-2xl md:text-3xl text-brand-red leading-snug mb-8">
+                "The meal planner you never knew you were missing, but will rely on every single week to keep dinner time peaceful."
+            </p>
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                <span class="font-serif text-xl font-bold">The New York Times</span>
+                <span class="font-sans font-bold tracking-widest text-lg">FOOD&WINE</span>
+                <span class="font-serif text-xl tracking-wide">SAVEUR</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works / Value Props -->
+    <section id="how-it-works" class="py-24 bg-brand-sand">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="text-center mb-16">
+                <h2 class="font-serif text-4xl text-brand-charcoal mb-4">Designed for your reality</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">We understand that "just try one bite" doesn't work for everyone. Our tools are built to accommodate strict preferences without judgment.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white p-8 rounded-[8px] smooth-shadow text-center">
+                    <div class="w-16 h-16 mx-auto bg-brand-cream rounded-full flex items-center justify-center mb-6 text-brand-red text-2xl">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold mb-3">Granular Filtering</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Filter recipes not just by allergies, but by textures (crunchy, smooth), colors, and temperature preferences.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="bg-white p-8 rounded-[8px] smooth-shadow text-center">
+                    <div class="w-16 h-16 mx-auto bg-brand-cream rounded-full flex items-center justify-center mb-6 text-brand-red text-2xl">
+                        <i class="fa-regular fa-calendar-check"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold mb-3">Low-Pressure Planning</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Build flexible weekly menus. Swap meals easily when a "safe food" suddenly becomes unacceptable.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="bg-white p-8 rounded-[8px] smooth-shadow text-center">
+                    <div class="w-16 h-16 mx-auto bg-brand-cream rounded-full flex items-center justify-center mb-6 text-brand-red text-2xl">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold mb-3">Smart Shopping Lists</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Automatically generate categorized grocery lists based on your selected recipes, saving you mental energy.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sample Recipe Gallery -->
+    <section id="recipes" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="text-center mb-16">
+                <h2 class="font-serif text-4xl text-brand-charcoal mb-4">Sample Safe Foods</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Explore a few of our highly-rated recipes designed to be approachable, adaptable, and sensory-friendly.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Recipe Card 1 -->
+                <div class="group cursor-pointer">
+                    <div class="relative h-64 rounded-[8px] overflow-hidden mb-4 bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1618449840665-9ed506d73a34?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Smooth Butternut Soup">
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-white/90 backdrop-blur px-2 py-1 text-[10px] font-bold tracking-wider uppercase rounded-[4px] text-brand-charcoal">Smooth</span>
+                            <span class="bg-brand-sage/90 backdrop-blur px-2 py-1 text-[10px] font-bold tracking-wider uppercase rounded-[4px] text-white">Dairy-Free</span>
+                        </div>
+                    </div>
+                    <h4 class="font-serif text-lg font-bold text-center mb-1">Hidden Veggie Golden Soup</h4>
+                    <p class="text-xs text-gray-500 text-center uppercase tracking-widest">Mild • Uniform Texture</p>
+                </div>
+
+                <!-- Recipe Card 2 -->
+                <div class="group cursor-pointer">
+                    <div class="relative h-64 rounded-[8px] overflow-hidden mb-4 bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1564834724105-918b73d1b9e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Crispy Baked Tofu">
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-white/90 backdrop-blur px-2 py-1 text-[10px] font-bold tracking-wider uppercase rounded-[4px] text-brand-charcoal">Crunchy</span>
+                            <span class="bg-brand-mustard/90 backdrop-blur px-2 py-1 text-[10px] font-bold tracking-wider uppercase rounded-[4px] text-white">Nut-Free</span>
+                        </div>
+                    </div>
+                    <h4 class="font-serif text-lg font-bold text-center mb-1">Crispy Baked Tofu Bites</h4>
+                    <p class="text-xs text-gray-500 text-center uppercase tracking-widest">Dry • Finger Food</p>
+                </div>
+
+                <!-- Recipe Card 3 -->
+                <div class="group cursor-pointer">
+                    <div class="relative h-64 rounded-[8px] overflow-hidden mb-4 bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1551181814-b85fdf009b24?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Deconstructed Pasta">
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-white/90 backdrop-blur px-2 py-1 text-[10px] font-bold tracking-wider uppercase rounded-[4px] text-brand-charcoal">Separated</span>
+                        </div>
+                    </div>
+                    <h4 class="font-serif text-lg font-bold text-center mb-1">Deconstructed Pasta Plate</h4>
+                    <p class="text-xs text-gray-500 text-center uppercase tracking-widest">No Touching • Plain</p>
+                </div>
+
+                <!-- Recipe Card 4 -->
+                <div class="group cursor-pointer">
+                    <div class="relative h-64 rounded-[8px] overflow-hidden mb-4 bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1514944288352-fffac99f0bdf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Sweet Potato Muffins">
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-white/90 backdrop-blur px-2 py-1 text-[10px] font-bold tracking-wider uppercase rounded-[4px] text-brand-charcoal">Soft</span>
+                            <span class="bg-brand-sage/90 backdrop-blur px-2 py-1 text-[10px] font-bold tracking-wider uppercase rounded-[4px] text-white">Gluten-Free</span>
+                        </div>
+                    </div>
+                    <h4 class="font-serif text-lg font-bold text-center mb-1">Sweet Potato Mini Muffins</h4>
+                    <p class="text-xs text-gray-500 text-center uppercase tracking-widest">Sweet • Bite-Sized</p>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <button class="bg-white border border-gray-300 text-brand-charcoal px-8 py-3 rounded-[4px] font-medium hover:bg-gray-50 transition-all">
+                    View Full Recipe Library
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-24 bg-brand-cream border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <h2 class="font-serif text-3xl text-center text-brand-charcoal mb-16">Stories from our community</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-[8px] smooth-shadow relative">
+                    <i class="fa-solid fa-quote-left absolute top-6 left-6 text-4xl text-gray-100"></i>
+                    <p class="relative z-10 text-gray-600 mb-6 italic">"Finding recipes that fit my son's texture aversions and dairy allergy used to take hours of scrolling blogs. Now I just filter by 'Crunchy' and 'Dairy-Free' and we have a meal plan in 5 minutes. It's lowered my daily anxiety immensely."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg" class="w-10 h-10 rounded-full" alt="Sarah M.">
+                        <div>
+                            <p class="text-sm font-bold">Sarah M.</p>
+                            <p class="text-xs text-gray-500">Mother of a 6-year-old</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-[8px] smooth-shadow relative">
+                    <i class="fa-solid fa-quote-left absolute top-6 left-6 text-4xl text-gray-100"></i>
+                    <p class="relative z-10 text-gray-600 mb-6 italic">"The 'separated' meal ideas have been a game changer. The app doesn't make me feel bad for serving plain pasta next to unseasoned chicken. It just gives me practical tools to make sure he's fed and happy."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" class="w-10 h-10 rounded-full" alt="David L.">
+                        <div>
+                            <p class="text-sm font-bold">David L.</p>
+                            <p class="text-xs text-gray-500">Father of twins</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA / Auth Entry -->
+    <section class="py-24 bg-brand-red text-center px-6">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="font-serif text-4xl text-white mb-6">Ready for calmer dinners?</h2>
+            <p class="text-red-100 mb-10 text-lg">Join thousands of caregivers using FussyEater Club to manage mealtime stress. Create your family profile to unlock personalized recommendations.</p>
+            
+            <div class="bg-white p-8 rounded-[8px] shadow-xl max-w-md mx-auto text-left">
+                <h3 class="font-bold text-xl mb-6 text-center">Create your free account</h3>
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Email Address</label>
+                        <input type="email" class="w-full border border-gray-300 rounded-[4px] px-4 py-2.5 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-colors" placeholder="you@example.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Password</label>
+                        <input type="password" class="w-full border border-gray-300 rounded-[4px] px-4 py-2.5 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-colors" placeholder="••••••••">
+                    </div>
+                    <button type="button" class="w-full bg-brand-charcoal text-white font-bold py-3 rounded-[4px] mt-2 hover:bg-black transition-colors">
+                        Sign Up
+                    </button>
+                </form>
+                <div class="mt-6 text-center text-sm text-gray-500">
+                    Already have an account? <a href="#" class="text-brand-red font-bold hover:underline">Log in</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-charcoal text-white py-12 text-center">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-center gap-2 mb-6">
+                <i class="fa-solid fa-bowl-food text-brand-red text-xl"></i>
+                <span class="font-serif text-xl font-bold tracking-tight">FussyEater Club</span>
+            </div>
+            <p class="text-gray-400 text-sm mb-6">Practical tools for peaceful mealtimes.</p>
+            <div class="flex justify-center gap-6 text-sm text-gray-400">
+                <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                <a href="#" class="hover:text-white transition-colors">Contact Support</a>
+            </div>
+            <p class="text-gray-500 text-xs mt-8">© 2024 FussyEater Club. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

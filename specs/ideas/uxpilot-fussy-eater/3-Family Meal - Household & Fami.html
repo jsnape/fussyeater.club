@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Household & Family Profiles - FussyEater Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#B22222',
+                            cream: '#FDFBF7',
+                            sand: '#F5F5F5',
+                            charcoal: '#2D2D2D',
+                            mustard: '#E8B031',
+                            sage: '#8BA888'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #FDFBF7; }
+        .smooth-shadow { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); }
+        .sticker-badge { 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        /* Custom scrollbar for horizontal lists */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="font-sans text-brand-charcoal antialiased m-0 p-0 overflow-x-hidden min-h-screen flex flex-col relative">
+
+    <!-- Shared Navigation Header -->
+    <header id="main-header" class="w-full bg-brand-cream/90 backdrop-blur-md sticky top-0 z-50 border-b border-brand-sand shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-bowl-food text-brand-red text-2xl"></i>
+                <span class="font-serif text-2xl font-bold text-brand-red tracking-tight hidden sm:block">FussyEater Club</span>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Recipes Browse</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Meal Planner</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Shopping List</a>
+                <a href="#" class="text-sm font-bold text-brand-red border-b-2 border-brand-red pb-1">Household & Profiles</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Account & Preferences</a>
+            </nav>
+
+            <button class="md:hidden text-brand-charcoal text-xl">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-12 py-8 relative z-10">
+        
+        <!-- Page Header & Global Sync -->
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-10 gap-6">
+            <div>
+                <h1 class="font-serif text-3xl sm:text-4xl font-bold text-brand-charcoal mb-2">Household Profiles</h1>
+                <p class="text-gray-500 text-sm max-w-2xl">Manage your family members, their allergies, and sensory preferences here. We'll use this to filter recipes and generate safe meal plans.</p>
+            </div>
+            
+            <!-- Global Sync Toggle Card -->
+            <div class="bg-white rounded-[16px] smooth-shadow p-4 border border-gray-100 flex items-center gap-4 w-full lg:w-auto">
+                <div class="bg-brand-sage/10 w-10 h-10 rounded-full flex items-center justify-center text-brand-sage shrink-0">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-brand-charcoal">Sync Preferences</h3>
+                    <p class="text-[11px] text-gray-500">Apply to Browse & Meal Planner</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer ml-auto pl-4">
+                    <input type="checkbox" value="" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-sage"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            
+            <!-- Left Column: Member List -->
+            <div class="xl:col-span-4 space-y-6">
+                
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-bold text-brand-charcoal">Family Members</h2>
+                    <button class="text-xs font-bold text-brand-red bg-brand-red/10 px-3 py-1.5 rounded-[6px] hover:bg-brand-red/20 transition-colors">
+                        <i class="fa-solid fa-plus mr-1"></i> Add Member
+                    </button>
+                </div>
+
+                <!-- Active Member Card -->
+                <div class="bg-white rounded-[16px] smooth-shadow p-5 border-2 border-brand-red cursor-pointer relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-brand-red text-white text-[10px] font-bold px-3 py-1 rounded-bl-[12px]">Editing</div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-full bg-brand-sand overflow-hidden border-2 border-white shadow-sm shrink-0">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg" alt="Leo" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-brand-charcoal">Leo (Child)</h3>
+                            <p class="text-xs text-gray-500 mt-0.5">Age 4-6 • Picky Eater</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-100 flex flex-wrap gap-2">
+                        <span class="text-[11px] font-medium bg-brand-red/10 text-brand-red px-2 py-1 rounded-[4px]"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Peanuts</span>
+                        <span class="text-[11px] font-medium bg-brand-sage/10 text-brand-sage px-2 py-1 rounded-[4px]"><i class="fa-solid fa-check mr-1"></i> Pasta</span>
+                    </div>
+                </div>
+
+                <!-- Inactive Member Card -->
+                <div class="bg-white rounded-[16px] smooth-shadow p-5 border border-gray-100 cursor-pointer hover:border-gray-300 transition-colors opacity-70 hover:opacity-100">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-full bg-brand-sand overflow-hidden border-2 border-white shadow-sm shrink-0">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-7.jpg" alt="Sarah" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-brand-charcoal">Sarah (Parent)</h3>
+                            <p class="text-xs text-gray-500 mt-0.5">Adult • No restrictions</p>
+                        </div>
+                    </div>
+                </div>
+                
+                 <!-- Inactive Member Card -->
+                 <div class="bg-white rounded-[16px] smooth-shadow p-5 border border-gray-100 cursor-pointer hover:border-gray-300 transition-colors opacity-70 hover:opacity-100">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-full bg-brand-sand overflow-hidden border-2 border-white shadow-sm shrink-0 flex items-center justify-center text-gray-400">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-brand-charcoal">Tom (Parent)</h3>
+                            <p class="text-xs text-gray-500 mt-0.5">Adult • Vegetarian</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Member Details & Preferences -->
+            <div class="xl:col-span-8 bg-white rounded-[24px] smooth-shadow border border-gray-100 overflow-hidden">
+                
+                <!-- Profile Header -->
+                <div class="p-6 sm:p-8 border-b border-gray-100 bg-brand-sand/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-full bg-white overflow-hidden border-4 border-white shadow-sm shrink-0 relative group cursor-pointer">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg" alt="Leo" class="w-full h-full object-cover group-hover:opacity-50 transition-opacity">
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fa-solid fa-camera text-brand-charcoal"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-brand-charcoal flex items-center gap-2">Leo's Profile <i class="fa-solid fa-pen text-[12px] text-gray-400 cursor-pointer hover:text-brand-red"></i></h2>
+                            <p class="text-sm text-gray-500">Managing preferences for 1 family member</p>
+                        </div>
+                    </div>
+                    <button class="text-sm font-bold text-white bg-brand-charcoal px-6 py-2.5 rounded-[8px] hover:bg-black transition-colors w-full sm:w-auto">
+                        Save Changes
+                    </button>
+                </div>
+
+                <div class="p-6 sm:p-8 space-y-10">
+                    
+                    <!-- Section: Allergies & Intolerances -->
+                    <section>
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-brand-charcoal flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-brand-red"></i> Allergies & Intolerances</h3>
+                                <p class="text-xs text-gray-500 mt-1">Strictly avoid these ingredients across all meals.</p>
+                            </div>
+                            <button class="text-xs font-bold text-brand-red hover:underline">Add New</button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Allergy Item -->
+                            <div class="border border-brand-red/20 bg-brand-red/5 rounded-[12px] p-4 flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-sm font-bold text-brand-charcoal">Peanuts</h4>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-brand-red bg-white px-2 py-0.5 rounded-[4px] border border-brand-red/10 mt-1 inline-block">Severe (Anaphylaxis)</span>
+                                </div>
+                                <button class="text-gray-400 hover:text-brand-red transition-colors"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <!-- Allergy Item -->
+                            <div class="border border-brand-mustard/30 bg-brand-mustard/5 rounded-[12px] p-4 flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-sm font-bold text-brand-charcoal">Dairy</h4>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-brand-mustard bg-white px-2 py-0.5 rounded-[4px] border border-brand-mustard/10 mt-1 inline-block">Mild Intolerance</span>
+                                </div>
+                                <button class="text-gray-400 hover:text-brand-red transition-colors"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <hr class="border-gray-100">
+
+                    <!-- Section: Sensory & Textures -->
+                    <section>
+                        <div class="mb-4">
+                            <h3 class="text-lg font-bold text-brand-charcoal flex items-center gap-2"><i class="fa-solid fa-face-meh-blank text-brand-mustard"></i> Sensory & Textures</h3>
+                            <p class="text-xs text-gray-500 mt-1">What textures does Leo struggle with?</p>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-3">
+                            <button class="border border-gray-200 bg-white text-gray-600 text-sm font-medium px-4 py-2 rounded-[8px] hover:border-brand-charcoal transition-colors">Mushy</button>
+                            <button class="border-2 border-brand-red bg-brand-red/5 text-brand-charcoal text-sm font-bold px-4 py-2 rounded-[8px] flex items-center gap-2">Slimy <i class="fa-solid fa-xmark text-brand-red text-xs"></i></button>
+                            <button class="border border-gray-200 bg-white text-gray-600 text-sm font-medium px-4 py-2 rounded-[8px] hover:border-brand-charcoal transition-colors">Crunchy</button>
+                            <button class="border-2 border-brand-red bg-brand-red/5 text-brand-charcoal text-sm font-bold px-4 py-2 rounded-[8px] flex items-center gap-2">Mixed Textures <i class="fa-solid fa-xmark text-brand-red text-xs"></i></button>
+                            <button class="border border-gray-200 bg-white text-gray-600 text-sm font-medium px-4 py-2 rounded-[8px] hover:border-brand-charcoal transition-colors">Chewy</button>
+                            <button class="border border-dashed border-gray-300 bg-brand-sand text-gray-500 text-sm font-medium px-4 py-2 rounded-[8px] hover:text-brand-charcoal transition-colors"><i class="fa-solid fa-plus mr-1"></i> Add Custom</button>
+                        </div>
+                    </section>
+
+                    <hr class="border-gray-100">
+
+                    <!-- Section: Safe Foods & Dislikes -->
+                    <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <div class="mb-4">
+                                <h3 class="text-sm font-bold text-brand-sage uppercase tracking-wide flex items-center gap-2"><i class="fa-solid fa-heart"></i> Safe Foods</h3>
+                                <p class="text-[11px] text-gray-500 mt-1">Always accepted ingredients</p>
+                            </div>
+                            <div class="bg-brand-sand/50 border border-gray-200 rounded-[12px] p-3 min-h-[120px] flex flex-wrap content-start gap-2">
+                                <span class="bg-white border border-gray-200 text-xs font-medium px-2.5 py-1.5 rounded-[6px] shadow-sm flex items-center gap-2">Plain Pasta <i class="fa-solid fa-xmark text-gray-400 hover:text-brand-red cursor-pointer"></i></span>
+                                <span class="bg-white border border-gray-200 text-xs font-medium px-2.5 py-1.5 rounded-[6px] shadow-sm flex items-center gap-2">Chicken Nuggets <i class="fa-solid fa-xmark text-gray-400 hover:text-brand-red cursor-pointer"></i></span>
+                                <span class="bg-white border border-gray-200 text-xs font-medium px-2.5 py-1.5 rounded-[6px] shadow-sm flex items-center gap-2">Apples <i class="fa-solid fa-xmark text-gray-400 hover:text-brand-red cursor-pointer"></i></span>
+                                <input type="text" placeholder="Type to add..." class="bg-transparent text-xs outline-none w-24 ml-1 placeholder-gray-400">
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="mb-4">
+                                <h3 class="text-sm font-bold text-brand-charcoal uppercase tracking-wide flex items-center gap-2"><i class="fa-solid fa-thumbs-down"></i> Dislikes</h3>
+                                <p class="text-[11px] text-gray-500 mt-1">Try to avoid, but not allergic</p>
+                            </div>
+                            <div class="bg-brand-sand/50 border border-gray-200 rounded-[12px] p-3 min-h-[120px] flex flex-wrap content-start gap-2">
+                                <span class="bg-white border border-gray-200 text-xs font-medium px-2.5 py-1.5 rounded-[6px] shadow-sm flex items-center gap-2 text-gray-600">Broccoli <i class="fa-solid fa-xmark text-gray-400 hover:text-brand-red cursor-pointer"></i></span>
+                                <span class="bg-white border border-gray-200 text-xs font-medium px-2.5 py-1.5 rounded-[6px] shadow-sm flex items-center gap-2 text-gray-600">Onions <i class="fa-solid fa-xmark text-gray-400 hover:text-brand-red cursor-pointer"></i></span>
+                                <input type="text" placeholder="Type to add..." class="bg-transparent text-xs outline-none w-24 ml-1 placeholder-gray-400">
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Shared Footer -->
+    <footer id="main-footer" class="w-full py-8 text-center bg-brand-cream border-t border-brand-sand z-10 mt-auto">
+        <p class="text-xs text-gray-500">© 2024 FussyEater Club. Safe, stress-free meal planning.</p>
+    </footer>
+
+</body>
+</html>

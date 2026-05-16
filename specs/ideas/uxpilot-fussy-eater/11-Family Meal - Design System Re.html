@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design System Reference - FussyEater Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#B22222',
+                            cream: '#FDFBF7',
+                            sand: '#F5F5F5',
+                            charcoal: '#2D2D2D',
+                            mustard: '#E8B031',
+                            sage: '#8BA888'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #FDFBF7; }
+        .smooth-shadow { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); }
+        .soft-card {
+            background-color: #FFFFFF;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .sensory-checkbox {
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            background-color: #FFFFFF;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .sensory-checkbox:checked {
+            background-color: #8BA888;
+            border-color: #8BA888;
+        }
+        .sensory-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            width: 8px;
+            height: 14px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+        
+        /* Toggle Switch */
+        .toggle-checkbox:checked { right: 0; border-color: #8BA888; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #8BA888; }
+        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
+    </style>
+</head>
+<body class="font-sans text-brand-charcoal antialiased m-0 p-0 overflow-x-hidden min-h-screen flex flex-col relative">
+
+    <!-- Shared Navigation Header -->
+    <header id="main-header" class="w-full bg-brand-cream/90 backdrop-blur-md sticky top-0 z-50 border-b border-brand-sand shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-bowl-food text-brand-red text-2xl"></i>
+                <span class="font-serif text-2xl font-bold text-brand-red tracking-tight hidden sm:block">FussyEater Club</span>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Recipes Browse</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Meal Planner</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Shopping List</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Household & Profiles</a>
+                <a href="#" class="text-sm font-bold text-brand-red border-b-2 border-brand-red pb-1">Account & Preferences</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <button class="w-10 h-10 rounded-full bg-brand-sand flex items-center justify-center text-brand-charcoal hover:bg-gray-200 transition-colors">
+                    <i class="fa-solid fa-bell"></i>
+                </button>
+                <div class="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden cursor-pointer">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" alt="User Profile" class="w-full h-full object-cover">
+                </div>
+                <button class="md:hidden text-brand-charcoal text-xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-[1440px] mx-auto w-full px-4 sm:px-6 lg:px-12 py-12 relative z-10 flex flex-col gap-16">
+        
+        <!-- Header Section -->
+        <section id="ds-header" class="text-center max-w-3xl mx-auto">
+            <h1 class="font-serif text-4xl md:text-5xl font-bold text-brand-charcoal mb-4">Design System Reference</h1>
+            <p class="text-lg text-gray-500">Internal UI foundations and reusable components for consistent desktop experience across FussyEater Club.</p>
+        </section>
+
+        <!-- Typography & Colors -->
+        <section id="ds-foundations" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Typography -->
+            <div class="soft-card p-8 flex flex-col gap-8">
+                <div>
+                    <h2 class="font-serif text-2xl font-bold text-brand-charcoal mb-2 border-b border-gray-100 pb-2">Typography Scale</h2>
+                    <p class="text-sm text-gray-500 mb-6">Playfair Display for headings, Inter for UI text.</p>
+                </div>
+                
+                <div class="flex flex-col gap-6">
+                    <div class="flex items-baseline gap-4 border-b border-gray-50 pb-4">
+                        <span class="text-xs text-gray-400 w-12 shrink-0">H1</span>
+                        <h1 class="font-serif text-5xl font-bold text-brand-charcoal">Playfair 48px</h1>
+                    </div>
+                    <div class="flex items-baseline gap-4 border-b border-gray-50 pb-4">
+                        <span class="text-xs text-gray-400 w-12 shrink-0">H2</span>
+                        <h2 class="font-serif text-4xl font-bold text-brand-charcoal">Playfair 36px</h2>
+                    </div>
+                    <div class="flex items-baseline gap-4 border-b border-gray-50 pb-4">
+                        <span class="text-xs text-gray-400 w-12 shrink-0">H3</span>
+                        <h3 class="font-serif text-2xl font-bold text-brand-charcoal">Playfair 24px</h3>
+                    </div>
+                    <div class="flex items-baseline gap-4 border-b border-gray-50 pb-4">
+                        <span class="text-xs text-gray-400 w-12 shrink-0">H6</span>
+                        <h6 class="font-sans text-lg font-bold text-brand-charcoal">Inter 18px Bold</h6>
+                    </div>
+                    <div class="flex items-baseline gap-4 border-b border-gray-50 pb-4">
+                        <span class="text-xs text-gray-400 w-12 shrink-0">Body</span>
+                        <p class="font-sans text-base text-gray-600">Inter 16px Regular. Used for long form text and general descriptions.</p>
+                    </div>
+                    <div class="flex items-baseline gap-4">
+                        <span class="text-xs text-gray-400 w-12 shrink-0">Small</span>
+                        <p class="font-sans text-sm text-gray-500">Inter 14px Medium. Used for metadata and subtle labels.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colors -->
+            <div class="soft-card p-8 flex flex-col gap-8">
+                <div>
+                    <h2 class="font-serif text-2xl font-bold text-brand-charcoal mb-2 border-b border-gray-100 pb-2">Color Palette</h2>
+                    <p class="text-sm text-gray-500 mb-6">Warm, calming, and accessible.</p>
+                </div>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <div class="flex flex-col gap-2">
+                        <div class="h-20 rounded-2xl bg-[#B22222] border border-gray-200/50 shadow-sm"></div>
+                        <div class="text-sm font-bold text-brand-charcoal">Brand Red</div>
+                        <div class="text-xs text-gray-500">#B22222</div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div class="h-20 rounded-2xl bg-[#E8B031] border border-gray-200/50 shadow-sm"></div>
+                        <div class="text-sm font-bold text-brand-charcoal">Brand Mustard</div>
+                        <div class="text-xs text-gray-500">#E8B031</div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div class="h-20 rounded-2xl bg-[#8BA888] border border-gray-200/50 shadow-sm"></div>
+                        <div class="text-sm font-bold text-brand-charcoal">Brand Sage</div>
+                        <div class="text-xs text-gray-500">#8BA888</div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div class="h-20 rounded-2xl bg-[#2D2D2D] border border-gray-200/50 shadow-sm"></div>
+                        <div class="text-sm font-bold text-brand-charcoal">Charcoal</div>
+                        <div class="text-xs text-gray-500">#2D2D2D</div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div class="h-20 rounded-2xl bg-[#FDFBF7] border border-gray-200 shadow-sm"></div>
+                        <div class="text-sm font-bold text-brand-charcoal">Cream (Bg)</div>
+                        <div class="text-xs text-gray-500">#FDFBF7</div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div class="h-20 rounded-2xl bg-[#F5F5F5] border border-gray-200 shadow-sm"></div>
+                        <div class="text-sm font-bold text-brand-charcoal">Sand (Surface)</div>
+                        <div class="text-xs text-gray-500">#F5F5F5</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Components Library -->
+        <section id="ds-components" class="soft-card p-8 flex flex-col gap-12">
+            <div>
+                <h2 class="font-serif text-3xl font-bold text-brand-charcoal mb-2">Component Library</h2>
+                <p class="text-sm text-gray-500">Interactive primitives used across the application.</p>
+            </div>
+
+            <!-- Buttons & Forms -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                <!-- Buttons -->
+                <div class="flex flex-col gap-6">
+                    <h3 class="font-serif text-xl font-bold text-brand-charcoal border-b border-gray-100 pb-2">Buttons</h3>
+                    
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs text-gray-400 w-20">Primary</span>
+                            <button class="px-6 py-2.5 bg-brand-charcoal text-white rounded-2xl text-sm font-bold hover:bg-gray-800 transition-colors shadow-sm">Save Changes</button>
+                            <button class="px-6 py-2.5 bg-brand-charcoal/50 text-white rounded-2xl text-sm font-bold cursor-not-allowed">Disabled</button>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs text-gray-400 w-20">Secondary</span>
+                            <button class="px-6 py-2.5 bg-white border border-gray-200 text-brand-charcoal rounded-2xl text-sm font-bold hover:bg-brand-sand transition-colors shadow-sm">Cancel</button>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs text-gray-400 w-20">Ghost</span>
+                            <button class="px-4 py-2 text-brand-charcoal hover:text-brand-mustard text-sm font-bold transition-colors">Edit Profile</button>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs text-gray-400 w-20">Icon</span>
+                            <button class="w-10 h-10 rounded-full bg-brand-sand flex items-center justify-center text-brand-charcoal hover:bg-gray-200 transition-colors">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Forms -->
+                <div class="flex flex-col gap-6">
+                    <h3 class="font-serif text-xl font-bold text-brand-charcoal border-b border-gray-100 pb-2">Form Fields</h3>
+                    
+                    <div class="flex flex-col gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-brand-charcoal mb-2">Standard Input</label>
+                            <input type="text" placeholder="Enter text here..." class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-brand-sand/30 text-brand-charcoal focus:outline-none focus:border-brand-mustard focus:ring-1 focus:ring-brand-mustard transition-all">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-brand-charcoal mb-2">Dropdown Select</label>
+                            <div class="relative">
+                                <select class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-brand-sand/30 text-brand-charcoal appearance-none focus:outline-none focus:border-brand-mustard focus:ring-1 focus:ring-brand-mustard transition-all">
+                                    <option>Select an option</option>
+                                    <option>Option 1</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between py-2 border rounded-2xl p-4 border-gray-200 bg-brand-sand/30">
+                            <div>
+                                <h4 class="text-sm font-bold text-brand-charcoal">Toggle Switch</h4>
+                            </div>
+                            <div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" name="toggle_ds" id="toggle_ds" checked class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-gray-200 appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out"/>
+                                <label for="toggle_ds" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-200 cursor-pointer transition-colors duration-200 ease-in-out"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Badges & Chips -->
+            <div class="flex flex-col gap-6 pt-8 border-t border-gray-100">
+                <h3 class="font-serif text-xl font-bold text-brand-charcoal border-b border-gray-100 pb-2">Badges & Filter Chips</h3>
+                
+                <div class="flex flex-wrap gap-4">
+                    <div class="px-3 py-1 bg-brand-sage/20 text-brand-sage rounded-full text-xs font-bold border border-brand-sage/30 flex items-center gap-1.5">
+                        <i class="fa-solid fa-leaf"></i> Dairy-Free
+                    </div>
+                    <div class="px-3 py-1 bg-brand-mustard/20 text-[#B8860B] rounded-full text-xs font-bold border border-brand-mustard/30 flex items-center gap-1.5">
+                        <i class="fa-solid fa-wheat-awn"></i> Gluten-Free
+                    </div>
+                    <div class="px-3 py-1 bg-brand-red/10 text-brand-red rounded-full text-xs font-bold border border-brand-red/20 flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Contains Nuts
+                    </div>
+                    <div class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-bold border border-gray-200 flex items-center gap-1.5">
+                        <i class="fa-solid fa-clock"></i> 30 Mins
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mt-4">
+                    <button class="px-4 py-2 rounded-full border-2 border-brand-charcoal bg-brand-charcoal text-white text-sm font-medium transition-colors">All Recipes</button>
+                    <button class="px-4 py-2 rounded-full border border-gray-200 bg-white text-gray-600 hover:border-brand-mustard hover:text-brand-charcoal text-sm font-medium transition-colors">Breakfast</button>
+                    <button class="px-4 py-2 rounded-full border border-gray-200 bg-white text-gray-600 hover:border-brand-mustard hover:text-brand-charcoal text-sm font-medium transition-colors">Sensory Friendly</button>
+                </div>
+            </div>
+
+            <!-- Alerts -->
+            <div class="flex flex-col gap-6 pt-8 border-t border-gray-100">
+                <h3 class="font-serif text-xl font-bold text-brand-charcoal border-b border-gray-100 pb-2">Alerts & Feedback</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Gentle Warning -->
+                    <div class="bg-brand-sage/10 border border-brand-sage/30 rounded-2xl p-6 flex items-start gap-4 shadow-sm">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand-sage shrink-0 shadow-sm">
+                            <i class="fa-solid fa-shield-heart text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-base font-bold text-brand-charcoal mb-1">Gentle Warning (Info)</h4>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                Used for reassuring notes, allergy disclaimers, or helpful tips. High contrast text on soft background.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Critical Alert -->
+                    <div class="bg-brand-red/5 border border-brand-red/20 rounded-2xl p-6 flex items-start gap-4 shadow-sm">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand-red shrink-0 shadow-sm">
+                            <i class="fa-solid fa-circle-exclamation text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-base font-bold text-brand-charcoal mb-1">Critical Alert (Danger)</h4>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                Used for hard allergy conflicts in meal plans or destructive actions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Patterns: Meal Planner DnD -->
+        <section id="ds-interactive" class="soft-card p-8 flex flex-col gap-8">
+            <div>
+                <h2 class="font-serif text-2xl font-bold text-brand-charcoal mb-2">Interactive Patterns</h2>
+                <p class="text-sm text-gray-500">Drag-and-Drop Calendar Preview (7-column layout)</p>
+            </div>
+
+            <div class="border border-gray-200 rounded-2xl overflow-hidden bg-brand-sand/10">
+                <!-- Calendar Header -->
+                <div class="grid grid-cols-7 border-b border-gray-200 bg-white">
+                    <div class="p-3 text-center text-xs font-bold text-gray-500 border-r border-gray-100">MON</div>
+                    <div class="p-3 text-center text-xs font-bold text-gray-500 border-r border-gray-100">TUE</div>
+                    <div class="p-3 text-center text-xs font-bold text-gray-500 border-r border-gray-100">WED</div>
+                    <div class="p-3 text-center text-xs font-bold text-gray-500 border-r border-gray-100">THU</div>
+                    <div class="p-3 text-center text-xs font-bold text-gray-500 border-r border-gray-100">FRI</div>
+                    <div class="p-3 text-center text-xs font-bold text-gray-500 border-r border-gray-100">SAT</div>
+                    <div class="p-3 text-center text-xs font-bold text-gray-500">SUN</div>
+                </div>
+                
+                <!-- Calendar Grid (Sample Week) -->
+                <div class="grid grid-cols-7 min-h-[160px]">
+                    <!-- Day 1 -->
+                    <div class="p-2 border-r border-gray-200 bg-white">
+                        <div class="bg-brand-sand rounded-xl p-2 mb-2 border border-gray-200/50 cursor-grab hover:border-brand-mustard transition-colors group">
+                            <div class="text-xs font-bold text-brand-charcoal mb-1">Mac & Cheese</div>
+                            <div class="flex gap-1">
+                                <span class="w-2 h-2 rounded-full bg-brand-sage"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Day 2 (Drop Target Active) -->
+                    <div class="p-2 border-r border-gray-200 bg-brand-mustard/5 border-2 border-dashed border-brand-mustard rounded-lg m-1 flex items-center justify-center">
+                        <span class="text-xs text-brand-mustard font-medium">Drop here</span>
+                    </div>
+                    <!-- Day 3 -->
+                    <div class="p-2 border-r border-gray-200 bg-white"></div>
+                    <!-- Day 4 -->
+                    <div class="p-2 border-r border-gray-200 bg-white">
+                        <div class="bg-brand-sand rounded-xl p-2 mb-2 border border-gray-200/50 cursor-grab hover:border-brand-mustard transition-colors">
+                            <div class="text-xs font-bold text-brand-charcoal mb-1">Chicken Nuggets</div>
+                        </div>
+                    </div>
+                    <!-- Day 5 -->
+                    <div class="p-2 border-r border-gray-200 bg-white"></div>
+                    <!-- Day 6 -->
+                    <div class="p-2 border-r border-gray-200 bg-white"></div>
+                    <!-- Day 7 -->
+                    <div class="p-2 bg-white"></div>
+                </div>
+            </div>
+
+            <!-- Accessibility Notes -->
+            <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                <h4 class="text-sm font-bold text-brand-charcoal mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-universal-access text-brand-mustard"></i> Accessibility Notes for DnD
+                </h4>
+                <ul class="text-sm text-gray-600 space-y-2 list-disc list-inside">
+                    <li>Ensure keyboard navigation allows moving items via Space/Enter to select, Arrow keys to move, and Space/Enter to drop.</li>
+                    <li>Provide aria-live regions announcing "Item grabbed", "Moved to Tuesday", and "Dropped".</li>
+                    <li>Maintain minimum 4.5:1 contrast ratio on all badges and text within cards.</li>
+                    <li>Focus states must use <code class="bg-gray-200 px-1 rounded text-xs">focus:ring-brand-mustard</code> for clear visibility.</li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Shared Footer -->
+    <footer id="main-footer" class="w-full py-8 text-center bg-brand-cream border-t border-brand-sand mt-auto">
+        <p class="text-xs text-gray-500">© 2024 FussyEater Club. Safe, stress-free meal planning.</p>
+    </footer>
+
+</body>
+</html>

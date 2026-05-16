@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Literata:wght@600;700&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .prose-container {
+            max-width: 800px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#caebcf",
+                        "surface-container": "#f5ece6",
+                        "on-tertiary-fixed-variant": "#7d2c1b",
+                        "on-background": "#1f1b17",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#caebcf",
+                        "surface-container-low": "#fbf2eb",
+                        "on-primary-container": "#743a07",
+                        "primary": "#8e4e1c",
+                        "primary-container": "#f9a66c",
+                        "on-tertiary-container": "#802f1d",
+                        "on-surface-variant": "#53443a",
+                        "inverse-on-surface": "#f8efe8",
+                        "secondary-fixed-dim": "#aeceb4",
+                        "outline": "#867369",
+                        "surface-variant": "#eae1da",
+                        "outline-variant": "#d8c2b6",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#eae1da",
+                        "on-secondary-container": "#4e6b55",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#ffdad3",
+                        "on-secondary-fixed-variant": "#314d39",
+                        "surface-container-high": "#f0e6e0",
+                        "on-primary-fixed": "#311400",
+                        "on-primary-fixed-variant": "#713704",
+                        "tertiary-fixed-dim": "#ffb4a4",
+                        "surface-dim": "#e1d8d2",
+                        "surface-bright": "#fff8f4",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#ffdcc6",
+                        "on-error": "#ffffff",
+                        "background": "#fff8f4",
+                        "inverse-primary": "#ffb786",
+                        "on-tertiary-fixed": "#3d0600",
+                        "primary-fixed-dim": "#ffb786",
+                        "surface": "#fff8f4",
+                        "tertiary-container": "#ffa18c",
+                        "secondary": "#48654f",
+                        "on-surface": "#1f1b17",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#34302b",
+                        "on-secondary-fixed": "#042110",
+                        "tertiary": "#9c432f",
+                        "surface-tint": "#8e4e1c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap-mobile": "40px",
+                        "base": "8px",
+                        "card-padding": "24px",
+                        "section-gap-desktop": "80px",
+                        "gutter": "16px",
+                        "container-margin": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Quicksand"],
+                        "headline-md": ["Literata"],
+                        "headline-sm": ["Literata"],
+                        "label-md": ["Quicksand"],
+                        "label-sm": ["Quicksand"],
+                        "display-lg": ["Literata"],
+                        "display-lg-mobile": ["Literata"],
+                        "body-lg": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "display-lg-mobile": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md">
+<!-- TopAppBar -->
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-container-margin py-4 max-w-7xl mx-auto">
+<div class="font-display-lg text-display-lg text-primary">FussyEater Club</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-primary border-b-2 border-primary pb-1 font-bold font-label-md text-label-md" href="#">Recipes</a>
+<a class="text-on-surface-variant font-medium font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Meal Planner</a>
+<a class="text-on-surface-variant font-medium font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Shopping List</a>
+<a class="text-on-surface-variant font-medium font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Household</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="bg-primary text-on-primary px-6 py-3 rounded-full font-label-md text-label-md shadow-sm hover:opacity-90 active:scale-95 transition-all">Add Recipe</button>
+<span class="material-symbols-outlined text-primary text-3xl cursor-pointer">account_circle</span>
+</div>
+</div>
+</header>
+<main class="min-h-screen">
+<!-- Hero Section -->
+<section class="relative w-full h-[614px] overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A beautifully plated nest of golden egg noodles mixed with finely julienned vibrant carrots and zucchini, captured in a warm, domestic kitchen setting. Soft, afternoon sunlight streams through a nearby window, creating a serene and appetizing glow over the dish. The overall aesthetic is clean and modern, using a palette of soft apricots, sages, and warm wood tones to evoke a sense of calm and healthy family dining." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvvXGwnQKZaGjN3nvV9kVo-uioxYAxzgzN_hZfqYnqrI8u7CEEkoovoSPyIemY5_Jm8rD3bBtQ6HUWgh8pxMrHN_RIWe1q6kwXWxcnw_d2vN9DeoW4izExbUmTyMAA0fcpjlisLjebLW-s92jIzhPx2T3ve_T0vG2YiZFDnL5US_tmsX-WUfJZmrFkorR4tGMIKrEmIBMMDhcL8vnN9kbRojum4DDUfv24V7tz3JHonx8IVgXuj4DMiDacBenC8YD_9vpp0IdZ4o3F"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+<div class="max-w-7xl mx-auto w-full px-container-margin pb-12">
+<h1 class="font-display-lg text-display-lg text-white mb-4">Noodle Nest with Hidden Veggies</h1>
+<div class="flex flex-wrap gap-3">
+<span class="bg-secondary-container text-on-secondary-container px-4 py-1.5 rounded-full font-label-md text-label-md">Veggie-heavy</span>
+<span class="bg-secondary-container text-on-secondary-container px-4 py-1.5 rounded-full font-label-md text-label-md">Quick</span>
+<span class="bg-secondary-container text-on-secondary-container px-4 py-1.5 rounded-full font-label-md text-label-md">Dairy-free</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Recipe Content Wrapper -->
+<div class="max-w-7xl mx-auto px-container-margin py-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Left Column: Details & Instructions -->
+<div class="lg:col-span-8 space-y-12">
+<!-- Metadata -->
+<div class="flex items-center gap-8 py-6 px-8 bg-surface-container-low rounded-xl border-1.5 border-outline-variant/30">
+<div class="flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm">PREP TIME</span>
+<span class="font-headline-sm text-headline-sm text-primary">15m</span>
+</div>
+<div class="w-px h-10 bg-outline-variant"></div>
+<div class="flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm">COOK TIME</span>
+<span class="font-headline-sm text-headline-sm text-primary">20m</span>
+</div>
+<div class="w-px h-10 bg-outline-variant"></div>
+<div class="flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm">YIELD</span>
+<span class="font-headline-sm text-headline-sm text-primary">4 servings</span>
+</div>
+</div>
+<!-- Method -->
+<section>
+<h2 class="font-headline-md text-headline-md text-on-background mb-8 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">restaurant_menu</span>
+                        The Method
+                    </h2>
+<div class="space-y-8">
+<div class="flex gap-6">
+<span class="flex-shrink-0 w-12 h-12 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-headline-sm text-headline-sm">1</span>
+<p class="font-body-lg text-body-lg text-on-surface pt-2">Boil the noodles according to package instructions until just al dente. Drain and rinse under cold water to prevent sticking.</p>
+</div>
+<div class="flex gap-6">
+<span class="flex-shrink-0 w-12 h-12 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-headline-sm text-headline-sm">2</span>
+<p class="font-body-lg text-body-lg text-on-surface pt-2">Using a spiralizer or a box grater, shred the carrots and zucchini into long, thin strands that mimic the shape of the noodles.</p>
+</div>
+<div class="flex gap-6">
+<span class="flex-shrink-0 w-12 h-12 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-headline-sm text-headline-sm">3</span>
+<p class="font-body-lg text-body-lg text-on-surface pt-2">Whisk together the sauce ingredients in a small bowl until smooth. The coconut aminos provide a gentle sweetness kids love.</p>
+</div>
+<div class="flex gap-6">
+<span class="flex-shrink-0 w-12 h-12 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-headline-sm text-headline-sm">4</span>
+<p class="font-body-lg text-body-lg text-on-surface pt-2">Toss the noodles, raw veggie strands, and sauce in a large pan over low heat for 2-3 minutes. The veggies should soften slightly but retain their "noodle" texture.</p>
+</div>
+</div>
+</section>
+<!-- Mom's Tip -->
+<div class="bg-tertiary-fixed text-on-tertiary-fixed-variant p-8 rounded-xl flex gap-6 items-start shadow-sm">
+<span class="material-symbols-outlined text-3xl">lightbulb</span>
+<div>
+<h4 class="font-label-md text-label-md font-bold mb-2 uppercase tracking-wider">Mom's Tips</h4>
+<p class="font-body-md text-body-md italic">"Swap broccoli for cauliflower if they're in a 'white food' phase. The cauliflower blends perfectly with the noodles and is virtually invisible once the sauce is tossed through."</p>
+</div>
+</div>
+</div>
+<!-- Right Column: Ingredients -->
+<aside class="lg:col-span-4">
+<div class="bg-surface-container p-card-padding rounded-xl sticky top-24">
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">shopping_basket</span>
+                        Ingredients
+                    </h3>
+<div class="space-y-8">
+<div>
+<h4 class="font-label-md text-label-md text-secondary font-bold uppercase mb-4">Noodles &amp; Sauce</h4>
+<ul class="space-y-4">
+<li class="flex items-center gap-3">
+<input class="w-6 h-6 rounded border-outline text-primary focus:ring-primary bg-surface-container-lowest" type="checkbox"/>
+<span class="font-body-md text-body-md">250g Egg Noodles</span>
+</li>
+<li class="flex items-center gap-3">
+<input class="w-6 h-6 rounded border-outline text-primary focus:ring-primary bg-surface-container-lowest" type="checkbox"/>
+<span class="font-body-md text-body-md">2 tbsp Coconut Aminos</span>
+</li>
+<li class="flex items-center gap-3">
+<input class="w-6 h-6 rounded border-outline text-primary focus:ring-primary bg-surface-container-lowest" type="checkbox"/>
+<span class="font-body-md text-body-md">1 tsp Toasted Sesame Oil</span>
+</li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-secondary font-bold uppercase mb-4">The Veggies</h4>
+<ul class="space-y-4">
+<li class="flex items-center gap-3">
+<input class="w-6 h-6 rounded border-outline text-primary focus:ring-primary bg-surface-container-lowest" type="checkbox"/>
+<span class="font-body-md text-body-md">2 Large Carrots (Spiralized)</span>
+</li>
+<li class="flex items-center gap-3">
+<input class="w-6 h-6 rounded border-outline text-primary focus:ring-primary bg-surface-container-lowest" type="checkbox"/>
+<span class="font-body-md text-body-md">1 Medium Zucchini (Spiralized)</span>
+</li>
+<li class="flex items-center gap-3">
+<input class="w-6 h-6 rounded border-outline text-primary focus:ring-primary bg-surface-container-lowest" type="checkbox"/>
+<span class="font-body-md text-body-md">1/2 cup Finely Chopped Broccoli</span>
+</li>
+</ul>
+</div>
+</div>
+<button class="w-full mt-10 bg-secondary text-on-secondary py-4 rounded-full font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+                        Add to Shopping List
+                    </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low border-t border-outline-variant">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-container-margin py-10 gap-base max-w-7xl mx-auto">
+<div class="flex flex-col gap-2">
+<span class="font-headline-sm text-headline-sm text-primary">FussyEater Club</span>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 FussyEater Club. Supporting families one meal at a time.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary underline underline-offset-4 transition-opacity duration-200" href="#">Help Center</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary underline underline-offset-4 transition-opacity duration-200" href="#">Community</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary underline underline-offset-4 transition-opacity duration-200" href="#">Account Settings</a>
+<a class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary underline underline-offset-4 transition-opacity duration-200" href="#">Privacy</a>
+</div>
+</div>
+</footer>
+</body></html>

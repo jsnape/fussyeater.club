@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account & Preferences - FussyEater Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#B22222',
+                            cream: '#FDFBF7',
+                            sand: '#F5F5F5',
+                            charcoal: '#2D2D2D',
+                            mustard: '#E8B031',
+                            sage: '#8BA888'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #FDFBF7; }
+        .smooth-shadow { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); }
+        .soft-card {
+            background-color: #FFFFFF;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .sensory-checkbox {
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            background-color: #FFFFFF;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .sensory-checkbox:checked {
+            background-color: #8BA888;
+            border-color: #8BA888;
+        }
+        .sensory-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            width: 8px;
+            height: 14px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+        
+        /* Toggle Switch */
+        .toggle-checkbox:checked { right: 0; border-color: #8BA888; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #8BA888; }
+        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
+    </style>
+</head>
+<body class="font-sans text-brand-charcoal antialiased m-0 p-0 overflow-x-hidden min-h-screen flex flex-col relative">
+
+    <!-- Shared Navigation Header -->
+    <header id="main-header" class="w-full bg-brand-cream/90 backdrop-blur-md sticky top-0 z-50 border-b border-brand-sand shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-bowl-food text-brand-red text-2xl"></i>
+                <span class="font-serif text-2xl font-bold text-brand-red tracking-tight hidden sm:block">FussyEater Club</span>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Recipes Browse</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Meal Planner</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Shopping List</a>
+                <a href="#" class="text-sm font-medium text-gray-500 hover:text-brand-charcoal transition-colors">Household & Profiles</a>
+                <a href="#" class="text-sm font-bold text-brand-red border-b-2 border-brand-red pb-1">Account & Preferences</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <button class="w-10 h-10 rounded-full bg-brand-sand flex items-center justify-center text-brand-charcoal hover:bg-gray-200 transition-colors">
+                    <i class="fa-solid fa-bell"></i>
+                </button>
+                <div class="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden cursor-pointer">
+                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" alt="User Profile" class="w-full h-full object-cover">
+                </div>
+                <button class="md:hidden text-brand-charcoal text-xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-12 py-8 relative z-10 flex flex-col lg:flex-row gap-8">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="settings-sidebar" class="w-full lg:w-[280px] shrink-0">
+            <div class="sticky top-28 flex flex-col gap-2">
+                <h2 class="font-serif text-2xl font-bold text-brand-charcoal mb-4 px-4">Settings</h2>
+                
+                <a href="#profile" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-brand-sand text-brand-charcoal font-medium transition-colors border border-gray-200/50">
+                    <i class="fa-solid fa-user text-gray-500 w-5 text-center"></i>
+                    Account Profile
+                </a>
+                
+                <a href="#notifications" class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-brand-sand/50 text-gray-500 hover:text-brand-charcoal font-medium transition-colors border border-transparent">
+                    <i class="fa-solid fa-bell text-gray-400 w-5 text-center"></i>
+                    Notifications
+                </a>
+                
+                <a href="#household" class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-brand-sand/50 text-gray-500 hover:text-brand-charcoal font-medium transition-colors border border-transparent">
+                    <i class="fa-solid fa-house text-gray-400 w-5 text-center"></i>
+                    Household Defaults
+                </a>
+                
+                <a href="#content" class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-brand-sand/50 text-gray-500 hover:text-brand-charcoal font-medium transition-colors border border-transparent">
+                    <i class="fa-solid fa-sliders text-gray-400 w-5 text-center"></i>
+                    Content Preferences
+                </a>
+                
+                <a href="#billing" class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-brand-sand/50 text-gray-500 hover:text-brand-charcoal font-medium transition-colors border border-transparent">
+                    <i class="fa-solid fa-credit-card text-gray-400 w-5 text-center"></i>
+                    Subscription & Billing
+                </a>
+                
+                <div class="mt-8 border-t border-gray-200 pt-6">
+                    <a href="#help" class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-brand-sand/50 text-gray-500 hover:text-brand-charcoal font-medium transition-colors border border-transparent">
+                        <i class="fa-solid fa-circle-question text-gray-400 w-5 text-center"></i>
+                        Help & Support
+                    </a>
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-brand-red/10 text-brand-red font-medium transition-colors border border-transparent mt-2">
+                        <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i>
+                        Sign Out
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Settings Content -->
+        <div class="flex-grow flex flex-col gap-8 max-w-3xl">
+            
+            <!-- Account Profile Section -->
+            <section id="profile" class="scroll-mt-28 flex flex-col gap-6">
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-brand-charcoal">Account & Security</h3>
+                    <p class="text-sm text-gray-500 mt-1">Manage your email, password, and primary caregiver details.</p>
+                </div>
+                
+                <div class="soft-card p-6 sm:p-8 flex flex-col gap-6">
+                    <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+                        <div class="w-20 h-20 rounded-full border-2 border-gray-100 overflow-hidden shrink-0 relative group cursor-pointer">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" alt="Profile" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fa-solid fa-camera text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow">
+                            <label class="block text-sm font-bold text-brand-charcoal mb-2">Caregiver Name</label>
+                            <input type="text" value="Sarah Jenkins" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-brand-sand/30 text-brand-charcoal focus:outline-none focus:border-brand-mustard focus:ring-1 focus:ring-brand-mustard transition-all">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-brand-charcoal mb-2">Email Address</label>
+                            <input type="email" value="sarah.jenkins@example.com" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-brand-sand/30 text-brand-charcoal focus:outline-none focus:border-brand-mustard focus:ring-1 focus:ring-brand-mustard transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-brand-charcoal mb-2">Phone (Optional)</label>
+                            <input type="tel" placeholder="(555) 000-0000" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-brand-sand/30 text-brand-charcoal focus:outline-none focus:border-brand-mustard focus:ring-1 focus:ring-brand-mustard transition-all">
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-100 flex justify-between items-center">
+                        <button class="text-sm font-bold text-brand-charcoal hover:text-brand-mustard transition-colors">Change Password</button>
+                        <button class="px-6 py-2.5 bg-brand-charcoal text-white rounded-2xl text-sm font-bold hover:bg-gray-800 transition-colors">Save Changes</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notifications Section -->
+            <section id="notifications" class="scroll-mt-28 flex flex-col gap-6">
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-brand-charcoal">Notification Preferences</h3>
+                    <p class="text-sm text-gray-500 mt-1">Choose how and when we reach out to you.</p>
+                </div>
+                
+                <div class="soft-card p-6 sm:p-8 flex flex-col gap-6">
+                    <!-- Toggle Row -->
+                    <div class="flex items-center justify-between py-2">
+                        <div>
+                            <h4 class="text-base font-bold text-brand-charcoal">Weekly Meal Plan Reminders</h4>
+                            <p class="text-sm text-gray-500 mt-0.5">Get a nudge to build your plan for the week.</p>
+                        </div>
+                        <div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="toggle" id="toggle1" checked class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-gray-200 appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out"/>
+                            <label for="toggle1" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-200 cursor-pointer transition-colors duration-200 ease-in-out"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full h-px bg-gray-100"></div>
+                    
+                    <!-- Toggle Row -->
+                    <div class="flex items-center justify-between py-2">
+                        <div>
+                            <h4 class="text-base font-bold text-brand-charcoal">New Safe Recipe Alerts</h4>
+                            <p class="text-sm text-gray-500 mt-0.5">When we add recipes matching your household's safe list.</p>
+                        </div>
+                        <div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
+                            <input type="checkbox" name="toggle" id="toggle2" checked class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-gray-200 appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in-out"/>
+                            <label for="toggle2" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-200 cursor-pointer transition-colors duration-200 ease-in-out"></label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Allergy & Safety Disclaimer Callout -->
+            <div class="bg-brand-sage/10 border border-brand-sage/30 rounded-2xl p-6 flex items-start gap-4 shadow-sm">
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand-sage shrink-0 shadow-sm">
+                    <i class="fa-solid fa-shield-heart text-lg"></i>
+                </div>
+                <div>
+                    <h4 class="text-base font-bold text-brand-charcoal mb-1">A Note on Allergy Safety</h4>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        While we strive to provide accurate allergen information and safe swaps, ingredient formulations change. Always double-check labels on packaged goods before serving to children with severe allergies.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Shared Footer -->
+    <footer id="main-footer" class="w-full py-8 text-center bg-brand-cream border-t border-brand-sand mt-auto">
+        <p class="text-xs text-gray-500">© 2024 FussyEater Club. Safe, stress-free meal planning.</p>
+    </footer>
+
+</body>
+</html>

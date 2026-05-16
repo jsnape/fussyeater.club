@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Preview (Draft) - FussyEater Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#B22222',
+                            cream: '#FDFBF7',
+                            sand: '#F5F5F5',
+                            charcoal: '#2D2D2D',
+                            mustard: '#E8B031',
+                            sage: '#8BA888'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #FDFBF7; }
+        .smooth-shadow { box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); }
+        .sticker-badge { 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Read-only specific styling */
+        .preview-mode {
+            position: relative;
+        }
+        .preview-mode::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            border: 4px solid #E8B031; /* brand-mustard */
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.8;
+        }
+        .disabled-overlay {
+            position: absolute;
+            inset: 0;
+            background: transparent;
+            z-index: 10;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="font-sans text-brand-charcoal antialiased m-0 p-0 overflow-x-hidden min-h-screen flex flex-col relative preview-mode">
+
+    <!-- Shared Navigation Header -->
+    <header id="main-header" class="w-full bg-brand-cream/90 backdrop-blur-md sticky top-0 z-50 border-b border-brand-sand shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-bowl-food text-brand-red text-2xl"></i>
+                <span class="font-serif text-2xl font-bold text-brand-red tracking-tight hidden sm:block">FussyEater Club</span>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-6 pointer-events-none opacity-50">
+                <a href="#" class="text-sm font-bold text-brand-red border-b-2 border-brand-red pb-1">Recipes Browse</a>
+                <a href="#" class="text-sm font-medium text-gray-500">Meal Planner</a>
+                <a href="#" class="text-sm font-medium text-gray-500">Shopping List</a>
+                <a href="#" class="text-sm font-medium text-gray-500">Household & Profiles</a>
+                <a href="#" class="text-sm font-medium text-gray-500">Account & Preferences</a>
+            </nav>
+
+            <button class="md:hidden text-brand-charcoal text-xl opacity-50 pointer-events-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Draft Preview Action Bar (Sticky) -->
+    <div class="sticky top-20 z-40 bg-brand-mustard/10 border-b border-brand-mustard/20 py-3 px-4 sm:px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-sm shadow-sm">
+        <div class="flex items-center gap-3">
+            <span class="px-3 py-1 rounded-full bg-brand-mustard text-white text-xs font-bold uppercase tracking-wider shadow-sm">Draft Preview</span>
+            <span class="text-sm text-brand-charcoal/70 font-medium flex items-center gap-1.5">
+                <i class="fa-regular fa-clock text-brand-mustard"></i> Last saved: Today at 2:14 PM
+            </span>
+        </div>
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <button class="flex-1 sm:flex-none px-4 py-2 rounded-[12px] bg-white border border-gray-200 text-sm font-medium text-brand-charcoal hover:bg-gray-50 transition-colors shadow-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-link text-gray-400"></i> Share Link
+            </button>
+            <button class="flex-1 sm:flex-none px-4 py-2 rounded-[12px] bg-transparent border border-brand-charcoal text-sm font-medium text-brand-charcoal hover:bg-brand-charcoal/5 transition-colors flex items-center justify-center gap-2">
+                <i class="fa-solid fa-pen-to-square"></i> Back to Edit
+            </button>
+            <button class="flex-1 sm:flex-none px-6 py-2 rounded-[12px] bg-brand-red text-white text-sm font-bold hover:bg-brand-red/90 transition-colors shadow-sm">
+                Publish Recipe
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-[1440px] mx-auto w-full px-4 sm:px-6 lg:px-12 py-8 relative z-10 flex flex-col gap-8">
+        
+        <!-- Recipe Hero Section -->
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+            <!-- Cover Image -->
+            <div class="w-full lg:w-1/2 rounded-[24px] overflow-hidden smooth-shadow border border-gray-100 relative h-[300px] lg:h-[400px]">
+                <img class="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b2af8d5ae0-baa5dde4c83e391c9fa8.png" alt="Crispy chicken tenders and buttered pasta served on a warm, inviting family dining table, soft natural lighting, appetizing food photography" />
+                
+                <!-- Sensory Badges Overlay -->
+                <div class="absolute bottom-4 left-4 flex flex-wrap gap-2">
+                    <span class="px-3 py-1.5 rounded-[8px] bg-white/90 backdrop-blur text-brand-mustard text-xs font-bold border border-white/20 shadow-sm">Crunchy</span>
+                    <span class="px-3 py-1.5 rounded-[8px] bg-white/90 backdrop-blur text-brand-sage text-xs font-bold border border-white/20 shadow-sm">Smooth</span>
+                </div>
+            </div>
+
+            <!-- Recipe Meta -->
+            <div class="w-full lg:w-1/2 flex flex-col gap-6">
+                <div>
+                    <h1 class="font-serif text-4xl lg:text-5xl font-bold text-brand-charcoal mb-4">Crispy Chicken & Buttered Pasta</h1>
+                    <p class="text-brand-charcoal/80 text-lg leading-relaxed mb-6">A reliable favorite that combines the ultimate safe food (buttered pasta) with a homemade, extra-crunchy take on chicken tenders.</p>
+                    
+                    <div class="flex flex-wrap gap-6 py-4 border-y border-brand-sand">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-brand-sand flex items-center justify-center text-brand-charcoal">
+                                <i class="fa-regular fa-clock"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Prep Time</p>
+                                <p class="text-sm font-bold text-brand-charcoal">15 mins</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-brand-sand flex items-center justify-center text-brand-charcoal">
+                                <i class="fa-solid fa-fire-burner"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Cook Time</p>
+                                <p class="text-sm font-bold text-brand-charcoal">20 mins</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-brand-sand flex items-center justify-center text-brand-charcoal">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium uppercase tracking-wider">Servings</p>
+                                <p class="text-sm font-bold text-brand-charcoal">4</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Household Compatibility Grid -->
+                <div class="bg-white rounded-[24px] p-6 border border-gray-100 smooth-shadow relative">
+                    <div class="absolute -top-3 -right-3 w-16 h-16 opacity-10 pointer-events-none">
+                        <i class="fa-solid fa-shield-heart text-5xl text-brand-sage"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-brand-charcoal mb-4 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-house-chimney text-gray-400"></i> Household Compatibility
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Profile Card: Flagged -->
+                        <div class="bg-brand-mustard/5 rounded-[16px] p-4 border border-brand-mustard/20 flex items-start gap-3">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg" alt="Alex" class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover">
+                            <div>
+                                <p class="text-sm font-bold text-brand-charcoal">Alex</p>
+                                <div class="flex items-center gap-1.5 mt-1">
+                                    <i class="fa-solid fa-triangle-exclamation text-brand-mustard text-xs"></i>
+                                    <p class="text-xs text-brand-mustard font-medium">Contains Dairy</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Card: Safe -->
+                        <div class="bg-brand-sage/5 rounded-[16px] p-4 border border-brand-sage/20 flex items-start gap-3">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-7.jpg" alt="Mia" class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover">
+                            <div>
+                                <p class="text-sm font-bold text-brand-charcoal">Mia</p>
+                                <div class="flex items-center gap-1.5 mt-1">
+                                    <i class="fa-solid fa-check-circle text-brand-sage text-xs"></i>
+                                    <p class="text-xs text-brand-sage font-medium">Safe Match</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- Ingredients Column -->
+            <div class="w-full lg:w-[400px] shrink-0">
+                <div class="bg-white rounded-[24px] p-6 lg:p-8 border border-gray-100 smooth-shadow sticky top-40">
+                    <h3 class="text-xl font-serif font-bold text-brand-charcoal mb-6 border-b border-brand-sand pb-4">Ingredients</h3>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3 pb-3 border-b border-gray-50 last:border-0 last:pb-0">
+                            <div class="w-6 h-6 rounded-full bg-brand-sand flex items-center justify-center shrink-0 mt-0.5">
+                                <span class="w-2 h-2 rounded-full bg-brand-charcoal"></span>
+                            </div>
+                            <div>
+                                <p class="text-sm text-brand-charcoal"><span class="font-bold">1 lb</span> Chicken Breast, cut into strips</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 pb-3 border-b border-gray-50 last:border-0 last:pb-0">
+                            <div class="w-6 h-6 rounded-full bg-brand-sand flex items-center justify-center shrink-0 mt-0.5">
+                                <span class="w-2 h-2 rounded-full bg-brand-charcoal"></span>
+                            </div>
+                            <div>
+                                <p class="text-sm text-brand-charcoal"><span class="font-bold">1 cup</span> Panko Breadcrumbs</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 pb-3 border-b border-gray-50 last:border-0 last:pb-0">
+                            <div class="w-6 h-6 rounded-full bg-brand-sand flex items-center justify-center shrink-0 mt-0.5">
+                                <span class="w-2 h-2 rounded-full bg-brand-charcoal"></span>
+                            </div>
+                            <div>
+                                <p class="text-sm text-brand-charcoal"><span class="font-bold">1/2 cup</span> Safe Milk Alternative</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 pb-3 border-b border-gray-50 last:border-0 last:pb-0">
+                            <div class="w-6 h-6 rounded-full bg-brand-sand flex items-center justify-center shrink-0 mt-0.5">
+                                <span class="w-2 h-2 rounded-full bg-brand-charcoal"></span>
+                            </div>
+                            <div>
+                                <p class="text-sm text-brand-charcoal"><span class="font-bold">16 oz</span> Favorite Pasta</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 pb-3 border-b border-gray-50 last:border-0 last:pb-0">
+                            <div class="w-6 h-6 rounded-full bg-brand-sand flex items-center justify-center shrink-0 mt-0.5">
+                                <span class="w-2 h-2 rounded-full bg-brand-charcoal"></span>
+                            </div>
+                            <div>
+                                <p class="text-sm text-brand-charcoal"><span class="font-bold">2 tbsp</span> Butter or Dairy-Free Spread</p>
+                                <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-brand-red/10 text-brand-red border border-brand-red/20 uppercase">Contains Dairy</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Instructions Column -->
+            <div class="flex-1">
+                <div class="bg-white rounded-[24px] p-6 lg:p-8 border border-gray-100 smooth-shadow">
+                    <h3 class="text-xl font-serif font-bold text-brand-charcoal mb-8 border-b border-brand-sand pb-4">Step-by-Step Instructions</h3>
+                    
+                    <div class="space-y-8">
+                        <!-- Step 1 -->
+                        <div class="relative pl-12">
+                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-brand-charcoal text-white text-sm font-bold flex items-center justify-center shadow-sm">1</div>
+                            <div class="space-y-3">
+                                <h4 class="font-bold text-brand-charcoal text-lg">Prep the oven and pasta water</h4>
+                                <p class="text-brand-charcoal/80 text-sm leading-relaxed">Preheat your oven to 400°F (200°C). Line a baking sheet with parchment paper. Meanwhile, bring a large pot of salted water to a boil for the pasta.</p>
+                                
+                                <div class="bg-brand-sand/30 rounded-[12px] p-4 border border-gray-100 flex gap-3 items-start mt-4">
+                                    <i class="fa-solid fa-lightbulb text-brand-mustard mt-0.5 text-lg"></i>
+                                    <div>
+                                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sensory Note</p>
+                                        <p class="text-sm text-brand-charcoal font-medium">Keep the kitchen fan on if boiling water sounds or steam are overwhelming.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="relative pl-12">
+                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-brand-charcoal text-white text-sm font-bold flex items-center justify-center shadow-sm">2</div>
+                            <div class="space-y-3">
+                                <h4 class="font-bold text-brand-charcoal text-lg">Coat the chicken</h4>
+                                <p class="text-brand-charcoal/80 text-sm leading-relaxed">Dip each chicken strip into a shallow bowl of safe liquid, then roll tightly in the panko breadcrumbs until fully coated. Place on the prepared baking sheet.</p>
+                                
+                                <div class="bg-brand-sand/30 rounded-[12px] p-4 border border-gray-100 flex gap-3 items-start mt-4">
+                                    <i class="fa-solid fa-lightbulb text-brand-mustard mt-0.5 text-lg"></i>
+                                    <div>
+                                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sensory Note</p>
+                                        <p class="text-sm text-brand-charcoal font-medium">Ensure the coating is even. Bare spots can feel 'slimy' compared to the crunchy parts.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 3 -->
+                        <div class="relative pl-12">
+                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-brand-charcoal text-white text-sm font-bold flex items-center justify-center shadow-sm">3</div>
+                            <div class="space-y-3">
+                                <h4 class="font-bold text-brand-charcoal text-lg">Bake & Boil</h4>
+                                <p class="text-brand-charcoal/80 text-sm leading-relaxed">Bake the chicken for 15-20 minutes until golden and cooked through. Boil pasta according to package directions, then drain.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 4 -->
+                        <div class="relative pl-12">
+                            <div class="absolute left-0 top-0 w-8 h-8 rounded-full bg-brand-charcoal text-white text-sm font-bold flex items-center justify-center shadow-sm">4</div>
+                            <div class="space-y-3">
+                                <h4 class="font-bold text-brand-charcoal text-lg">Serve</h4>
+                                <p class="text-brand-charcoal/80 text-sm leading-relaxed">Toss warm pasta with butter or safe spread. Serve chicken alongside, keeping components separate on the plate.</p>
+                                
+                                <div class="bg-brand-sand/30 rounded-[12px] p-4 border border-gray-100 flex gap-3 items-start mt-4">
+                                    <i class="fa-solid fa-lightbulb text-brand-mustard mt-0.5 text-lg"></i>
+                                    <div>
+                                        <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sensory Note</p>
+                                        <p class="text-sm text-brand-charcoal font-medium">Use a divided plate if foods touching is a concern.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Shared Footer -->
+    <footer id="main-footer" class="w-full py-8 text-center bg-brand-cream border-t border-brand-sand z-10 mt-auto opacity-50 pointer-events-none">
+        <p class="text-xs text-gray-500">© 2024 FussyEater Club. Safe, stress-free meal planning.</p>
+    </footer>
+
+</body>
+</html>

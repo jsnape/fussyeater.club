@@ -148,7 +148,7 @@ describe('register page ui', () => {
         await page.getByRole('textbox', { name: 'Confirm password' }).fill('Password123');
         await page.getByRole('textbox', { name: 'Household name' }).fill('Taylor Family');
 
-        await page.getByRole('button', { name: 'Complete registration' }).click();
+        await page.getByRole('button', { name: 'Create Account' }).click();
 
         await expect
             .element(page.getByText('Registration is temporarily unavailable. Please try again.'))
@@ -191,7 +191,7 @@ describe('register page ui', () => {
         await page.getByRole('textbox', { name: 'Confirm password' }).fill('Password456');
         await page.getByRole('textbox', { name: 'Household name' }).fill('Taylor Family');
 
-        await page.getByRole('button', { name: 'Complete registration' }).click();
+        await page.getByRole('button', { name: 'Create Account' }).click();
 
         await expect.element(page.getByText('Passwords do not match.')).toBeInTheDocument();
         expect(mockedApiFetch).not.toHaveBeenCalled();

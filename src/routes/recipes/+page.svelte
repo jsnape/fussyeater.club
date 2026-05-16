@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Button } from 'flowbite-svelte';
+    import { BookOpenOutline } from 'flowbite-svelte-icons';
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
     import type { PageData } from './$types';
@@ -7,6 +8,7 @@
     import RecipeSearchBar from '$lib/components/recipe/RecipeSearchBar.svelte';
     import RecipePagination from '$lib/components/recipe/RecipePagination.svelte';
     import RecipeErrorState from '$lib/components/recipe/RecipeErrorState.svelte';
+    import EmptyState from '$lib/components/ui/EmptyState.svelte';
 
     let { data }: { data: PageData } = $props();
 
@@ -55,24 +57,18 @@
         </div>
 
         {#if data.items.length === 0}
-            <div class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
-                <h2 class="text-xl font-semibold text-slate-900">No recipes found</h2>
-                <p class="mt-3 text-base text-slate-600">
-                    {#if data.q}
-                        No results for "<span class="font-medium">{data.q}</span>". Try different
-                        search terms or browse all recipes.
-                    {:else}
-                        There are no recipes to show yet.
-                    {/if}
-                </p>
-                {#if data.q}
-                    <div class="mt-6">
-                        <Button href={resolve('/recipes')} color="primary"
-                            >Browse all recipes</Button
-                        >
-                    </div>
-                {/if}
-            </div>
+            <EmptyState
+                heading="No recipes found"
+                description={data.q
+                    ? `No results for "${data.q}". Try different search terms or browse all recipes.`
+                    : 'There are no recipes to show yet. Add your first recipe to get started!'}
+                actionLabel={data.q ? 'Browse all recipes' : 'Add a recipe'}
+                actionHref={data.q ? resolve('/recipes') : resolve('/recipes/new')}
+            >
+                {#snippet icon()}
+                    <BookOpenOutline class="h-12 w-12 text-primary-400" />
+                {/snippet}
+            </EmptyState>
         {:else}
             <p class="mt-4 text-sm text-slate-500">
                 {data.total} recipe{data.total === 1 ? '' : 's'} found

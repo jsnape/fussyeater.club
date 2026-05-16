@@ -35,7 +35,7 @@
 
 <a
     href={resolve(`/recipes/${recipe.id}`)}
-    class="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md"
+    class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow hover:shadow-md"
 >
     <div class="overflow-hidden">
         <img
@@ -45,7 +45,7 @@
         />
     </div>
 
-    <div class="flex flex-1 flex-col p-5">
+    <div class="flex flex-1 flex-col p-6">
         <h3 class="text-lg font-semibold text-slate-900 group-hover:text-primary-600">
             {recipe.title}
         </h3>

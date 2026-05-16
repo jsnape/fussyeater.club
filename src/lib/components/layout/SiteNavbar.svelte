@@ -9,7 +9,7 @@
 
     let { isAuthenticated = false, userLabel = null, canManageHousehold = false } = $props();
     let activeUrl = $derived(page.url.pathname);
-    let navLinks = $derived(getSiteNavLinks({ canManageHousehold }));
+    let navLinks = $derived(getSiteNavLinks({ isAuthenticated, canManageHousehold }));
 
     async function logout(): Promise<void> {
         const csrfToken = getCookieValue('csrf-token');

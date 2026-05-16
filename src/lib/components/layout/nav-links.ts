@@ -3,11 +3,21 @@ export type SiteNavLink = {
     href: string;
 };
 
-export function getSiteNavLinks(args: { canManageHousehold: boolean }): SiteNavLink[] {
+export function getSiteNavLinks(args: {
+    isAuthenticated: boolean;
+    canManageHousehold: boolean;
+}): SiteNavLink[] {
+    if (!args.isAuthenticated) {
+        return [
+            { label: 'Home', href: '/' },
+            { label: 'Recipes', href: '/recipes' }
+        ];
+    }
+
     const links: SiteNavLink[] = [
-        { label: 'Home', href: '/' },
         { label: 'Recipes', href: '/recipes' },
-        { label: 'Design', href: '/design' }
+        { label: 'Planner', href: '/planner' },
+        { label: 'Shopping', href: '/shopping' }
     ];
 
     if (args.canManageHousehold) {

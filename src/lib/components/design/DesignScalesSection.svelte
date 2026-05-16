@@ -8,31 +8,31 @@
     }: { spacingTokens: ScaleToken[]; elevationTokens: ScaleToken[] } = $props();
 </script>
 
-<section class="grid gap-4 lg:grid-cols-2">
-    <Card class="border-primary-200 bg-white">
-        <div class="space-y-3 p-2">
-            <h2 class="text-xl font-semibold text-primary-900">Spacing Scale</h2>
+<section class="grid gap-6 lg:grid-cols-2">
+    <Card class="border-slate-200/60 bg-white shadow-sm">
+        <div class="space-y-4 p-6">
+            <h2 class="text-xl font-semibold text-slate-900">Spacing Scale</h2>
             {#each spacingTokens as item (item.token)}
                 <div
-                    class="flex items-center justify-between rounded-lg border border-primary-100 px-3 py-2"
+                    class="flex items-center justify-between rounded-lg border border-slate-100 px-4 py-3"
                 >
-                    <span class="text-sm font-medium text-primary-900">{item.token}</span>
-                    <span class="text-sm text-primary-700">{item.value}</span>
+                    <span class="text-sm font-medium text-slate-900">{item.token}</span>
+                    <span class="text-sm text-slate-500">{item.value}</span>
                 </div>
             {/each}
         </div>
     </Card>
 
-    <Card class="border-primary-200 bg-white">
-        <div class="space-y-3 p-2">
-            <h2 class="text-xl font-semibold text-primary-900">Elevation Scale</h2>
+    <Card class="border-slate-200/60 bg-white shadow-sm">
+        <div class="space-y-4 p-6">
+            <h2 class="text-xl font-semibold text-slate-900">Elevation Scale</h2>
             {#each elevationTokens as item (item.token)}
                 <div
-                    class="rounded-lg border border-primary-100 bg-primary-50 px-3 py-3"
+                    class="rounded-lg border border-slate-100 bg-slate-50 px-4 py-4"
                     style={`box-shadow: var(${item.token});`}
                 >
-                    <p class="text-sm font-medium text-primary-900">{item.token}</p>
-                    <p class="text-xs text-primary-700">{item.value}</p>
+                    <p class="text-sm font-medium text-slate-900">{item.token}</p>
+                    <p class="text-xs text-slate-500">{item.value}</p>
                 </div>
             {/each}
         </div>

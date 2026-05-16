@@ -29,23 +29,23 @@
 {#if mode === 'edit'}
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-            <Label for="prep-minutes" class="mb-1 text-sm font-medium text-primary-700"
+            <Label for="prep-minutes" class="mb-1 text-sm font-medium text-slate-700"
                 >Prep (minutes)</Label
             >
             <Input id="prep-minutes" type="number" bind:value={prepMinutes} min="0" />
         </div>
         <div>
-            <Label for="cook-minutes" class="mb-1 text-sm font-medium text-primary-700"
+            <Label for="cook-minutes" class="mb-1 text-sm font-medium text-slate-700"
                 >Cook (minutes)</Label
             >
             <Input id="cook-minutes" type="number" bind:value={cookMinutes} min="0" />
         </div>
         <div>
-            <Label for="servings" class="mb-1 text-sm font-medium text-primary-700">Servings</Label>
+            <Label for="servings" class="mb-1 text-sm font-medium text-slate-700">Servings</Label>
             <Input id="servings" type="number" bind:value={servings} min="1" />
         </div>
         <div>
-            <Label for="yield-text" class="mb-1 text-sm font-medium text-primary-700">Yield</Label>
+            <Label for="yield-text" class="mb-1 text-sm font-medium text-slate-700">Yield</Label>
             <Input
                 id="yield-text"
                 type="text"
@@ -56,7 +56,7 @@
         </div>
     </div>
 {:else if hasAny}
-    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-primary-700">
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-600">
         {#if hasPrep}
             <span>Prep: {prepNum} min</span>
         {/if}

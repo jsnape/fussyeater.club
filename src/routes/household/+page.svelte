@@ -177,40 +177,40 @@
     }
 </script>
 
-<main class="min-h-dvh bg-primary-50 px-6 py-8 md:px-10 md:py-12">
+<main class="min-h-dvh bg-slate-50 px-6 py-10 md:px-10 md:py-16">
     <div class="mx-auto max-w-6xl space-y-8">
-        <section class="rounded-lg border border-primary-200 bg-white p-6 shadow-sm">
-            <h1 class="text-2xl font-semibold text-primary-900">Household</h1>
-            <p class="mt-2 text-sm text-primary-700">Manage members and household invites.</p>
+        <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-md">
+            <h1 class="text-2xl font-semibold text-slate-900">Household</h1>
+            <p class="mt-2 text-base text-slate-600">Manage members and household invites.</p>
             {#if loadError}
                 <p class="mt-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{loadError}</p>
             {/if}
         </section>
 
-        <section class="rounded-lg border border-primary-200 bg-white p-6 shadow-sm">
-            <h2 class="text-lg font-semibold text-primary-900">Members</h2>
+        <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-md">
+            <h2 class="text-lg font-semibold text-slate-900">Members</h2>
             {#if members.length === 0}
-                <p class="mt-3 text-sm text-primary-700">No members found.</p>
+                <p class="mt-3 text-base text-slate-600">No members found.</p>
             {:else}
                 <div class="mt-4 overflow-x-auto">
-                    <table class="min-w-full text-left text-sm text-primary-900">
+                    <table class="min-w-full text-left text-sm text-slate-900">
                         <thead
-                            class="border-b border-primary-200 text-xs tracking-wide text-primary-700 uppercase"
+                            class="border-b border-slate-200 text-xs tracking-wide text-slate-600 uppercase"
                         >
                             <tr>
-                                <th class="py-2 pr-4">Name</th>
-                                <th class="py-2 pr-4">Email</th>
-                                <th class="py-2 pr-4">Role</th>
-                                <th class="py-2">Joined</th>
+                                <th class="py-3 pr-4">Name</th>
+                                <th class="py-3 pr-4">Email</th>
+                                <th class="py-3 pr-4">Role</th>
+                                <th class="py-3">Joined</th>
                             </tr>
                         </thead>
                         <tbody>
                             {#each members as member (member.userId)}
-                                <tr class="border-b border-primary-100">
-                                    <td class="py-2 pr-4">{member.name}</td>
-                                    <td class="py-2 pr-4">{member.email}</td>
-                                    <td class="py-2 pr-4 capitalize">{member.role}</td>
-                                    <td class="py-2"
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-3 pr-4">{member.name}</td>
+                                    <td class="py-3 pr-4">{member.email}</td>
+                                    <td class="py-3 pr-4 capitalize">{member.role}</td>
+                                    <td class="py-3"
                                         >{new Date(member.joinedAt).toLocaleDateString()}</td
                                     >
                                 </tr>
@@ -221,26 +221,26 @@
             {/if}
         </section>
 
-        <section class="rounded-lg border border-primary-200 bg-white p-6 shadow-sm">
-            <h2 class="text-lg font-semibold text-primary-900">Invites</h2>
+        <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-md">
+            <h2 class="text-lg font-semibold text-slate-900">Invites</h2>
 
-            <div class="mt-4 grid gap-3 md:grid-cols-3">
-                <label class="text-sm text-primary-800" for="max-uses">
+            <div class="mt-4 grid gap-4 md:grid-cols-3">
+                <label class="text-sm text-slate-700" for="max-uses">
                     Max uses
                     <input
                         id="max-uses"
-                        class="mt-1 w-full rounded-md border border-primary-300 px-3 py-2"
+                        class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
                         type="number"
                         min="1"
                         aria-label="Max uses"
                         bind:value={maxUses}
                     />
                 </label>
-                <label class="text-sm text-primary-800" for="expires-in-days">
+                <label class="text-sm text-slate-700" for="expires-in-days">
                     Expires in days
                     <input
                         id="expires-in-days"
-                        class="mt-1 w-full rounded-md border border-primary-300 px-3 py-2"
+                        class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2.5"
                         type="number"
                         min="1"
                         aria-label="Expires in days"
@@ -249,11 +249,11 @@
                 </label>
             </div>
 
-            <div class="mt-4 flex flex-wrap gap-3">
+            <div class="mt-4 flex flex-wrap gap-4">
                 {#if !activeInvite}
                     <button
                         type="button"
-                        class="rounded-md bg-primary-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                        class="rounded-lg bg-primary-700 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
                         onclick={() => void createInvite(false)}
                         disabled={isSubmitting}
                     >
@@ -270,21 +270,21 @@
             </div>
 
             {#if activeInvite}
-                <div class="mt-4 rounded-md border border-primary-200 bg-primary-50 p-4">
-                    <h3 class="text-sm font-semibold text-primary-900">Active Invite</h3>
-                    <p class="mt-2 text-sm text-primary-800">
+                <div class="mt-4 rounded-xl border border-slate-200 bg-primary-50 p-6">
+                    <h3 class="text-sm font-semibold text-slate-900">Active Invite</h3>
+                    <p class="mt-2 text-base text-slate-700">
                         Code: <span class="font-semibold">{displayedActiveInviteCode()}</span>
                     </p>
-                    <p class="mt-1 text-sm text-primary-800">
+                    <p class="mt-1 text-base text-slate-700">
                         Uses: {usedInviteCount(activeInvite)} / {activeInvite.maxUses}
                     </p>
-                    <p class="mt-1 text-sm text-primary-800">
+                    <p class="mt-1 text-base text-slate-700">
                         Expires: {new Date(activeInvite.expiresAt).toLocaleDateString()}
                     </p>
-                    <div class="mt-3 flex flex-wrap gap-3">
+                    <div class="mt-4 flex flex-wrap gap-3">
                         <button
                             type="button"
-                            class="rounded-md border border-primary-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-900 disabled:opacity-60"
+                            class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-700 disabled:opacity-60"
                             onclick={() => void copyActiveInviteLink()}
                             disabled={!canCopyActiveInviteLink}
                         >
@@ -292,7 +292,7 @@
                         </button>
                         <button
                             type="button"
-                            class="rounded-md border border-primary-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-900 disabled:opacity-60"
+                            class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-700 disabled:opacity-60"
                             onclick={() => void createInvite(true)}
                             disabled={isSubmitting}
                         >
@@ -300,7 +300,7 @@
                         </button>
                         <button
                             type="button"
-                            class="rounded-md border border-primary-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-900 disabled:opacity-50"
+                            class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-primary-700 disabled:opacity-50"
                             onclick={() => void revokeInvite(activeInvite.id)}
                             disabled={isRevokeDisabled(activeInvite)}
                             aria-label={`Revoke active invite ${displayedActiveInviteCode()}`}
@@ -317,30 +317,30 @@
             {/if}
 
             {#if expiredInvites.length === 0}
-                <p class="mt-4 text-sm text-primary-700">No expired invites.</p>
+                <p class="mt-4 text-base text-slate-600">No expired invites.</p>
             {:else}
                 <div class="mt-4 overflow-x-auto">
-                    <h3 class="mb-2 text-sm font-semibold text-primary-900">Expired Invites</h3>
-                    <table class="min-w-full text-left text-sm text-primary-900">
+                    <h3 class="mb-2 text-sm font-semibold text-slate-900">Expired Invites</h3>
+                    <table class="min-w-full text-left text-sm text-slate-900">
                         <thead
-                            class="border-b border-primary-200 text-xs tracking-wide text-primary-700 uppercase"
+                            class="border-b border-slate-200 text-xs tracking-wide text-slate-600 uppercase"
                         >
                             <tr>
-                                <th class="py-2 pr-4">Masked Code</th>
-                                <th class="py-2 pr-4">Status</th>
-                                <th class="py-2 pr-4">Uses</th>
-                                <th class="py-2">Expires</th>
+                                <th class="py-3 pr-4">Masked Code</th>
+                                <th class="py-3 pr-4">Status</th>
+                                <th class="py-3 pr-4">Uses</th>
+                                <th class="py-3">Expires</th>
                             </tr>
                         </thead>
                         <tbody>
                             {#each expiredInvites as invite (invite.id)}
-                                <tr class="border-b border-primary-100">
-                                    <td class="py-2 pr-4">{invite.codeMasked}</td>
-                                    <td class="py-2 pr-4 capitalize">{invite.status}</td>
-                                    <td class="py-2 pr-4">
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-3 pr-4">{invite.codeMasked}</td>
+                                    <td class="py-3 pr-4 capitalize">{invite.status}</td>
+                                    <td class="py-3 pr-4">
                                         Uses: {usedInviteCount(invite)} / {invite.maxUses}
                                     </td>
-                                    <td class="py-2"
+                                    <td class="py-3"
                                         >{new Date(invite.expiresAt).toLocaleDateString()}</td
                                     >
                                 </tr>

@@ -14,7 +14,7 @@
 
 {#if mode === 'edit'}
     <div>
-        <Label for="title" class="mb-1 text-sm font-medium text-primary-700">Title</Label>
+        <Label for="title" class="mb-1 text-sm font-medium text-slate-700">Title</Label>
         <Input
             id="title"
             type="text"
@@ -26,7 +26,7 @@
     </div>
 
     <div class="mt-4">
-        <Label for="description" class="mb-1 text-sm font-medium text-primary-700"
+        <Label for="description" class="mb-1 text-sm font-medium text-slate-700"
             >Description</Label
         >
         <Textarea
@@ -39,7 +39,7 @@
         />
     </div>
 {:else}
-    <h1 class="mt-6 text-3xl font-bold text-primary-900 sm:text-4xl">{title}</h1>
+    <h1 class="mt-6 text-3xl font-bold text-slate-900 sm:text-4xl">{title}</h1>
 
     {#if description}
         <div class="prose-primary prose mt-4 max-w-none">

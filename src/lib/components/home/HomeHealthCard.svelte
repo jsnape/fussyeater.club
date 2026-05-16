@@ -44,10 +44,10 @@
     });
 </script>
 
-<Card class="border-primary-200 bg-white shadow-sm">
-    <div class="space-y-4 p-2 sm:p-4">
+<Card class="border-slate-200/60 bg-white shadow-sm">
+    <div class="space-y-4 p-4 sm:p-6">
         <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-primary-900">Platform health</h2>
+            <h2 class="text-lg font-semibold text-slate-900">Platform health</h2>
             {#if healthState === 'healthy'}
                 <Badge color="green">Healthy</Badge>
             {:else if healthState === 'checking'}
@@ -56,6 +56,6 @@
                 <Badge color="red">Needs attention</Badge>
             {/if}
         </div>
-        <p class="text-sm text-primary-800" aria-live="polite">{statusText}</p>
+        <p class="text-base text-slate-600" aria-live="polite">{statusText}</p>
     </div>
 </Card>

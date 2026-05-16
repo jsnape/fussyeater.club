@@ -2,14 +2,14 @@
     import { Badge, Button, Card } from 'flowbite-svelte';
 </script>
 
-<Card class="w-full max-w-none border-primary-200 bg-white shadow-sm">
-    <div class="space-y-6 p-4 sm:p-6">
-        <Badge color="red" class="w-fit">Family recipes for picky eaters</Badge>
+<Card class="w-full max-w-none border-slate-200/60 bg-white shadow-md">
+    <div class="space-y-8 p-6 sm:p-10">
+        <Badge color="green" class="w-fit">Family recipes for picky eaters</Badge>
         <div class="space-y-3">
-            <h1 class="text-3xl font-semibold tracking-tight text-primary-900 sm:text-4xl">
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
                 Make dinner easier for everyone at the table
             </h1>
-            <p class="max-w-2xl text-base leading-relaxed text-primary-800">
+            <p class="max-w-2xl text-lg leading-relaxed text-slate-600">
                 Discover recipes your family will actually eat, plan a full week in minutes, and
                 build shopping lists tailored to allergies and preferences.
             </p>
@@ -18,31 +18,25 @@
         <img
             src="/images/home-hero-family-meal.jpg"
             alt="Family-style meal spread on a dinner table"
-            class="h-56 w-full rounded-xl object-cover sm:h-72"
+            class="h-64 w-full rounded-2xl object-cover sm:h-80"
             loading="lazy"
         />
-        <div class="flex flex-wrap items-center gap-3">
+        <div class="flex flex-wrap items-center gap-4">
             <Button color="yellow" size="lg">Start meal planning</Button>
             <Button color="light" size="lg">Browse recipes</Button>
         </div>
-        <div class="grid gap-3 sm:grid-cols-3">
-            <div
-                class="rounded-lg border border-primary-200 bg-primary-50 p-3 text-sm text-primary-900"
-            >
+        <div class="grid gap-4 sm:grid-cols-3">
+            <div class="rounded-xl bg-primary-50 p-4 text-base text-slate-900">
                 <p class="font-semibold">Allergy-aware</p>
-                <p class="text-primary-800">Filter by family needs</p>
+                <p class="text-slate-600">Filter by family needs</p>
             </div>
-            <div
-                class="rounded-lg border border-primary-200 bg-primary-50 p-3 text-sm text-primary-900"
-            >
+            <div class="rounded-xl bg-primary-50 p-4 text-base text-slate-900">
                 <p class="font-semibold">Fast planning</p>
-                <p class="text-primary-800">Build a weekly plan quickly</p>
+                <p class="text-slate-600">Build a weekly plan quickly</p>
             </div>
-            <div
-                class="rounded-lg border border-primary-200 bg-primary-50 p-3 text-sm text-primary-900"
-            >
+            <div class="rounded-xl bg-primary-50 p-4 text-base text-slate-900">
                 <p class="font-semibold">Shopping ready</p>
-                <p class="text-primary-800">Auto-generate grocery lists</p>
+                <p class="text-slate-600">Auto-generate grocery lists</p>
             </div>
         </div>
     </div>

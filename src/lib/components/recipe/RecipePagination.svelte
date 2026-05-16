@@ -17,13 +17,13 @@
 
 {#if totalPages > 1}
     <nav
-        class="flex items-center justify-between border-t border-primary-200 pt-4"
+        class="flex items-center justify-between border-t border-slate-200 pt-6"
         aria-label="Pagination"
     >
         <Button color="alternative" disabled={isFirstPage} onclick={() => onPageChange(page - 1)}>
             ← Previous
         </Button>
-        <span class="text-sm text-primary-700">
+        <span class="text-sm text-slate-600">
             Page {page} of {totalPages}
         </span>
         <Button color="alternative" disabled={isLastPage} onclick={() => onPageChange(page + 1)}>

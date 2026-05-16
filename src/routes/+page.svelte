@@ -4,8 +4,8 @@
     import HomeHeroSection from '$lib/components/home/HomeHeroSection.svelte';
 </script>
 
-<main class="min-h-dvh bg-primary-50 px-6 py-8 md:px-10 md:py-12">
-    <div class="mx-auto max-w-6xl space-y-8">
+<main class="min-h-dvh bg-slate-50 px-6 py-10 md:px-10 md:py-16">
+    <div class="mx-auto max-w-6xl space-y-12">
         <section>
             <HomeHeroSection />
         </section>

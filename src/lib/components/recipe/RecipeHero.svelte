@@ -14,7 +14,7 @@
 
 {#if mode === 'edit'}
     <div>
-        <Label for="image-url" class="mb-1 text-sm font-medium text-primary-700">Image URL</Label>
+        <Label for="image-url" class="mb-1 text-sm font-medium text-slate-700">Image URL</Label>
         <Input
             id="image-url"
             type="url"

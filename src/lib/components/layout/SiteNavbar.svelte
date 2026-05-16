@@ -31,24 +31,24 @@
     }
 </script>
 
-<header class="border-b border-primary-200 bg-white/90 backdrop-blur">
-    <Navbar fluid class="mx-auto w-full max-w-6xl px-6 py-3 md:px-10" aria-label="Main">
-        <NavBrand href="/" class="text-base font-semibold text-primary-900"
+<header class="shadow-sm bg-white/90 backdrop-blur">
+    <Navbar fluid class="mx-auto w-full max-w-6xl px-6 py-4 md:px-10" aria-label="Main">
+        <NavBrand href="/" class="text-lg font-semibold text-slate-900"
             >Fussy Eater Club</NavBrand
         >
         <NavHamburger />
-        <NavUl {activeUrl} class="text-sm font-medium text-primary-800">
+        <NavUl {activeUrl} class="text-base font-medium text-slate-700">
             {#each navLinks as link (link.href)}
                 <NavLi href={link.href}>{link.label}</NavLi>
             {/each}
             {#if isAuthenticated}
                 <li
-                    class="flex items-center rounded bg-primary-100 px-2 py-1 text-xs font-semibold tracking-wide text-primary-900"
+                    class="flex items-center rounded-full bg-primary-100 px-3 py-1 text-sm font-semibold tracking-wide text-primary-800"
                 >
                     Signed in{#if userLabel}: {userLabel}{/if}
                 </li>
                 <li>
-                    <button type="button" class="py-2" onclick={() => void logout()}>Logout</button>
+                    <button type="button" class="py-2 text-sm text-slate-500 hover:text-slate-700" onclick={() => void logout()}>Logout</button>
                 </li>
             {:else}
                 <NavLi href={resolve('/login')}>Login</NavLi>

@@ -44,9 +44,9 @@
         actionHref={resolve('/recipes')}
     />
 {:else}
-    <main class="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+    <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
         <div class="flex items-center justify-between">
-            <h1 class="text-3xl font-bold text-primary-900">Recipes</h1>
+            <h1 class="text-3xl font-bold text-slate-900">Recipes</h1>
             <Button href={resolve('/recipes/new')} color="primary">+ Add Recipe</Button>
         </div>
 
@@ -56,8 +56,8 @@
 
         {#if data.items.length === 0}
             <div class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
-                <h2 class="text-xl font-semibold text-primary-900">No recipes found</h2>
-                <p class="mt-3 text-primary-700">
+                <h2 class="text-xl font-semibold text-slate-900">No recipes found</h2>
+                <p class="mt-3 text-base text-slate-600">
                     {#if data.q}
                         No results for "<span class="font-medium">{data.q}</span>". Try different
                         search terms or browse all recipes.
@@ -74,13 +74,13 @@
                 {/if}
             </div>
         {:else}
-            <p class="mt-4 text-sm text-primary-600">
+            <p class="mt-4 text-sm text-slate-500">
                 {data.total} recipe{data.total === 1 ? '' : 's'} found
                 {#if data.q}&mdash; showing results for "<span class="font-medium">{data.q}</span
                     >"{/if}
             </p>
 
-            <div class="mt-4 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {#each data.items as item (item.id)}
                     <RecipeCard recipe={item} />
                 {/each}

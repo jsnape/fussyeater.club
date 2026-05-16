@@ -90,10 +90,10 @@
 
     {#if recipeType === 'full'}
         <div class="mt-4">
-            <p class="text-sm text-primary-700">Add at least one step.</p>
+            <p class="text-sm text-slate-600">Add at least one step.</p>
 
-            <div class="mt-4 rounded-lg border border-primary-200 bg-white p-5">
-                <Label for="method-step" class="mb-1 text-sm font-medium text-primary-700"
+            <div class="mt-4 rounded-xl border border-slate-200 bg-white p-6">
+                <Label for="method-step" class="mb-1 text-sm font-medium text-slate-700"
                     >Step description</Label
                 >
                 <Textarea
@@ -117,12 +117,12 @@
             </div>
 
             {#if steps.length > 0}
-                <ol class="mt-4 list-inside list-decimal space-y-2">
+                <ol class="mt-4 list-inside list-decimal space-y-3">
                     {#each steps as step, i (i)}
                         <li
-                            class="flex items-start justify-between rounded-md border border-primary-200 bg-white px-4 py-3"
+                            class="flex items-start justify-between rounded-lg border border-slate-200 bg-white px-4 py-3"
                         >
-                            <span class="text-sm text-primary-900">
+                            <span class="text-sm text-slate-900">
                                 <span class="font-semibold">{i + 1}.</span>
                                 {step}
                             </span>
@@ -142,16 +142,16 @@
         </div>
     {:else}
         <div class="mt-4">
-            <div class="rounded-lg border border-primary-200 bg-white p-5">
+            <div class="rounded-xl border border-slate-200 bg-white p-6">
                 <div>
-                    <Label for="source-kind" class="mb-1 text-sm font-medium text-primary-700"
+                    <Label for="source-kind" class="mb-1 text-sm font-medium text-slate-700"
                         >Source type</Label
                     >
                     <Select id="source-kind" items={sourceKindItems} bind:value={sourceKind} />
                 </div>
 
                 <div class="mt-4">
-                    <Label for="source-label" class="mb-1 text-sm font-medium text-primary-700"
+                    <Label for="source-label" class="mb-1 text-sm font-medium text-slate-700"
                         >Label</Label
                     >
                     <Input
@@ -165,7 +165,7 @@
 
                 {#if sourceKind === 'url'}
                     <div class="mt-4">
-                        <Label for="source-url" class="mb-1 text-sm font-medium text-primary-700"
+                        <Label for="source-url" class="mb-1 text-sm font-medium text-slate-700"
                             >URL</Label
                         >
                         <Input
@@ -180,7 +180,7 @@
                     <div class="mt-4">
                         <Label
                             for="source-book-title"
-                            class="mb-1 text-sm font-medium text-primary-700">Book title</Label
+                            class="mb-1 text-sm font-medium text-slate-700">Book title</Label
                         >
                         <Input
                             id="source-book-title"
@@ -193,7 +193,7 @@
                         <div>
                             <Label
                                 for="source-page"
-                                class="mb-1 text-sm font-medium text-primary-700">Page number</Label
+                                class="mb-1 text-sm font-medium text-slate-700">Page number</Label
                             >
                             <Input
                                 id="source-page"
@@ -205,7 +205,7 @@
                         <div>
                             <Label
                                 for="source-isbn"
-                                class="mb-1 text-sm font-medium text-primary-700">ISBN</Label
+                                class="mb-1 text-sm font-medium text-slate-700">ISBN</Label
                             >
                             <Input
                                 id="source-isbn"
@@ -224,7 +224,7 @@
         {#each steps as step, i (i)}
             <li class="flex gap-4">
                 <span
-                    class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-semibold text-primary-800"
+                    class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-primary-50 text-sm font-semibold text-primary-700"
                 >
                     {i + 1}
                 </span>
@@ -235,15 +235,15 @@
         {/each}
     </ol>
 {:else if recipeType === 'reference' && viewSourceReference}
-    <div class="rounded-lg border border-primary-200 bg-white p-5">
+    <div class="rounded-xl border border-slate-200 bg-white p-6">
         {#if viewSourceReference.kind === 'url'}
             <!-- eslint-disable svelte/no-navigation-without-resolve -->
-            <p class="text-primary-700">
+            <p class="text-slate-700">
                 <a
                     href={viewSourceReference.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="inline-flex items-center gap-1 text-primary-700 underline hover:text-primary-900"
+                    class="inline-flex items-center gap-1 text-primary-600 underline hover:text-primary-800"
                 >
                     {viewSourceReference.label}
                     <span class="text-xs">↗</span>
@@ -251,23 +251,23 @@
             </p>
             <!-- eslint-enable svelte/no-navigation-without-resolve -->
         {:else if viewSourceReference.kind === 'book'}
-            <div class="space-y-1 text-primary-700">
+            <div class="space-y-2 text-slate-700">
                 <p class="font-medium">{viewSourceReference.label}</p>
                 {#if viewSourceReference.bookTitle}
                     <p>
-                        <span class="text-primary-500">Book:</span>
+                        <span class="text-slate-400">Book:</span>
                         <em>{viewSourceReference.bookTitle}</em>
                     </p>
                 {/if}
                 {#if viewSourceReference.pageNumber}
                     <p>
-                        <span class="text-primary-500">Page:</span>
+                        <span class="text-slate-400">Page:</span>
                         {viewSourceReference.pageNumber}
                     </p>
                 {/if}
                 {#if viewSourceReference.isbn}
                     <p>
-                        <span class="text-primary-500">ISBN:</span>
+                        <span class="text-slate-400">ISBN:</span>
                         {viewSourceReference.isbn}
                     </p>
                 {/if}

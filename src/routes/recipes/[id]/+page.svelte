@@ -30,7 +30,7 @@
         message="We're having trouble loading this recipe right now. Please try again later."
     />
 {:else if recipe}
-    <article class="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
+    <article class="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
         <RecipeHero mode="view" imageUrl={recipe.imageUrl ?? ''} title={recipe.title} />
 
         <RecipeBasicInfo mode="view" title={recipe.title} description={recipe.description ?? ''} />
@@ -53,15 +53,15 @@
         {/if}
 
         {#if recipe.ingredients.length > 0}
-            <section class="mt-8">
-                <h2 class="text-xl font-semibold text-primary-900">Ingredients</h2>
+            <section class="mt-10">
+                <h2 class="text-xl font-semibold text-slate-900">Ingredients</h2>
                 <RecipeIngredients mode="view" ingredients={recipe.ingredients} />
             </section>
         {/if}
 
         {#if (recipe.type === 'full' && recipe.method && recipe.method.length > 0) || (recipe.type === 'reference' && recipe.sourceReference)}
-            <section class="mt-8">
-                <h2 class="text-xl font-semibold text-primary-900">
+            <section class="mt-10">
+                <h2 class="text-xl font-semibold text-slate-900">
                     {recipe.type === 'full' ? 'Method' : 'Source'}
                 </h2>
                 {#if recipe.type === 'full'}
@@ -97,8 +97,8 @@
         {/if}
 
         {#if recipe.notes}
-            <section class="mt-8">
-                <h2 class="text-xl font-semibold text-primary-900">Notes</h2>
+            <section class="mt-10">
+                <h2 class="text-xl font-semibold text-slate-900">Notes</h2>
                 <div class="mt-3">
                     <RecipeNotes mode="view" notes={recipe.notes} />
                 </div>

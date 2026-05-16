@@ -10,7 +10,7 @@
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-<div class="min-h-dvh bg-primary-50">
+<div class="min-h-dvh bg-slate-50">
     <SiteNavbar
         isAuthenticated={Boolean(data.sessionUser)}
         userLabel={signedInLabel}

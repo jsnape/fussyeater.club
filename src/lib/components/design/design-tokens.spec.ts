@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { colorTokens, elevationTokens, spacingTokens } from './design-tokens';
 
 describe('design tokens', () => {
-    it('defines six semantic color tokens', () => {
-        expect(colorTokens).toHaveLength(6);
+    it('defines nine semantic color tokens', () => {
+        expect(colorTokens).toHaveLength(9);
     });
 
     it('uses unique CSS variable names for colors', () => {

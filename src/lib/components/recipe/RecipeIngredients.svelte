@@ -100,7 +100,7 @@
             {#if ing.preparation.type === 'recipe-link' && ing.preparation.recipeId}
                 &nbsp;(<a
                     href={resolve(`/recipes/${ing.preparation.recipeId}`)}
-                    class="text-primary-700 underline hover:text-primary-900"
+                    class="text-primary-600 underline hover:text-primary-800"
                     >{ing.preparation.recipeLabel ?? ing.preparation.text ?? 'recipe'}</a
                 >)
             {:else if ing.preparation.text}
@@ -111,12 +111,12 @@
 {/snippet}
 
 {#if mode === 'edit'}
-    <p class="text-sm text-primary-700">Add at least one ingredient.</p>
+    <p class="text-sm text-slate-600">Add at least one ingredient.</p>
 
-    <div class="mt-4 rounded-lg border border-primary-200 bg-white p-5">
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    <div class="mt-4 rounded-xl border border-slate-200 bg-white p-6">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-                <Label for="ing-group" class="mb-1 text-sm font-medium text-primary-700"
+                <Label for="ing-group" class="mb-1 text-sm font-medium text-slate-700"
                     >Group (optional)</Label
                 >
                 <Input
@@ -127,7 +127,7 @@
                 />
             </div>
             <div>
-                <Label for="ing-amount" class="mb-1 text-sm font-medium text-primary-700"
+                <Label for="ing-amount" class="mb-1 text-sm font-medium text-slate-700"
                     >Amount (optional)</Label
                 >
                 <Input
@@ -140,7 +140,7 @@
                 />
             </div>
             <div>
-                <Label for="ing-unit" class="mb-1 text-sm font-medium text-primary-700"
+                <Label for="ing-unit" class="mb-1 text-sm font-medium text-slate-700"
                     >Unit (optional)</Label
                 >
                 <Input
@@ -151,7 +151,7 @@
                 />
             </div>
             <div>
-                <Label for="ing-name" class="mb-1 text-sm font-medium text-primary-700"
+                <Label for="ing-name" class="mb-1 text-sm font-medium text-slate-700"
                     >Ingredient</Label
                 >
                 <Input
@@ -164,7 +164,7 @@
             </div>
         </div>
         <div class="mt-3">
-            <Label for="ing-prep" class="mb-1 text-sm font-medium text-primary-700"
+            <Label for="ing-prep" class="mb-1 text-sm font-medium text-slate-700"
                 >Preparation (optional)</Label
             >
             <Input
@@ -187,12 +187,12 @@
     </div>
 
     {#if ingredients.length > 0}
-        <ul class="mt-4 space-y-2">
+        <ul class="mt-4 space-y-3">
             {#each ingredients as ing, i (i)}
                 <li
-                    class="flex items-center justify-between rounded-md border border-primary-200 bg-white px-4 py-3"
+                    class="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3"
                 >
-                    <span class="text-sm text-primary-900">
+                    <span class="text-sm text-slate-900">
                         {#if ing.ingredientGroup}<span class="font-medium"
                                 >[{ing.ingredientGroup}]</span
                             >&nbsp;{/if}
@@ -200,7 +200,7 @@
                         {#if ing.unit}&nbsp;{ing.unit}{/if}
                         {ing.ingredient}
                         {#if ing.preparation?.text}
-                            <span class="text-primary-600">— {ing.preparation.text}</span>
+                            <span class="text-slate-500">— {ing.preparation.text}</span>
                         {/if}
                     </span>
                     <Button
@@ -219,13 +219,13 @@
 {:else if ingredients.length > 0}
     {#each ingredientGroups as group (group.name)}
         {#if ingredientGroups.length > 1}
-            <h3 class="mt-4 text-sm font-semibold tracking-wide text-primary-600 uppercase">
+            <h3 class="mt-4 text-sm font-semibold tracking-wide text-slate-500 uppercase">
                 {group.name}
             </h3>
         {/if}
-        <ul class="mt-2 space-y-1.5">
+        <ul class="mt-2 space-y-2">
             {#each group.items as ing (ing.ingredient)}
-                <li class="flex items-baseline gap-2 text-primary-800">
+                <li class="flex items-baseline gap-3 text-slate-700">
                     <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary-400"
                     ></span>
                     {@render ingredientLine(ing)}

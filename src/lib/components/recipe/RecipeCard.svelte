@@ -45,16 +45,16 @@
         />
     </div>
 
-    <div class="flex flex-1 flex-col p-4">
-        <h3 class="text-lg font-semibold text-primary-900 group-hover:text-primary-700">
+    <div class="flex flex-1 flex-col p-5">
+        <h3 class="text-lg font-semibold text-slate-900 group-hover:text-primary-600">
             {recipe.title}
         </h3>
 
         {#if recipe.description}
-            <p class="mt-1 text-sm text-primary-600">{snippet(recipe.description)}</p>
+            <p class="mt-1 text-base text-slate-600">{snippet(recipe.description)}</p>
         {/if}
 
-        <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-primary-600">
+        <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500">
             {#if timeLabel}
                 <span class="flex items-center gap-1">
                     <span>⏱</span>

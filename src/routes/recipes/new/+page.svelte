@@ -136,9 +136,9 @@
     }
 </script>
 
-<main class="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
+<main class="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
     <!-- Header -->
-    <h1 class="text-2xl font-semibold text-primary-900">New Recipe</h1>
+    <h1 class="text-2xl font-semibold text-slate-900">New Recipe</h1>
 
     <!-- Error message -->
     {#if submitError}
@@ -148,8 +148,8 @@
     {/if}
 
     <!-- Basic Info -->
-    <section class="mt-8">
-        <h2 class="text-xl font-semibold text-primary-900">Basic information</h2>
+    <section class="mt-10">
+        <h2 class="text-xl font-semibold text-slate-900">Basic information</h2>
         <div class="mt-4">
             <RecipeBasicInfo mode="edit" bind:title bind:description />
         </div>
@@ -159,8 +159,8 @@
     </section>
 
     <!-- Timings & Servings -->
-    <section class="mt-8">
-        <h2 class="text-xl font-semibold text-primary-900">Timings &amp; servings</h2>
+    <section class="mt-10">
+        <h2 class="text-xl font-semibold text-slate-900">Timings &amp; servings</h2>
         <div class="mt-4">
             <RecipeMetadata
                 mode="edit"
@@ -173,16 +173,16 @@
     </section>
 
     <!-- Ingredients -->
-    <section class="mt-8">
-        <h2 class="text-xl font-semibold text-primary-900">Ingredients</h2>
+    <section class="mt-10">
+        <h2 class="text-xl font-semibold text-slate-900">Ingredients</h2>
         <div class="mt-1">
             <RecipeIngredients mode="edit" bind:ingredients />
         </div>
     </section>
 
     <!-- Method / Source Reference -->
-    <section class="mt-8">
-        <h2 class="text-xl font-semibold text-primary-900">Method</h2>
+    <section class="mt-10">
+        <h2 class="text-xl font-semibold text-slate-900">Method</h2>
         <div class="mt-3">
             <RecipeMethodOrSource
                 mode="edit"
@@ -199,31 +199,31 @@
     </section>
 
     <!-- Tags -->
-    <section class="mt-8">
-        <h2 class="text-xl font-semibold text-primary-900">Tags</h2>
+    <section class="mt-10">
+        <h2 class="text-xl font-semibold text-slate-900">Tags</h2>
         <div class="mt-4">
             <RecipeTags mode="edit" bind:tags />
         </div>
     </section>
 
     <!-- Notes -->
-    <section class="mt-8">
-        <h2 class="text-xl font-semibold text-primary-900">Notes</h2>
+    <section class="mt-10">
+        <h2 class="text-xl font-semibold text-slate-900">Notes</h2>
         <div class="mt-4">
             <RecipeNotes mode="edit" bind:notes />
         </div>
     </section>
 
     <!-- Visibility -->
-    <section class="mt-8">
-        <h2 class="text-xl font-semibold text-primary-900">Visibility</h2>
+    <section class="mt-10">
+        <h2 class="text-xl font-semibold text-slate-900">Visibility</h2>
         <div class="mt-4">
             <RecipeVisibility mode="edit" bind:visibility />
         </div>
     </section>
 
     <!-- Actions -->
-    <div class="mt-8 flex items-center gap-4">
+    <div class="mt-10 flex items-center gap-4">
         <Button
             color="primary"
             onclick={() => void handleSubmit()}

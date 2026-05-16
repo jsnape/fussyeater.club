@@ -24,13 +24,13 @@
     ];
 </script>
 
-<section class="grid gap-4 md:grid-cols-3">
+<section class="grid gap-6 md:grid-cols-3">
     {#each features as feature (feature.title)}
-        <Card class="border-primary-200 bg-white">
-            <div class="space-y-2 p-2 sm:p-3">
-                <feature.icon class="h-6 w-6 text-primary-700" aria-label={feature.iconLabel} />
-                <h3 class="text-base font-semibold text-primary-900">{feature.title}</h3>
-                <p class="text-sm text-primary-800">{feature.description}</p>
+        <Card class="border-slate-200/60 bg-white shadow-sm transition-shadow hover:shadow-md">
+            <div class="space-y-4 p-6">
+                <feature.icon class="h-8 w-8 text-primary-500" aria-label={feature.iconLabel} />
+                <h3 class="text-lg font-semibold text-slate-900">{feature.title}</h3>
+                <p class="text-base text-slate-600">{feature.description}</p>
             </div>
         </Card>
     {/each}

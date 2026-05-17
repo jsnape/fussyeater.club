@@ -195,6 +195,51 @@ export async function deleteIngredient(
 	return (result.meta?.changes ?? 0) > 0;
 }
 
+export async function addAliasToIngredient(
+	db: DbLike,
+	id: string,
+	alias: string
+): Promise<IngredientRow | null | 'self' | 'duplicate'> {
+	const row = await getIngredientById(db, id);
+	if (!row) return null;
+
+	const normalised = alias.trim().toLowerCase();
+
+	// Prevent self-referential alias
+	if (normalised === row.name.toLowerCase()) return 'self';
+
+	const existing = parseJsonColumn<string[]>(row.aliases);
+	if (existing.includes(normalised)) return row;
+
+	// Check the alias isn't already another ingredient's name or alias
+	const conflict = await db
+		.prepare(
+			`SELECT id FROM ingredients WHERE LOWER(name) = ?1 OR LOWER(aliases) LIKE ?2`
+		)
+		.bind(normalised, `%"${normalised}"%`)
+		.first<{ id: string }>();
+
+	if (conflict) return 'duplicate';
+
+	// Optimistic update: only write if updated_at hasn't changed since read
+	const updated = [...existing, normalised];
+	const now = nowIso();
+
+	const result = await db
+		.prepare(
+			'UPDATE ingredients SET aliases = ?1, updated_at = ?2 WHERE id = ?3 AND updated_at = ?4'
+		)
+		.bind(JSON.stringify(updated), now, id, row.updated_at)
+		.run();
+
+	if (!result.meta?.changes) {
+		// Row was modified concurrently — re-read and retry once
+		return addAliasToIngredient(db, id, alias);
+	}
+
+	return db.prepare('SELECT * FROM ingredients WHERE id = ?').bind(id).first<IngredientRow>();
+}
+
 export type ListIngredientsOptions = {
 	search?: string;
 	foodGroup?: string;

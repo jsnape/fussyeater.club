@@ -6,6 +6,7 @@ import {
 	getIngredientById,
 	updateIngredient,
 	deleteIngredient,
+	addAliasToIngredient,
 	ingredientNameExists,
 	toIngredientResponse,
 	isValidFoodGroup,
@@ -166,6 +167,62 @@ export const DELETE: RequestHandler = async (event) => {
 		return new Response(null, { status: 204 });
 	} catch (error) {
 		logError('admin.ingredients.delete.failure', requestId, {
+			error: error instanceof Error ? error.message : String(error)
+		});
+		return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, { status: 503 });
+	}
+};
+
+export const PATCH: RequestHandler = async (event) => {
+	const { request, platform, params } = event;
+	const requestId = resolveEventRequestId(event);
+	const id = params.id!;
+
+	logInfo('admin.ingredients.add_alias.start', requestId, { id });
+
+	if (!hasValidCsrf(request)) {
+		return jsonWithRequestId({ message: 'CSRF verification failed' }, requestId, { status: 403 });
+	}
+
+	const auth = await getAuthContext(request, platform);
+	if (!auth.userId) {
+		return jsonWithRequestId({ message: 'Authentication required' }, requestId, { status: 401 });
+	}
+
+	const db = requireDb(platform);
+	if (!(await isAdmin(db, auth.userId, request))) {
+		logWarn('admin.ingredients.add_alias.forbidden', requestId, { userId: auth.userId });
+		return jsonWithRequestId({ message: 'Admin access required' }, requestId, { status: 403 });
+	}
+
+	let body: Record<string, unknown>;
+	try {
+		body = (await request.json()) as Record<string, unknown>;
+	} catch {
+		return jsonWithRequestId({ message: 'Invalid JSON body' }, requestId, { status: 400 });
+	}
+
+	if (typeof body.alias !== 'string' || body.alias.trim().length === 0) {
+		return jsonWithRequestId({ message: 'alias is required' }, requestId, { status: 400 });
+	}
+
+	try {
+		const result = await addAliasToIngredient(db, id, body.alias);
+		if (!result) {
+			return jsonWithRequestId({ message: 'Ingredient not found' }, requestId, { status: 404 });
+		}
+		if (result === 'self') {
+			return jsonWithRequestId({ message: 'Cannot add ingredient name as its own alias' }, requestId, { status: 400 });
+		}
+		if (result === 'duplicate') {
+			return jsonWithRequestId({ message: 'This name is already used by another ingredient' }, requestId, { status: 409 });
+		}
+
+		logInfo('admin.ingredients.add_alias.success', requestId, { id, alias: body.alias });
+
+		return jsonWithRequestId(toIngredientResponse(result), requestId);
+	} catch (error) {
+		logError('admin.ingredients.add_alias.failure', requestId, {
 			error: error instanceof Error ? error.message : String(error)
 		});
 		return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, { status: 503 });

@@ -3,7 +3,7 @@ import { requireDb } from '$lib/server/db';
 import { getAuthContext, hasValidCsrf } from '$lib/server/security';
 import { getMembership } from '$lib/server/household';
 import { createRecipe } from '$lib/server/recipe';
-import type { RecipeRow } from '$lib/server/recipe';
+import { toRecipeDetailResponse, parseJsonField } from '$lib/server/recipe-response';
 import {
     jsonWithRequestId,
     logError,
@@ -145,10 +145,10 @@ export const GET: RequestHandler = async (event) => {
                 timings,
                 servings: row.servings ?? undefined,
                 yield: row.yield ?? undefined,
-                tags: safeParseJson<string[]>(row.tags, []),
+                tags: parseJsonField<string[]>(row.tags, []),
                 sourceReference:
                     row.type === 'reference'
-                        ? safeParseJson(row.source_reference, undefined)
+                        ? parseJsonField(row.source_reference, undefined)
                         : undefined
             };
         });
@@ -170,64 +170,6 @@ export const GET: RequestHandler = async (event) => {
         });
     }
 };
-
-function safeParseJson<T>(raw: string | null, fallback: T): T {
-    if (!raw) return fallback;
-    try {
-        return JSON.parse(raw) as T;
-    } catch {
-        return fallback;
-    }
-}
-
-function parseJsonField<T>(raw: string | null, fallback: T): T {
-    if (!raw) return fallback;
-    try {
-        return JSON.parse(raw) as T;
-    } catch {
-        return fallback;
-    }
-}
-
-function toRecipeDetailResponse(recipe: RecipeRow): Record<string, unknown> {
-    const timings =
-        recipe.prep_minutes != null || recipe.cook_minutes != null
-            ? {
-                  prepMinutes: recipe.prep_minutes ?? undefined,
-                  cookMinutes: recipe.cook_minutes ?? undefined
-              }
-            : undefined;
-
-    const base = {
-        id: recipe.id,
-        title: recipe.title,
-        description: recipe.description ?? undefined,
-        imageUrl: recipe.image_url ?? undefined,
-        type: recipe.type,
-        visibility: recipe.visibility,
-        timings,
-        servings: recipe.servings ?? undefined,
-        yield: recipe.yield ?? undefined,
-        tags: parseJsonField<string[]>(recipe.tags, []),
-        ingredients: parseJsonField<unknown[]>(recipe.ingredients, []),
-        notes: recipe.notes ?? undefined
-    };
-
-    if (recipe.type === 'full') {
-        return {
-            ...base,
-            method: parseJsonField<string[]>(recipe.method, [])
-        };
-    }
-
-    return {
-        ...base,
-        sourceReference: parseJsonField<Record<string, unknown> | undefined>(
-            recipe.source_reference,
-            undefined
-        )
-    };
-}
 
 type CreateRecipeBody = {
     title?: unknown;
@@ -491,7 +433,8 @@ export const POST: RequestHandler = async (event) => {
             sourceReference: body.sourceReference as Record<string, unknown> | undefined,
             tags: body.tags as string[] | undefined,
             notes: body.notes ? (body.notes as string) : undefined,
-            householdId: visibility === 'private' ? userHouseholdId : null
+            householdId: visibility === 'private' ? userHouseholdId : null,
+            createdBy: auth.userId
         });
 
         logInfo('recipes.create.success', requestId, {
@@ -502,7 +445,7 @@ export const POST: RequestHandler = async (event) => {
                 recipe.id !== (body.title as string).trim().toLowerCase().replace(/\s+/g, '-')
         });
 
-        return jsonWithRequestId(toRecipeDetailResponse(recipe), requestId, { status: 201 });
+        return jsonWithRequestId(toRecipeDetailResponse(recipe, auth, userHouseholdId), requestId, { status: 201 });
     } catch (error) {
         if (error instanceof Error && error.message === 'SLUG_COLLISION_EXHAUSTED') {
             logWarn('recipes.create.slug_collision_exhausted', requestId);

@@ -1,7 +1,15 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { createTestDbPair } from './test-db';
-import { getRecipeBySlug, canViewRecipe, generateUniqueSlug, createRecipe } from './recipe';
-import type { RecipeRow, CreateRecipeInput } from './recipe';
+import {
+    getRecipeBySlug,
+    canViewRecipe,
+    canEditRecipe,
+    generateUniqueSlug,
+    createRecipe,
+    updateRecipe,
+    deleteRecipe
+} from '$lib/server/recipe';
+import type { RecipeRow, CreateRecipeInput, UpdateRecipeInput } from '$lib/server/recipe';
 import type { AuthContext } from './security';
 
 describe('getRecipeBySlug', () => {
@@ -80,6 +88,7 @@ describe('canViewRecipe', () => {
         type: 'full',
         visibility: 'public',
         household_id: null,
+        created_by: null,
         servings: null,
         yield: null,
         prep_minutes: null,
@@ -134,6 +143,89 @@ describe('canViewRecipe', () => {
 
     it('should deny authenticated user without household access to a private recipe', () => {
         expect(canViewRecipe(privateRecipe, authenticatedAuth, null)).toBe(false);
+    });
+});
+
+describe('canEditRecipe', () => {
+    const publicRecipe: RecipeRow = {
+        id: 'public-recipe',
+        title: 'Public',
+        description: null,
+        image_url: null,
+        type: 'full',
+        visibility: 'public',
+        household_id: null,
+        created_by: null,
+        servings: null,
+        yield: null,
+        prep_minutes: null,
+        cook_minutes: null,
+        ingredients: '[]',
+        method: null,
+        source_reference: null,
+        notes: null,
+        tags: '[]'
+    };
+
+    const authenticatedAuth: AuthContext = {
+        userId: 'user-1',
+        email: 'user@example.com',
+        name: 'User',
+        socialProvider: null
+    };
+
+    const anonymousAuth: AuthContext = {
+        userId: null,
+        email: null,
+        name: null,
+        socialProvider: null
+    };
+
+    it('should allow creator to edit their own recipe', () => {
+        const recipe: RecipeRow = {
+            ...publicRecipe,
+            id: 'creator-recipe',
+            created_by: 'user-1'
+        };
+
+        expect(canEditRecipe(recipe, authenticatedAuth, null)).toBe(true);
+    });
+
+    it('should allow household member to edit household recipe', () => {
+        const recipe: RecipeRow = {
+            ...publicRecipe,
+            id: 'household-recipe',
+            visibility: 'private',
+            household_id: 'house-1'
+        };
+
+        expect(canEditRecipe(recipe, authenticatedAuth, 'house-1')).toBe(true);
+    });
+
+    it('should deny anonymous users', () => {
+        const recipe: RecipeRow = {
+            ...publicRecipe,
+            id: 'anonymous-recipe',
+            created_by: 'user-1'
+        };
+
+        expect(canEditRecipe(recipe, anonymousAuth, 'house-1')).toBe(false);
+    });
+
+    it('should deny users who are not creator and not in the household', () => {
+        const recipe: RecipeRow = {
+            ...publicRecipe,
+            id: 'restricted-recipe',
+            visibility: 'private',
+            household_id: 'house-1',
+            created_by: 'other-user'
+        };
+
+        expect(canEditRecipe(recipe, authenticatedAuth, 'other-house')).toBe(false);
+    });
+
+    it('should deny editing public recipes with no creator and no household', () => {
+        expect(canEditRecipe(publicRecipe, authenticatedAuth, null)).toBe(false);
     });
 });
 
@@ -211,7 +303,8 @@ describe('createRecipe', () => {
         ingredients: [{ amount: 400, unit: 'g', ingredient: 'spaghetti' }],
         method: ['Cook spaghetti.', 'Serve.'],
         tags: ['Italian', 'Quick'],
-        householdId: null
+        householdId: null,
+        createdBy: null
     };
 
     it('should create a recipe and return it', async () => {
@@ -309,5 +402,160 @@ describe('createRecipe', () => {
         const src = JSON.parse(recipe.source_reference!);
         expect(src.kind).toBe('book');
         expect(src.label).toBe('My Cookbook');
+    });
+});
+
+describe('updateRecipe', () => {
+    const pairs: Array<ReturnType<typeof createTestDbPair>> = [];
+
+    afterEach(() => {
+        for (const pair of pairs.splice(0)) {
+            pair.cleanup();
+        }
+    });
+
+    const baseInput: CreateRecipeInput = {
+        title: 'Original Pasta',
+        description: 'Original description',
+        type: 'full',
+        visibility: 'public',
+        ingredients: [{ amount: 400, unit: 'g', ingredient: 'spaghetti' }],
+        method: ['Cook spaghetti.', 'Serve.'],
+        tags: ['Italian', 'Quick'],
+        householdId: null,
+        createdBy: null
+    };
+
+    const baseUpdateInput: UpdateRecipeInput = {
+        title: 'Updated Pasta',
+        description: 'Updated description',
+        imageUrl: 'https://example.com/updated.jpg',
+        type: 'full',
+        visibility: 'public',
+        servings: 6,
+        yield: '2 bowls',
+        prepMinutes: 15,
+        cookMinutes: 20,
+        ingredients: [{ amount: 500, unit: 'g', ingredient: 'linguine' }],
+        method: ['Mix.', 'Serve.'],
+        tags: ['Family', 'Quick'],
+        notes: 'Updated notes',
+        householdId: null
+    };
+
+    it('should update recipe fields', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        const recipe = await createRecipe(pair.first, baseInput);
+
+        await updateRecipe(pair.first, recipe.id, baseUpdateInput);
+
+        const updatedRecipe = await getRecipeBySlug(pair.first, recipe.id);
+        expect(updatedRecipe).not.toBeNull();
+        expect(updatedRecipe!.title).toBe('Updated Pasta');
+        expect(updatedRecipe!.description).toBe('Updated description');
+        expect(updatedRecipe!.image_url).toBe('https://example.com/updated.jpg');
+        expect(updatedRecipe!.servings).toBe(6);
+    });
+
+    it('should update recipe type from full to reference', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        const recipe = await createRecipe(pair.first, baseInput);
+        const updateInput: UpdateRecipeInput = {
+            ...baseUpdateInput,
+            title: 'Cookbook Pasta',
+            type: 'reference',
+            method: undefined,
+            sourceReference: { kind: 'book', label: 'My Cookbook', pageNumber: 12 }
+        };
+
+        const updatedRecipe = await updateRecipe(pair.first, recipe.id, updateInput);
+
+        expect(updatedRecipe).not.toBeNull();
+        expect(updatedRecipe!.type).toBe('reference');
+        expect(updatedRecipe!.method).toBeNull();
+        expect(updatedRecipe!.source_reference).not.toBeNull();
+        expect(JSON.parse(updatedRecipe!.source_reference!)).toEqual({
+            kind: 'book',
+            label: 'My Cookbook',
+            pageNumber: 12
+        });
+    });
+
+    it('should return null for non-existent slug', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+
+        const updatedRecipe = await updateRecipe(pair.first, 'does-not-exist', baseUpdateInput);
+
+        expect(updatedRecipe).toBeNull();
+    });
+
+    it('should preserve slug when title changes', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        const recipe = await createRecipe(pair.first, baseInput);
+
+        const updatedRecipe = await updateRecipe(pair.first, recipe.id, {
+            ...baseUpdateInput,
+            title: 'Renamed Pasta'
+        });
+
+        expect(updatedRecipe).not.toBeNull();
+        expect(updatedRecipe!.id).toBe(recipe.id);
+        expect(await getRecipeBySlug(pair.first, recipe.id)).not.toBeNull();
+        expect(await getRecipeBySlug(pair.first, 'renamed-pasta')).toBeNull();
+    });
+});
+
+describe('deleteRecipe', () => {
+    const pairs: Array<ReturnType<typeof createTestDbPair>> = [];
+
+    afterEach(() => {
+        for (const pair of pairs.splice(0)) {
+            pair.cleanup();
+        }
+    });
+
+    const baseInput: CreateRecipeInput = {
+        title: 'Delete Me Pasta',
+        type: 'full',
+        visibility: 'public',
+        ingredients: [{ amount: 400, unit: 'g', ingredient: 'spaghetti' }],
+        method: ['Cook spaghetti.', 'Serve.'],
+        tags: ['Italian', 'Quick'],
+        householdId: null,
+        createdBy: null
+    };
+
+    it('should delete an existing recipe and return true', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        const recipe = await createRecipe(pair.first, baseInput);
+
+        const deleted = await deleteRecipe(pair.first, recipe.id);
+
+        expect(deleted).toBe(true);
+    });
+
+    it('should return false for non-existent slug', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+
+        const deleted = await deleteRecipe(pair.first, 'does-not-exist');
+
+        expect(deleted).toBe(false);
+    });
+
+    it('should make recipe unfindable after deletion', async () => {
+        const pair = createTestDbPair();
+        pairs.push(pair);
+        const recipe = await createRecipe(pair.first, baseInput);
+
+        await deleteRecipe(pair.first, recipe.id);
+
+        const deletedRecipe = await getRecipeBySlug(pair.first, recipe.id);
+        expect(deletedRecipe).toBeNull();
     });
 });

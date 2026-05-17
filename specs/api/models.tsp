@@ -148,6 +148,7 @@ ingredients: RecipeIngredient[];
 method?: string[];
 sourceReference?: RecipeSourceReference;
 notes?: string;
+canEdit?: boolean;
 }
 
 model RecipeSummary {
@@ -172,6 +173,23 @@ total: int32;
 }
 
 model CreateRecipeRequest {
+title: string;
+description?: string;
+imageUrl?: string;
+type: "full" | "reference";
+visibility?: "public" | "private";
+servings?: int32;
+`yield`?: string;
+prepMinutes?: int32;
+cookMinutes?: int32;
+ingredients: RecipeIngredient[];
+method?: string[];
+sourceReference?: RecipeSourceReference;
+tags?: string[];
+notes?: string;
+}
+
+model UpdateRecipeRequest {
 title: string;
 description?: string;
 imageUrl?: string;

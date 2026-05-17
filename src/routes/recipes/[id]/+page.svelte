@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { PageData } from './$types';
+    import { resolve } from '$app/paths';
     import RecipeErrorState from '$lib/components/recipe/RecipeErrorState.svelte';
     import RecipeHero from '$lib/components/recipe/RecipeHero.svelte';
     import RecipeBasicInfo from '$lib/components/recipe/RecipeBasicInfo.svelte';
@@ -33,6 +34,20 @@
 {:else if recipe}
     <article class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
         <RecipeHero mode="view" imageUrl={recipe.imageUrl ?? ''} title={recipe.title} recipeType={recipe.type} />
+
+        {#if recipe.canEdit}
+            <div class="mt-4 flex justify-end">
+                <a
+                    href={resolve(`/recipes/${recipe.id}/edit`)}
+                    class="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-teal-700"
+                >
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                    </svg>
+                    Edit Recipe
+                </a>
+            </div>
+        {/if}
 
         <!-- Two-column layout: main content + sidebar -->
         <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_280px]">

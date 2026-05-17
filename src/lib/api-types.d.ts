@@ -220,9 +220,9 @@ export interface paths {
             cookie?: never;
         };
         get: operations["Recipes_getDetail"];
-        put?: never;
+        put: operations["Recipes_update"];
         post?: never;
-        delete?: never;
+        delete: operations["Recipes_remove"];
         options?: never;
         head?: never;
         patch?: never;
@@ -453,6 +453,7 @@ export interface components {
             method?: string[];
             sourceReference?: components["schemas"]["RecipeSourceReference"];
             notes?: string;
+            canEdit?: boolean;
         } & {
             [key: string]: unknown;
         };
@@ -561,6 +562,29 @@ export interface components {
         };
         SaveProfileResponse: {
             ok: boolean;
+        } & {
+            [key: string]: unknown;
+        };
+        UpdateRecipeRequest: {
+            title: string;
+            description?: string;
+            imageUrl?: string;
+            /** @enum {string} */
+            type: "full" | "reference";
+            /** @enum {string} */
+            visibility?: "public" | "private";
+            /** Format: int32 */
+            servings?: number;
+            yield?: string;
+            /** Format: int32 */
+            prepMinutes?: number;
+            /** Format: int32 */
+            cookMinutes?: number;
+            ingredients: components["schemas"]["RecipeIngredient"][];
+            method?: string[];
+            sourceReference?: components["schemas"]["RecipeSourceReference"];
+            tags?: string[];
+            notes?: string;
         } & {
             [key: string]: unknown;
         };
@@ -1445,6 +1469,133 @@ export interface operations {
             };
             /** @description The server could not understand the request due to invalid syntax. */
             400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The server cannot find the requested resource. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    Recipes_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateRecipeRequest"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecipeDetail"];
+                };
+            };
+            /** @description The server could not understand the request due to invalid syntax. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The server cannot find the requested resource. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    Recipes_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description There is no content to send for this request, but the headers may be useful. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access is unauthorized. */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

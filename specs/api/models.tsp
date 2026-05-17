@@ -190,14 +190,6 @@ notes?: string;
 
 // ── Dietary Profiles ─────────────────────────────────────────
 
-enum AgeRange {
-  child0to3: "child-0-3",
-  child4to6: "child-4-6",
-  child7to12: "child-7-12",
-  teen: "teen",
-  adult: "adult",
-}
-
 enum AllergySeverity {
   severe: "severe",
   moderate: "moderate",
@@ -213,7 +205,6 @@ model MemberProfile {
   userId: string;
   name: string;
   role: string;
-  ageRange: AgeRange;
   allergies: AllergyEntry[];
   textures: string[];
   safeFoods: string[];
@@ -226,7 +217,6 @@ model ListProfilesResponse {
 }
 
 model SaveProfileRequest {
-  ageRange: AgeRange;
   allergies: AllergyEntry[];
   textures: string[];
   safeFoods: string[];

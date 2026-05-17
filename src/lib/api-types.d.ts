@@ -216,8 +216,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** @enum {string} */
-        AgeRange: "child-0-3" | "child-4-6" | "child-7-12" | "teen" | "adult";
         AllergyEntry: {
             ingredient: string;
             severity: components["schemas"]["AllergySeverity"];
@@ -397,7 +395,6 @@ export interface components {
             userId: string;
             name: string;
             role: string;
-            ageRange: components["schemas"]["AgeRange"];
             allergies: components["schemas"]["AllergyEntry"][];
             textures: string[];
             safeFoods: string[];
@@ -507,7 +504,6 @@ export interface components {
             [key: string]: unknown;
         };
         SaveProfileRequest: {
-            ageRange: components["schemas"]["AgeRange"];
             allergies: components["schemas"]["AllergyEntry"][];
             textures: string[];
             safeFoods: string[];

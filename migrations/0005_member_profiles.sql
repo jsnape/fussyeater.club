@@ -3,7 +3,6 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS member_profiles (
     user_id TEXT PRIMARY KEY,
     household_id TEXT NOT NULL,
-    age_range TEXT NOT NULL DEFAULT 'adult',
     allergies TEXT NOT NULL DEFAULT '[]',
     textures TEXT NOT NULL DEFAULT '[]',
     safe_foods TEXT NOT NULL DEFAULT '[]',

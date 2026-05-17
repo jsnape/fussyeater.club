@@ -17,16 +17,6 @@
 	type SaveProfileRequest = components['schemas']['SaveProfileRequest'];
 	type HouseholdMember = components['schemas']['HouseholdMember'];
 
-	type AgeRangeValue = 'child-0-3' | 'child-4-6' | 'child-7-12' | 'teen' | 'adult';
-
-	const AGE_RANGE_OPTIONS: { value: AgeRangeValue; label: string }[] = [
-		{ value: 'child-0-3', label: 'Child (0–3)' },
-		{ value: 'child-4-6', label: 'Child (4–6)' },
-		{ value: 'child-7-12', label: 'Child (7–12)' },
-		{ value: 'teen', label: 'Teen' },
-		{ value: 'adult', label: 'Adult' }
-	];
-
 	const TEXTURE_PRESETS = ['Mushy', 'Slimy', 'Crunchy', 'Mixed Textures', 'Chewy', 'Stringy', 'Grainy'];
 
 	const SEVERITY_OPTIONS: { value: AllergyEntry['severity']; label: string }[] = [
@@ -74,7 +64,6 @@
 	function buildInitialProfile(userId: string) {
 		const profile = getProfileForUser(userId);
 		return {
-			ageRange: (profile?.ageRange as AgeRangeValue) ?? 'adult',
 			allergies: profile?.allergies ? profile.allergies.map((a) => ({ ...a })) : [],
 			textures: profile?.textures ? [...profile.textures] : [],
 			safeFoods: profile?.safeFoods ? [...profile.safeFoods] : [],
@@ -83,7 +72,6 @@
 	}
 
 	const initial = buildInitialProfile('');
-	let editAgeRange = $state<AgeRangeValue>(initial.ageRange);
 	let editAllergies = $state<AllergyEntry[]>(initial.allergies);
 	let editTextures = $state<string[]>(initial.textures);
 	let editSafeFoods = $state<string[]>(initial.safeFoods);
@@ -91,7 +79,6 @@
 
 	function loadProfileIntoEditor(userId: string) {
 		const data = buildInitialProfile(userId);
-		editAgeRange = data.ageRange;
 		editAllergies = data.allergies;
 		editTextures = data.textures;
 		editSafeFoods = data.safeFoods;
@@ -182,7 +169,6 @@
 		saveError = '';
 
 		const body: SaveProfileRequest = {
-			ageRange: editAgeRange,
 			allergies: editAllergies,
 			textures: editTextures,
 			safeFoods: editSafeFoods,
@@ -202,7 +188,6 @@
 				userId: selectedUserId,
 				name: selectedMember?.name ?? '',
 				role: selectedMember?.role ?? '',
-				ageRange: editAgeRange,
 				allergies: [...editAllergies],
 				textures: [...editTextures],
 				safeFoods: [...editSafeFoods],
@@ -329,19 +314,6 @@
 		<!-- Profile Editor -->
 		{#if selectedMember}
 			<div class="space-y-6">
-				<!-- Age Range -->
-				<div class="rounded-2xl bg-white p-6 shadow-sm">
-					<h3 class="mb-4 text-base font-semibold text-slate-900">Age Range</h3>
-					<select
-						bind:value={editAgeRange}
-						class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-primary-500 focus:ring-primary-500"
-					>
-						{#each AGE_RANGE_OPTIONS as opt (opt.value)}
-							<option value={opt.value}>{opt.label}</option>
-						{/each}
-					</select>
-				</div>
-
 				<!-- Allergies & Intolerances -->
 				<div class="rounded-2xl bg-white p-6 shadow-sm">
 					<div class="mb-4 flex items-center gap-2">

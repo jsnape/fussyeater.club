@@ -11,7 +11,6 @@ export type MemberProfileRow = {
 	householdId: string;
 	name: string;
 	role: string;
-	ageRange: string;
 	allergies: string;
 	textures: string;
 	safeFoods: string;
@@ -22,7 +21,6 @@ export type MemberProfile = {
 	userId: string;
 	name: string;
 	role: string;
-	ageRange: string;
 	allergies: AllergyEntry[];
 	textures: string[];
 	safeFoods: string[];
@@ -30,7 +28,6 @@ export type MemberProfile = {
 };
 
 export type SaveProfileInput = {
-	ageRange: string;
 	allergies: AllergyEntry[];
 	textures: string[];
 	safeFoods: string[];
@@ -59,7 +56,6 @@ export async function getProfilesForHousehold(
 				mp.user_id AS userId,
 				u.name AS name,
 				hm.role AS role,
-				mp.age_range AS ageRange,
 				mp.allergies AS allergies,
 				mp.textures AS textures,
 				mp.safe_foods AS safeFoods,
@@ -77,7 +73,6 @@ export async function getProfilesForHousehold(
 		userId: row.userId,
 		name: row.name ?? '',
 		role: row.role ?? 'member',
-		ageRange: row.ageRange,
 		allergies: parseJsonColumn<AllergyEntry[]>(row.allergies),
 		textures: parseJsonColumn<string[]>(row.textures),
 		safeFoods: parseJsonColumn<string[]>(row.safeFoods),
@@ -96,7 +91,6 @@ export async function getProfileForMember(
 				mp.user_id AS userId,
 				u.name AS name,
 				hm.role AS role,
-				mp.age_range AS ageRange,
 				mp.allergies AS allergies,
 				mp.textures AS textures,
 				mp.safe_foods AS safeFoods,
@@ -115,7 +109,6 @@ export async function getProfileForMember(
 		userId: row.userId,
 		name: row.name ?? '',
 		role: row.role ?? 'member',
-		ageRange: row.ageRange,
 		allergies: parseJsonColumn<AllergyEntry[]>(row.allergies),
 		textures: parseJsonColumn<string[]>(row.textures),
 		safeFoods: parseJsonColumn<string[]>(row.safeFoods),
@@ -132,11 +125,10 @@ export async function saveProfile(
 	const now = nowIso();
 	await db
 		.prepare(
-			`INSERT INTO member_profiles (user_id, household_id, age_range, allergies, textures, safe_foods, dislikes, created_at, updated_at)
-			VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?8)
+			`INSERT INTO member_profiles (user_id, household_id, allergies, textures, safe_foods, dislikes, created_at, updated_at)
+			VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7)
 			ON CONFLICT(user_id) DO UPDATE SET
 				household_id = excluded.household_id,
-				age_range = excluded.age_range,
 				allergies = excluded.allergies,
 				textures = excluded.textures,
 				safe_foods = excluded.safe_foods,
@@ -146,7 +138,6 @@ export async function saveProfile(
 		.bind(
 			userId,
 			householdId,
-			input.ageRange,
 			JSON.stringify(input.allergies),
 			JSON.stringify(input.textures),
 			JSON.stringify(input.safeFoods),
@@ -186,7 +177,6 @@ export async function updateHouseholdSettings(
 		.run();
 }
 
-const VALID_AGE_RANGES = new Set(['child-0-3', 'child-4-6', 'child-7-12', 'teen', 'adult']);
 const VALID_SEVERITIES = new Set(['severe', 'moderate', 'mild']);
 
 export function validateProfileInput(
@@ -197,10 +187,6 @@ export function validateProfileInput(
 	}
 
 	const body = input as Record<string, unknown>;
-
-	if (typeof body.ageRange !== 'string' || !VALID_AGE_RANGES.has(body.ageRange)) {
-		return { valid: false, error: `Invalid ageRange. Must be one of: ${[...VALID_AGE_RANGES].join(', ')}` };
-	}
 
 	if (!Array.isArray(body.allergies)) {
 		return { valid: false, error: 'allergies must be an array' };
@@ -233,7 +219,6 @@ export function validateProfileInput(
 	return {
 		valid: true,
 		data: {
-			ageRange: body.ageRange,
 			allergies: body.allergies.map((a: { ingredient: string; severity: string }) => ({
 				ingredient: a.ingredient.trim(),
 				severity: a.severity as 'severe' | 'moderate' | 'mild'

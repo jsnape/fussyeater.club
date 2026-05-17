@@ -62,14 +62,12 @@ describe('profile', () => {
 			await seedHousehold(pair);
 
 			await saveProfile(pair.first, 'user-1', 'hh-1', {
-				ageRange: 'adult',
 				allergies: [{ ingredient: 'Peanuts', severity: 'severe' }],
 				textures: ['Mushy'],
 				safeFoods: ['Pasta'],
 				dislikes: ['Broccoli']
 			});
 			await saveProfile(pair.first, 'user-2', 'hh-1', {
-				ageRange: 'child-4-6',
 				allergies: [],
 				textures: [],
 				safeFoods: [],
@@ -79,10 +77,8 @@ describe('profile', () => {
 			const profiles = await getProfilesForHousehold(pair.first, 'hh-1');
 			expect(profiles).toHaveLength(2);
 			expect(profiles[0].name).toBe('Alice');
-			expect(profiles[0].ageRange).toBe('adult');
 			expect(profiles[0].allergies).toEqual([{ ingredient: 'Peanuts', severity: 'severe' }]);
 			expect(profiles[1].name).toBe('Bob');
-			expect(profiles[1].ageRange).toBe('child-4-6');
 		});
 	});
 
@@ -102,7 +98,6 @@ describe('profile', () => {
 			await seedHousehold(pair);
 
 			await saveProfile(pair.first, 'user-1', 'hh-1', {
-				ageRange: 'adult',
 				allergies: [{ ingredient: 'Dairy', severity: 'moderate' }],
 				textures: ['Slimy', 'Crunchy'],
 				safeFoods: ['Rice', 'Chicken'],
@@ -112,7 +107,6 @@ describe('profile', () => {
 			const profile = await getProfileForMember(pair.first, 'user-1', 'hh-1');
 			expect(profile).not.toBeNull();
 			expect(profile!.userId).toBe('user-1');
-			expect(profile!.ageRange).toBe('adult');
 			expect(profile!.allergies).toEqual([{ ingredient: 'Dairy', severity: 'moderate' }]);
 			expect(profile!.textures).toEqual(['Slimy', 'Crunchy']);
 			expect(profile!.safeFoods).toEqual(['Rice', 'Chicken']);
@@ -127,7 +121,6 @@ describe('profile', () => {
 			await seedHousehold(pair);
 
 			await saveProfile(pair.first, 'user-1', 'hh-1', {
-				ageRange: 'adult',
 				allergies: [],
 				textures: [],
 				safeFoods: [],
@@ -135,10 +128,9 @@ describe('profile', () => {
 			});
 
 			let profile = await getProfileForMember(pair.first, 'user-1', 'hh-1');
-			expect(profile!.ageRange).toBe('adult');
+			expect(profile!.allergies).toEqual([]);
 
 			await saveProfile(pair.first, 'user-1', 'hh-1', {
-				ageRange: 'teen',
 				allergies: [{ ingredient: 'Eggs', severity: 'mild' }],
 				textures: ['Grainy'],
 				safeFoods: ['Toast'],
@@ -146,7 +138,6 @@ describe('profile', () => {
 			});
 
 			profile = await getProfileForMember(pair.first, 'user-1', 'hh-1');
-			expect(profile!.ageRange).toBe('teen');
 			expect(profile!.allergies).toEqual([{ ingredient: 'Eggs', severity: 'mild' }]);
 			expect(profile!.textures).toEqual(['Grainy']);
 		});
@@ -180,7 +171,6 @@ describe('profile', () => {
 	describe('validateProfileInput', () => {
 		it('should accept valid input', () => {
 			const result = validateProfileInput({
-				ageRange: 'adult',
 				allergies: [{ ingredient: 'Peanuts', severity: 'severe' }],
 				textures: ['Mushy'],
 				safeFoods: ['Pasta'],
@@ -189,20 +179,8 @@ describe('profile', () => {
 			expect(result.valid).toBe(true);
 		});
 
-		it('should reject invalid ageRange', () => {
-			const result = validateProfileInput({
-				ageRange: 'baby',
-				allergies: [],
-				textures: [],
-				safeFoods: [],
-				dislikes: []
-			});
-			expect(result.valid).toBe(false);
-		});
-
 		it('should reject invalid allergy severity', () => {
 			const result = validateProfileInput({
-				ageRange: 'adult',
 				allergies: [{ ingredient: 'Peanuts', severity: 'extreme' }],
 				textures: [],
 				safeFoods: [],
@@ -213,7 +191,6 @@ describe('profile', () => {
 
 		it('should reject non-array textures', () => {
 			const result = validateProfileInput({
-				ageRange: 'adult',
 				allergies: [],
 				textures: 'Mushy',
 				safeFoods: [],
@@ -229,7 +206,6 @@ describe('profile', () => {
 
 		it('should trim and filter empty strings', () => {
 			const result = validateProfileInput({
-				ageRange: 'child-0-3',
 				allergies: [{ ingredient: '  Milk  ', severity: 'mild' }],
 				textures: ['  Slimy  ', ''],
 				safeFoods: ['  Pasta  ', '  '],

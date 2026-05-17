@@ -676,12 +676,14 @@ export interface components {
             colour: string;
             /** Format: int32 */
             count: number;
+            plants: string[];
         } & {
             [key: string]: unknown;
         };
         PlantStats: {
             /** Format: int32 */
             uniquePlants: number;
+            plantNames: string[];
             colourCounts: components["schemas"]["PlantColourCount"][];
         } & {
             [key: string]: unknown;

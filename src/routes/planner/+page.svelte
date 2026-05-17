@@ -22,7 +22,7 @@
 	let weekStart = $state(data.plan?.weekStart ?? data.initialWeek);
 	let entries = $state<MealPlanEntry[]>(data.plan?.entries ?? []);
 	let stats = $state(data.plan?.stats ?? { planned: 0, total: 21, withAlerts: 0 });
-	let plantStats = $state<PlantStats>(data.plan?.plantStats ?? { uniquePlants: 0, colourCounts: [] });
+	let plantStats = $state<PlantStats>(data.plan?.plantStats ?? { uniquePlants: 0, plantNames: [], colourCounts: [] });
 	let allRecipes = $state<RecipeSummary[]>(data.recipes?.items ?? []);
 	let sidebarRecipes = $state<RecipeSummary[]>(data.recipes?.items ?? []);
 	let isLoading = $state(false);

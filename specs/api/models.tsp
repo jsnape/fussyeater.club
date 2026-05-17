@@ -311,10 +311,12 @@ model MealPlanStats {
 model PlantColourCount {
   colour: string;
   count: int32;
+  plants: string[];
 }
 
 model PlantStats {
   uniquePlants: int32;
+  plantNames: string[];
   colourCounts: PlantColourCount[];
 }
 

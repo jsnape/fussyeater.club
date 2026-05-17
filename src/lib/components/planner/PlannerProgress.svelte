@@ -35,15 +35,27 @@
 
 	// Colour map for quick lookup
 	let colourMap = $derived.by(() => {
-		const map: Record<string, number> = {};
+		const map: Record<string, { count: number; plants: string[] }> = {};
 		for (const c of plantStats.colourCounts) {
-			map[c.colour] = c.count;
+			map[c.colour] = { count: c.count, plants: c.plants };
 		}
 		return map;
 	});
 
-	let coloursHit = $derived(RAINBOW_COLOURS.filter((c) => (colourMap[c.key] ?? 0) > 0).length);
+	let coloursHit = $derived(RAINBOW_COLOURS.filter((c) => (colourMap[c.key]?.count ?? 0) > 0).length);
 	let allColoursHit = $derived(coloursHit === RAINBOW_COLOURS.length);
+
+	// Title-case a plant name for display
+	function titleCase(s: string): string {
+		return s.replace(/\b\w/g, (c) => c.toUpperCase());
+	}
+
+	// Full plant list tooltip for the diversity bar
+	let allPlantsTooltip = $derived(
+		plantStats.plantNames.length > 0
+			? plantStats.plantNames.map(titleCase).join(', ')
+			: 'No plants found yet'
+	);
 
 	function plantBarColour(pct: number): string {
 		if (pct >= 100) return 'bg-emerald-500';
@@ -103,7 +115,7 @@
 			{/if}
 		</div>
 
-		<div class="mt-3">
+		<div class="mt-3" title={allPlantsTooltip}>
 			<div class="flex items-center justify-between text-xs text-slate-500">
 				<span>{plantStats.uniquePlants} of {PLANT_GOAL} different plants</span>
 				<span>{plantPercentage}%</span>
@@ -135,9 +147,13 @@
 
 		<div class="mt-4 flex gap-1.5">
 			{#each RAINBOW_COLOURS as colour (colour.key)}
-				{@const count = colourMap[colour.key] ?? 0}
+				{@const entry = colourMap[colour.key]}
+				{@const count = entry?.count ?? 0}
 				{@const active = count > 0}
-				<div class="flex flex-1 flex-col items-center gap-1.5" title="{colour.label}: {count} plant{count === 1 ? '' : 's'}">
+				{@const tooltip = active
+					? `${colour.label}: ${(entry?.plants ?? []).map(titleCase).join(', ')}`
+					: `${colour.label}: none yet`}
+				<div class="flex flex-1 flex-col items-center gap-1.5" title={tooltip}>
 					<!-- Colour arc segment -->
 					<div
 						class="flex h-12 w-full items-center justify-center rounded-xl transition-all duration-500 {active ? `${colour.bg} shadow-sm ring-2 ${colour.ring}` : 'bg-slate-100 ring-1 ring-slate-200'}"
@@ -157,7 +173,7 @@
 		</div>
 
 		{#if !allColoursHit && plantStats.uniquePlants > 0}
-			{@const missing = RAINBOW_COLOURS.filter((c) => (colourMap[c.key] ?? 0) === 0)}
+			{@const missing = RAINBOW_COLOURS.filter((c) => (colourMap[c.key]?.count ?? 0) === 0)}
 			<p class="mt-3 text-xs text-slate-400">
 				Missing: {missing.map((c) => c.label.toLowerCase()).join(', ')}
 			</p>

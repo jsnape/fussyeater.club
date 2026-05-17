@@ -77,10 +77,12 @@ export type UpsertEntryInput = {
 export type PlantColourCount = {
 	colour: string;
 	count: number;
+	plants: string[];
 };
 
 export type PlantStats = {
 	uniquePlants: number;
+	plantNames: string[];
 	colourCounts: PlantColourCount[];
 };
 
@@ -104,7 +106,7 @@ export async function computePlantStats(
 	}
 
 	if (allIngredientNames.size === 0) {
-		return { uniquePlants: 0, colourCounts: [] };
+		return { uniquePlants: 0, plantNames: [], colourCounts: [] };
 	}
 
 	// Look up all matching canonical ingredients that are plant food groups
@@ -123,11 +125,13 @@ export async function computePlantStats(
 
 	const matchedPlants = new Set<string>();
 	const colourMap: Record<string, number> = {};
+	const colourPlants: Record<string, string[]> = {};
 
 	for (const row of result.results ?? []) {
 		matchedPlants.add(row.name);
 		const colour = row.plant_colour ?? 'unknown';
 		colourMap[colour] = (colourMap[colour] ?? 0) + 1;
+		(colourPlants[colour] ??= []).push(row.name);
 	}
 
 	// Also check aliases for unmatched ingredient names
@@ -151,6 +155,7 @@ export async function computePlantStats(
 						matchedPlants.add(alias);
 						const colour = row.plant_colour ?? 'unknown';
 						colourMap[colour] = (colourMap[colour] ?? 0) + 1;
+						(colourPlants[colour] ??= []).push(alias);
 					}
 				}
 			}
@@ -158,13 +163,21 @@ export async function computePlantStats(
 	}
 
 	const colourCounts: PlantColourCount[] = Object.entries(colourMap)
-		.map(([colour, count]) => ({ colour, count }))
+		.map(([colour, count]) => ({
+			colour,
+			count,
+			plants: (colourPlants[colour] ?? []).sort()
+		}))
 		.sort((a, b) => {
 			const order = ['red', 'orange', 'yellow', 'green', 'blue-purple', 'white-brown', 'multicolour'];
 			return order.indexOf(a.colour) - order.indexOf(b.colour);
 		});
 
-	return { uniquePlants: matchedPlants.size, colourCounts };
+	return {
+		uniquePlants: matchedPlants.size,
+		plantNames: [...matchedPlants].sort(),
+		colourCounts
+	};
 }
 
 // ── Week utilities ───────────────────────────────────────

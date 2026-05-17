@@ -279,6 +279,7 @@ model CompatibilityAlert {
 
 model CompatibilityResult {
   safe: boolean;
+  hasAllergyAlert: boolean;
   alerts: CompatibilityAlert[];
 }
 

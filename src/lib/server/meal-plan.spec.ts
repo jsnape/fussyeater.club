@@ -404,6 +404,7 @@ describe('checkCompatibility', () => {
 			profiles
 		);
 		expect(result.safe).toBe(false);
+		expect(result.hasAllergyAlert).toBe(true);
 		expect(result.alerts).toHaveLength(1);
 		expect(result.alerts[0].memberName).toBe('Alex');
 		expect(result.alerts[0].reason).toBe('allergy');
@@ -418,6 +419,7 @@ describe('checkCompatibility', () => {
 		);
 		// "mushroom risotto" contains "mushroom" — should flag
 		expect(result.safe).toBe(false);
+		expect(result.hasAllergyAlert).toBe(false);
 		expect(result.alerts.some((a) => a.reason === 'dislike' && a.memberName === 'Alex')).toBe(true);
 	});
 
@@ -427,12 +429,14 @@ describe('checkCompatibility', () => {
 			profiles
 		);
 		expect(result.safe).toBe(true);
+		expect(result.hasAllergyAlert).toBe(false);
 		expect(result.alerts).toHaveLength(0);
 	});
 
 	it('should handle null ingredients', () => {
 		const result = checkCompatibility(null, profiles);
 		expect(result.safe).toBe(true);
+		expect(result.hasAllergyAlert).toBe(false);
 	});
 
 	it('should handle empty profiles', () => {
@@ -441,6 +445,7 @@ describe('checkCompatibility', () => {
 			[]
 		);
 		expect(result.safe).toBe(true);
+		expect(result.hasAllergyAlert).toBe(false);
 	});
 });
 

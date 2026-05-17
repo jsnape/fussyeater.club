@@ -41,6 +41,7 @@ export type CompatibilityAlert = {
 
 export type CompatibilityResult = {
 	safe: boolean;
+	hasAllergyAlert: boolean;
 	alerts: CompatibilityAlert[];
 };
 
@@ -156,7 +157,11 @@ export function checkCompatibility(
 		}
 	}
 
-	return { safe: alerts.length === 0, alerts };
+	return {
+		safe: alerts.length === 0,
+		hasAllergyAlert: alerts.some((a) => a.reason === 'allergy'),
+		alerts
+	};
 }
 
 // ── Database operations ──────────────────────────────────
@@ -222,7 +227,7 @@ export function toEntryResponse(
 ): MealEntryResponse {
 	const compatibility = entry.recipe_id
 		? checkCompatibility(entry.recipe_ingredients, profiles)
-		: { safe: true, alerts: [] };
+		: { safe: true, hasAllergyAlert: false, alerts: [] };
 
 	const response: MealEntryResponse = {
 		id: entry.id,

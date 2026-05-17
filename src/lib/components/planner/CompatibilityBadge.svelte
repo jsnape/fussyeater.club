@@ -6,6 +6,10 @@
 	let { compatibility }: { compatibility: CompatibilityResult } = $props();
 
 	let tooltipVisible = $state(false);
+
+	let hasAllergy = $derived(compatibility.hasAllergyAlert === true);
+	let badgeBg = $derived(hasAllergy ? 'bg-red-50' : 'bg-amber-50');
+	let badgeText = $derived(hasAllergy ? 'text-red-700' : 'text-amber-700');
 </script>
 
 {#if compatibility.safe}
@@ -17,7 +21,7 @@
 	</span>
 {:else}
 	<span
-		class="relative inline-flex items-center gap-0.5 rounded-full bg-amber-50 px-1.5 py-0.5 text-xs font-medium text-amber-700"
+		class="relative inline-flex items-center gap-0.5 rounded-full {badgeBg} px-1.5 py-0.5 text-xs font-medium {badgeText}"
 		role="button"
 		tabindex="0"
 		onmouseenter={() => (tooltipVisible = true)}
@@ -35,9 +39,9 @@
 					<div class="py-0.5">
 						<span class="font-semibold">{alert.memberName}</span>
 						{#if alert.reason === 'allergy'}
-							— allergic to <span class="text-amber-300">{alert.ingredient}</span>
+							— allergic to <span class="text-red-300">{alert.ingredient}</span>
 							{#if alert.severity}
-								<span class="text-amber-400">({alert.severity})</span>
+								<span class="text-red-400">({alert.severity})</span>
 							{/if}
 						{:else}
 							— dislikes <span class="text-amber-300">{alert.ingredient}</span>

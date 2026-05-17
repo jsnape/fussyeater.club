@@ -417,6 +417,7 @@ export interface components {
         };
         CompatibilityResult: {
             safe: boolean;
+            hasAllergyAlert: boolean;
             alerts: components["schemas"]["CompatibilityAlert"][];
         } & {
             [key: string]: unknown;

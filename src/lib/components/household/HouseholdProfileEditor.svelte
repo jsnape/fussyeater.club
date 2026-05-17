@@ -731,11 +731,12 @@
 						</div>
 					{/if}
 
+					<div class="flex gap-2">
 					<input
 						type="text"
 						bind:value={safeFoodInput}
 						placeholder="Plain Pasta, Chicken Nuggets, Apples"
-						class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-primary-500 focus:ring-primary-500"
+						class="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-primary-500 focus:ring-primary-500"
 						onkeydown={(e: KeyboardEvent) => {
 							if (e.key === 'Enter') {
 								e.preventDefault();
@@ -743,6 +744,15 @@
 							}
 						}}
 					/>
+					<button
+						type="button"
+						onclick={addSafeFood}
+						disabled={!safeFoodInput.trim()}
+						class="rounded-xl bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+					>
+						Add
+					</button>
+				</div>
 				</div>
 
 				<!-- Dislikes -->
@@ -775,11 +785,12 @@
 						</div>
 					{/if}
 
+					<div class="flex gap-2">
 					<input
 						type="text"
 						bind:value={dislikeInput}
 						placeholder="Broccoli, Onions, Mushrooms"
-						class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-primary-500 focus:ring-primary-500"
+						class="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-primary-500 focus:ring-primary-500"
 						onkeydown={(e: KeyboardEvent) => {
 							if (e.key === 'Enter') {
 								e.preventDefault();
@@ -787,6 +798,15 @@
 							}
 						}}
 					/>
+					<button
+						type="button"
+						onclick={addDislike}
+						disabled={!dislikeInput.trim()}
+						class="rounded-xl bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+					>
+						Add
+					</button>
+				</div>
 				</div>
 
 				<!-- Save Button & Feedback -->

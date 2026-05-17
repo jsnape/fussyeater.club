@@ -48,14 +48,36 @@
 		nut: ['tree-nuts']
 	};
 
+	const plantFoodGroups = new Set(['fruit', 'vegetable', 'herb', 'legume']);
+
+	const plantColourOptions = [
+		{ value: '', name: '—' },
+		{ value: 'red', name: 'Red' },
+		{ value: 'orange', name: 'Orange' },
+		{ value: 'yellow', name: 'Yellow' },
+		{ value: 'green', name: 'Green' },
+		{ value: 'blue-purple', name: 'Blue / purple' },
+		{ value: 'white-brown', name: 'White / brown' }
+	];
+
 	let selectedGroups = $state<Record<string, string>>({});
+	let selectedColours = $state<Record<string, string>>({});
 	let bulkAdding = $state(false);
 	let bulkError = $state('');
 	let bulkResults = $state<{ added: number; failed: string[] }>({ added: 0, failed: [] });
 
-	let readyCount = $derived(
-		items.filter((item) => selectedGroups[item.name]?.length > 0).length
+	let anyPlantSelected = $derived(
+		items.some((item) => plantFoodGroups.has(selectedGroups[item.name] ?? ''))
 	);
+
+	function isReady(itemName: string): boolean {
+		const group = selectedGroups[itemName];
+		if (!group) return false;
+		if (plantFoodGroups.has(group) && !selectedColours[itemName]) return false;
+		return true;
+	}
+
+	let readyCount = $derived(items.filter((item) => isReady(item.name)).length);
 
 	async function bulkAdd(): Promise<void> {
 		bulkError = '';
@@ -66,19 +88,20 @@
 		const headers: Record<string, string> = { 'Content-Type': 'application/json' };
 		if (csrfToken) headers['x-csrf-token'] = csrfToken;
 
-		const toAdd = items.filter((item) => selectedGroups[item.name]?.length > 0);
+		const toAdd = items.filter((item) => isReady(item.name));
 
 		for (const item of toAdd) {
+			const group = selectedGroups[item.name];
 			try {
 				await apiFetch('/api/admin/ingredients', {
 					method: 'POST',
 					headers,
 					body: JSON.stringify({
 						name: item.name,
-						foodGroup: selectedGroups[item.name],
-						allergens: foodGroupDefaultAllergens[selectedGroups[item.name]] ?? [],
+						foodGroup: group,
+						allergens: foodGroupDefaultAllergens[group] ?? [],
 						aliases: [],
-						plantColour: null,
+						plantColour: plantFoodGroups.has(group) ? selectedColours[item.name] : null,
 						description: null
 					})
 				});
@@ -93,6 +116,7 @@
 		if (bulkResults.added > 0) {
 			await invalidateAll();
 			selectedGroups = {};
+			selectedColours = {};
 		}
 	}
 </script>
@@ -158,6 +182,9 @@
 					<TableHeadCell class="text-slate-600">Name</TableHeadCell>
 					<TableHeadCell class="text-slate-600">Used in</TableHeadCell>
 					<TableHeadCell class="text-slate-600">Food group</TableHeadCell>
+					{#if anyPlantSelected}
+						<TableHeadCell class="text-slate-600">Colour</TableHeadCell>
+					{/if}
 					<TableHeadCell class="text-right text-slate-600">Actions</TableHeadCell>
 				</TableHead>
 				<TableBody>
@@ -186,6 +213,24 @@
 									{/each}
 								</select>
 							</TableBodyCell>
+							{#if anyPlantSelected}
+								<TableBodyCell>
+									{#if plantFoodGroups.has(selectedGroups[item.name] ?? '')}
+										<select
+											value={selectedColours[item.name] ?? ''}
+											onchange={(e) => {
+												const target = e.target as HTMLSelectElement;
+												selectedColours[item.name] = target.value;
+											}}
+											class="min-w-[8rem] rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-700 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+										>
+											{#each plantColourOptions as colour (colour.value)}
+												<option value={colour.value}>{colour.name}</option>
+											{/each}
+										</select>
+									{/if}
+								</TableBodyCell>
+							{/if}
 							<TableBodyCell class="text-right">
 								<div class="flex items-center justify-end gap-2">
 									<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve() used, query params appended -->

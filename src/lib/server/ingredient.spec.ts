@@ -88,7 +88,7 @@ describe('validation helpers', () => {
 		expect(isPlantFoodGroup('fruit')).toBe(true);
 		expect(isPlantFoodGroup('vegetable')).toBe(true);
 		expect(isPlantFoodGroup('herb')).toBe(true);
-		expect(isPlantFoodGroup('spice')).toBe(true);
+		expect(isPlantFoodGroup('spice')).toBe(false);
 		expect(isPlantFoodGroup('legume')).toBe(true);
 		expect(isPlantFoodGroup('meat')).toBe(false);
 		expect(isPlantFoodGroup('dairy')).toBe(false);

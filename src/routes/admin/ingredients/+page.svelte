@@ -77,7 +77,7 @@
 
 	const severeAllergens = new Set(['peanuts', 'tree-nuts', 'shellfish', 'fish', 'milk', 'eggs']);
 
-	const plantFoodGroups = new Set(['fruit', 'vegetable', 'herb', 'legume', 'grain']);
+	const plantFoodGroups = new Set(['fruit', 'vegetable', 'herb', 'legume']);
 
 	function getPlantColourDotClass(colour: string): string {
 		const found = plantColours.find((c) => c.value === colour);

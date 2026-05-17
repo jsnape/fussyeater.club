@@ -46,7 +46,8 @@ function hasCfAccessAdminGroup(request: Request): boolean {
 		return true;
 	}
 
-	// Parse JWT payload (base64url-encoded, second segment)
+	// JWT signature is verified by Cloudflare Access at the edge before the
+	// request reaches this Worker. We only need to read the claims here.
 	try {
 		const parts = jwt.split('.');
 		if (parts.length !== 3) return false;

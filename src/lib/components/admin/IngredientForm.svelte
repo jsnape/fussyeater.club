@@ -84,7 +84,7 @@
         { value: 'buckwheat', label: 'Buckwheat' }
     ];
 
-    const plantFoodGroups = new Set(['fruit', 'vegetable', 'herb', 'spice', 'legume']);
+    const plantFoodGroups = new Set(['fruit', 'vegetable', 'herb', 'legume']);
 
     const plantColourOptions = [
         { value: 'red', label: 'Red', dot: 'bg-red-500' },

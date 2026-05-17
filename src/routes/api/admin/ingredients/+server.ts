@@ -147,9 +147,11 @@ export const POST: RequestHandler = async (event) => {
 
 		return jsonWithRequestId(toIngredientResponse(row), requestId, { status: 201 });
 	} catch (error) {
-		logError('admin.ingredients.create.failure', requestId, {
-			error: error instanceof Error ? error.message : String(error)
-		});
+		const msg = error instanceof Error ? error.message : String(error);
+		if (msg.includes('UNIQUE constraint failed')) {
+			return jsonWithRequestId({ message: 'An ingredient with this name already exists' }, requestId, { status: 409 });
+		}
+		logError('admin.ingredients.create.failure', requestId, { error: msg });
 		return jsonWithRequestId({ message: 'Service temporarily unavailable' }, requestId, { status: 503 });
 	}
 };

@@ -12,7 +12,7 @@ export const FOOD_GROUPS = [
 export type FoodGroup = (typeof FOOD_GROUPS)[number];
 
 export const PLANT_FOOD_GROUPS: ReadonlySet<string> = new Set([
-	'fruit', 'vegetable', 'herb', 'spice', 'legume'
+	'fruit', 'vegetable', 'herb', 'legume'
 ]);
 
 export const PLANT_COLOURS = [

@@ -427,6 +427,56 @@ describe('getUnmappedIngredients', () => {
 		const unmapped = await getUnmappedIngredients(db);
 		expect(unmapped).toHaveLength(0);
 	});
+
+	it('should match plural recipe names to singular canonical names', async () => {
+		const db = getDb();
+
+		await createIngredient(db, {
+			name: 'Egg',
+			foodGroup: 'dairy',
+			allergens: ['eggs'],
+			plantColour: null,
+			aliases: [],
+			description: null
+		});
+
+		await createIngredient(db, {
+			name: 'Tomato',
+			foodGroup: 'vegetable',
+			allergens: [],
+			plantColour: 'red',
+			aliases: [],
+			description: null
+		});
+
+		await seedRecipeWithIngredients(db, 'recipe-1', [
+			{ ingredient: 'eggs' },
+			{ ingredient: 'tomatoes' }
+		]);
+
+		const unmapped = await getUnmappedIngredients(db);
+		expect(unmapped).toHaveLength(0);
+	});
+
+	it('should match singular recipe names to plural canonical names', async () => {
+		const db = getDb();
+
+		await createIngredient(db, {
+			name: 'Olives',
+			foodGroup: 'vegetable',
+			allergens: [],
+			plantColour: 'green',
+			aliases: [],
+			description: null
+		});
+
+		await seedRecipeWithIngredients(db, 'recipe-1', [
+			{ ingredient: 'olive' }
+		]);
+
+		const unmapped = await getUnmappedIngredients(db);
+		expect(unmapped).toHaveLength(0);
+	});
 });
 
 // ── Name uniqueness ─────────────────────────────────────

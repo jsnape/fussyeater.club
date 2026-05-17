@@ -1,5 +1,6 @@
 import type { DbLike } from './db';
 import { nowIso } from './db';
+import { pluralVariants } from '$lib/plural-variants';
 
 // ── Constants ────────────────────────────────────────────
 
@@ -308,16 +309,17 @@ export async function getUnmappedIngredients(
 
 	const knownNames = new Set<string>();
 	for (const row of canonicals.results ?? []) {
-		knownNames.add(row.name.toLowerCase());
+		for (const v of pluralVariants(row.name)) knownNames.add(v);
 		const aliases = parseJsonColumn<string[]>(row.aliases);
 		for (const alias of aliases) {
-			knownNames.add(alias.toLowerCase());
+			for (const v of pluralVariants(alias)) knownNames.add(v);
 		}
 	}
 
 	const unmapped: UnmappedIngredient[] = [];
 	for (const [name, count] of ingredientCounts) {
-		if (!knownNames.has(name)) {
+		const matched = [...pluralVariants(name)].some((v) => knownNames.has(v));
+		if (!matched) {
 			unmapped.push({ name, recipeCount: count });
 		}
 	}

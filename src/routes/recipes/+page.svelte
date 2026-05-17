@@ -20,17 +20,23 @@
     });
 
     let totalPages = $derived(Math.max(1, Math.ceil(data.total / data.pageSize)));
-    let hasActiveFilters = $derived(Boolean(data.q) || data.sort !== 'latest');
-    let activeFilterCount = $derived((data.q ? 1 : 0) + (data.sort !== 'latest' ? 1 : 0));
+    let hasActiveFilters = $derived(Boolean(data.q) || Boolean(data.tag) || data.sort !== 'latest');
+    let activeFilterCount = $derived(
+        (data.q ? 1 : 0) + (data.tag ? 1 : 0) + (data.sort !== 'latest' ? 1 : 0)
+    );
 
-    function buildUrl(overrides: { q?: string; sort?: RecipeSort; page?: number } = {}): string {
+    function buildUrl(
+        overrides: { q?: string; sort?: RecipeSort; page?: number; tag?: string | null } = {}
+    ): string {
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- non-reactive local variable
         const params = new URLSearchParams();
         const q = overrides.q ?? data.q;
         const sort = overrides.sort ?? data.sort;
         const page = overrides.page ?? 1;
+        const tag = overrides.tag === null ? '' : (overrides.tag ?? data.tag);
 
         if (q.trim()) params.set('q', q.trim());
+        if (tag) params.set('tag', tag);
         if (sort !== 'latest') params.set('sort', sort);
         if (page > 1) params.set('page', String(page));
 
@@ -52,6 +58,11 @@
         searchQuery = '';
         // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used
         void goto(resolve('/recipes'));
+    }
+
+    function clearTag(): void {
+        // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve used inside buildUrl
+        void goto(buildUrl({ tag: null }));
     }
 
     function goToPage(page: number): void {
@@ -95,6 +106,23 @@
                 {activeFilterCount}
                 onClearFilters={handleClearFilters}
             />
+            {#if data.tag}
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-slate-500">Tag:</span>
+                    <span
+                        class="inline-flex items-center gap-1 rounded-full bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700"
+                    >
+                        {data.tag}
+                        <button
+                            onclick={clearTag}
+                            class="ml-0.5 inline-flex items-center justify-center text-primary-400 hover:text-primary-600"
+                            aria-label="Clear tag filter"
+                        >
+                            ✕
+                        </button>
+                    </span>
+                </div>
+            {/if}
         </div>
 
         {#if data.items.length === 0}

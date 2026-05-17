@@ -47,6 +47,7 @@ describe('/recipes page load', () => {
             pageSize: 24,
             total: 1,
             q: '',
+            tag: '',
             sort: 'latest',
             error: null
         });
@@ -63,6 +64,22 @@ describe('/recipes page load', () => {
         await load({ fetch: fetchMock, ...makeLoadArgs({ q: 'pasta' }) } as never);
 
         expect(String(fetchMock.mock.calls[0]?.[0])).toContain('q=pasta');
+    });
+
+    it('should pass tag param to API', async () => {
+        const fetchMock = vi.fn().mockResolvedValueOnce(
+            new Response(JSON.stringify({ items: [], page: 1, pageSize: 24, total: 0 } satisfies RecipeListResponse), {
+                status: 200,
+                headers: { 'content-type': 'application/json' }
+            })
+        );
+
+        const result = (await load({ fetch: fetchMock, ...makeLoadArgs({ tag: 'breakfast' }) } as never)) as {
+            tag: string;
+        };
+
+        expect(String(fetchMock.mock.calls[0]?.[0])).toContain('tag=breakfast');
+        expect(result.tag).toBe('breakfast');
     });
 
     it('should pass sort param to API', async () => {
@@ -119,6 +136,7 @@ describe('/recipes page load', () => {
             pageSize: 24,
             total: 0,
             q: 'pasta',
+            tag: '',
             sort: 'quickest',
             error: 'unavailable'
         });

@@ -22,6 +22,7 @@ export const GET: RequestHandler = async (event) => {
     logInfo('recipes.list.get.start', requestId, { path: '/api/recipes' });
 
     const qRaw = url.searchParams.get('q')?.trim() ?? '';
+    const tagRaw = url.searchParams.get('tag')?.trim().toLowerCase() ?? '';
     const pageRaw = url.searchParams.get('page');
     const pageSizeRaw = url.searchParams.get('pageSize');
     const sort = url.searchParams.get('sort') ?? 'latest';
@@ -72,6 +73,13 @@ export const GET: RequestHandler = async (event) => {
         if (qRaw) {
             conditions.push(`(title LIKE ?${bindIndex} OR description LIKE ?${bindIndex})`);
             binds.push(`%${qRaw}%`);
+            bindIndex++;
+        }
+
+        // Tag filter (tags stored as JSON array, e.g. '["breakfast","gluten-free"]')
+        if (tagRaw) {
+            conditions.push(`tags LIKE ?${bindIndex}`);
+            binds.push(`%"${tagRaw}"%`);
             bindIndex++;
         }
 

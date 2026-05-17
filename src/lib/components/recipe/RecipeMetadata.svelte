@@ -78,8 +78,8 @@
             </span>
         {/if}
         {#if hasYield}
-            <span class="rounded-lg bg-slate-50 px-3 py-1.5">
-                {yieldText}
+            <span class="flex items-center gap-1.5 rounded-lg bg-slate-50 px-3 py-1.5">
+                <span class="text-slate-400">📦</span> Yields {yieldText}
             </span>
         {/if}
     </div>

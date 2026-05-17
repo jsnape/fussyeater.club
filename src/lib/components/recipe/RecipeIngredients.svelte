@@ -115,7 +115,7 @@
 {#snippet ingredientLine(ing: RecipeIngredient)}
     {@const amount = mode === 'view' ? scaleAmount(ing.amount) : (ing.amount ? String(ing.amount) : '')}
     {@const unit = ing.unit ?? ''}
-    {@const unitSep = unit.length > 4 ? ' ' : ''}
+    {@const unitSep = unit.length >= 4 ? ' ' : ''}
     {@const qty = [amount, unit].filter(Boolean).join(unitSep)}
     <span>
         {#if qty}{qty}&nbsp;{/if}{ing.ingredient}{#if ing.preparation}

@@ -316,7 +316,7 @@
 							<td class="px-4 py-3 text-right">
 								<div class="flex items-center justify-end gap-2">
 									<a
-										href={resolve('/admin/ingredients/[id]', { id: ingredient.id })}
+										href={resolve('/admin/ingredients/[id]/edit', { id: ingredient.id })}
 										class="rounded-lg px-3 py-1.5 text-xs font-medium text-primary-600 transition-colors hover:bg-primary-50"
 									>
 										Edit

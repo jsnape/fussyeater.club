@@ -53,7 +53,7 @@
             href={resolve('/admin/ingredients')}
             class="text-sm font-medium text-teal-600 hover:text-teal-700"
         >
-            ← Back to Ingredients
+            ← Back to ingredients
         </a>
     </div>
     <h1 class="mt-4 text-2xl font-semibold text-slate-900">

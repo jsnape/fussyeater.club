@@ -46,7 +46,7 @@
 
     // --- Constants ---
     const foodGroupItems = [
-        { value: '', name: 'Select a food group…' },
+    { value: '', name: 'Select a food group…' },
         { value: 'dairy', name: 'Dairy' },
         { value: 'meat', name: 'Meat' },
         { value: 'poultry', name: 'Poultry' },
@@ -91,8 +91,8 @@
         { value: 'orange', label: 'Orange', dot: 'bg-orange-500' },
         { value: 'yellow', label: 'Yellow', dot: 'bg-yellow-400' },
         { value: 'green', label: 'Green', dot: 'bg-green-500' },
-        { value: 'blue-purple', label: 'Blue / Purple', dot: 'bg-purple-500' },
-        { value: 'white-brown', label: 'White / Brown', dot: 'bg-amber-200' }
+        { value: 'blue-purple', label: 'Blue / purple', dot: 'bg-purple-500' },
+        { value: 'white-brown', label: 'White / brown', dot: 'bg-amber-200' }
     ];
 
     // --- Derived state ---
@@ -183,7 +183,7 @@
             id="ingredient-name"
             type="text"
             bind:value={name}
-            placeholder="e.g. Cheddar Cheese"
+            placeholder="e.g. Cheddar cheese"
             required
         />
     </div>
@@ -299,7 +299,7 @@
             {#if isSubmitting}
                 {isEdit ? 'Saving…' : 'Creating…'}
             {:else}
-                {isEdit ? 'Save Changes' : 'Create Ingredient'}
+                {isEdit ? 'Save changes' : 'Create ingredient'}
             {/if}
         </Button>
         <Button

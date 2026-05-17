@@ -43,7 +43,7 @@
 					/>
 				</svg>
 			</div>
-			<h1 class="mb-2 text-xl font-semibold text-slate-900">Access Denied</h1>
+			<h1 class="mb-2 text-xl font-semibold text-slate-900">Access denied</h1>
 			<p class="mb-6 text-sm text-slate-500">
 				You don't have permission to access the admin area.
 			</p>
@@ -51,7 +51,7 @@
 				href={resolve('/')}
 				class="inline-flex items-center rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
 			>
-				Go Home
+				Go home
 			</a>
 		</div>
 	</div>

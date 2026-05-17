@@ -27,7 +27,7 @@
 	let totalPages = $derived(Math.max(1, Math.ceil(data.ingredients.total / data.ingredients.pageSize)));
 
 	const foodGroups = [
-		{ value: '', name: 'All Food Groups' },
+		{ value: '', name: 'All food groups' },
 		{ value: 'dairy', name: 'Dairy' },
 		{ value: 'meat', name: 'Meat' },
 		{ value: 'poultry', name: 'Poultry' },
@@ -48,11 +48,11 @@
 	];
 
 	const allergenOptions = [
-		{ value: '', name: 'All Allergens' },
+		{ value: '', name: 'All allergens' },
 		{ value: 'milk', name: 'Milk' },
 		{ value: 'eggs', name: 'Eggs' },
 		{ value: 'peanuts', name: 'Peanuts' },
-		{ value: 'tree-nuts', name: 'Tree Nuts' },
+		{ value: 'tree-nuts', name: 'Tree nuts' },
 		{ value: 'wheat', name: 'Wheat' },
 		{ value: 'soy', name: 'Soy' },
 		{ value: 'fish', name: 'Fish' },
@@ -71,8 +71,8 @@
 		{ value: 'orange', label: 'Orange', dotClass: 'bg-orange-500' },
 		{ value: 'yellow', label: 'Yellow', dotClass: 'bg-yellow-400' },
 		{ value: 'green', label: 'Green', dotClass: 'bg-green-500' },
-		{ value: 'blue-purple', label: 'Blue/Purple', dotClass: 'bg-purple-500' },
-		{ value: 'white-brown', label: 'White/Brown', dotClass: 'bg-amber-200 border border-amber-400' }
+		{ value: 'blue-purple', label: 'Blue/purple', dotClass: 'bg-purple-500' },
+		{ value: 'white-brown', label: 'White/brown', dotClass: 'bg-amber-200 border border-amber-400' }
 	];
 
 	const severeAllergens = new Set(['peanuts', 'tree-nuts', 'shellfish', 'fish', 'milk', 'eggs']);
@@ -163,7 +163,7 @@
 	<!-- Page header -->
 	<div class="flex items-center justify-between">
 		<div class="flex items-center gap-3">
-			<h1 class="text-3xl font-bold text-slate-900">Ingredient Database</h1>
+			<h1 class="text-3xl font-bold text-slate-900">Ingredient database</h1>
 			<span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-sm font-medium text-slate-600">
 				{data.ingredients.total}
 			</span>
@@ -172,7 +172,7 @@
 			href={resolve('/admin/ingredients/new')}
 			class="inline-flex items-center gap-1.5 rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary-700"
 		>
-			+ New Ingredient
+			+ New ingredient
 		</a>
 	</div>
 
@@ -200,7 +200,7 @@
 		<select
 			value={selectedFoodGroup}
 			onchange={handleFoodGroupChange}
-			class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+			class="min-w-[10rem] rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
 		>
 			{#each foodGroups as group (group.value)}
 				<option value={group.value}>{group.name}</option>
@@ -211,7 +211,7 @@
 		<select
 			value={selectedAllergen}
 			onchange={handleAllergenChange}
-			class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+			class="min-w-[9rem] rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
 		>
 			{#each allergenOptions as option (option.value)}
 				<option value={option.value}>{option.name}</option>
@@ -220,7 +220,7 @@
 
 		<!-- Plant colour chips -->
 		<div class="flex items-center gap-1.5">
-			<span class="mr-1 text-xs font-medium text-slate-500">Plant Colour:</span>
+			<span class="mr-1 text-xs font-medium text-slate-500">Plant colour:</span>
 			{#each plantColours as colour (colour.value)}
 				<button
 					type="button"
@@ -253,9 +253,9 @@
 				<thead class="border-b border-slate-200 bg-slate-50">
 					<tr>
 						<th class="px-4 py-3 font-medium text-slate-600">Name</th>
-						<th class="px-4 py-3 font-medium text-slate-600">Food Group</th>
+						<th class="px-4 py-3 font-medium text-slate-600">Food group</th>
 						<th class="px-4 py-3 font-medium text-slate-600">Allergens</th>
-						<th class="px-4 py-3 font-medium text-slate-600">Plant Colour</th>
+						<th class="px-4 py-3 font-medium text-slate-600">Plant colour</th>
 						<th class="px-4 py-3 text-right font-medium text-slate-600">Actions</th>
 					</tr>
 				</thead>

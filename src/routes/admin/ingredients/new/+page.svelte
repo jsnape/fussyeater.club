@@ -1,6 +1,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import { resolve } from '$app/paths';
+    import { page } from '$app/state';
     import { apiFetch, ApiError } from '$lib/api';
     import { getCookieValue } from '$lib/browser/cookies';
     import IngredientForm from '$lib/components/admin/IngredientForm.svelte';
@@ -13,6 +14,8 @@
         aliases: string[];
         description?: string | null;
     };
+
+    let prefillName = $derived(page.url.searchParams.get('name') ?? '');
 
     let error = $state('');
 
@@ -50,10 +53,10 @@
             href={resolve('/admin/ingredients')}
             class="text-sm font-medium text-teal-600 hover:text-teal-700"
         >
-            ← Back to Ingredients
+            ← Back to ingredients
         </a>
     </div>
-    <h1 class="mt-4 text-2xl font-semibold text-slate-900">New Ingredient</h1>
+    <h1 class="mt-4 text-2xl font-semibold text-slate-900">New ingredient</h1>
     <p class="mt-1 text-sm text-slate-500">Add a new canonical ingredient to the database</p>
 
     {#if error}
@@ -63,6 +66,10 @@
     {/if}
 
     <div class="mt-8">
-        <IngredientForm onSave={handleSave} onCancel={handleCancel} />
+        <IngredientForm
+            ingredient={prefillName ? { id: '', name: prefillName, foodGroup: '', allergens: [], aliases: [], description: '' } : null}
+            onSave={handleSave}
+            onCancel={handleCancel}
+        />
     </div>
 </main>

@@ -22,7 +22,7 @@
 	<!-- Header -->
 	<div class="mb-6">
 		<div class="flex items-center gap-3">
-			<h1 class="text-2xl font-bold text-slate-900">Unmapped Ingredients</h1>
+			<h1 class="text-2xl font-bold text-slate-900">Unmapped ingredients</h1>
 			{#if total > 0}
 				<Badge color="red">{total}</Badge>
 			{/if}
@@ -45,7 +45,7 @@
 			<Table striped={true}>
 				<TableHead class="bg-slate-50">
 					<TableHeadCell class="text-slate-600">Name</TableHeadCell>
-					<TableHeadCell class="text-slate-600">Used In</TableHeadCell>
+					<TableHeadCell class="text-slate-600">Used in</TableHeadCell>
 					<TableHeadCell class="text-right text-slate-600">Actions</TableHeadCell>
 				</TableHead>
 				<TableBody>

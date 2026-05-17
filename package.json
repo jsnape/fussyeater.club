@@ -53,7 +53,7 @@
     "svelte-check": "^4.4.6",
     "tailwindcss": "^4.2.2",
     "tailwindcss-mcp-server": "^0.1.1",
-    "typescript": "^6.0.3",
+    "typescript": "~5.9.3",
     "typescript-eslint": "^8.58.0",
     "uipro-cli": "^2.2.3",
     "vite": "^8.0.4",

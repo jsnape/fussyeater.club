@@ -41,6 +41,13 @@
 		{ value: 'other', name: 'Other' }
 	];
 
+	const foodGroupDefaultAllergens: Record<string, string[]> = {
+		dairy: ['dairy'],
+		fish: ['fish'],
+		shellfish: ['crustaceans'],
+		nut: ['tree-nuts']
+	};
+
 	let selectedGroups = $state<Record<string, string>>({});
 	let bulkAdding = $state(false);
 	let bulkError = $state('');
@@ -69,7 +76,7 @@
 					body: JSON.stringify({
 						name: item.name,
 						foodGroup: selectedGroups[item.name],
-						allergens: [],
+						allergens: foodGroupDefaultAllergens[selectedGroups[item.name]] ?? [],
 						aliases: [],
 						plantColour: null,
 						description: null

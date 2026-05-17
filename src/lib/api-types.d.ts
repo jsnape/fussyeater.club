@@ -646,6 +646,7 @@ export interface components {
             weekStart: string;
             entries: components["schemas"]["MealPlanEntry"][];
             stats: components["schemas"]["MealPlanStats"];
+            plantStats: components["schemas"]["PlantStats"];
         } & {
             [key: string]: unknown;
         };
@@ -668,6 +669,20 @@ export interface components {
             textures: string[];
             safeFoods: string[];
             dislikes: string[];
+        } & {
+            [key: string]: unknown;
+        };
+        PlantColourCount: {
+            colour: string;
+            /** Format: int32 */
+            count: number;
+        } & {
+            [key: string]: unknown;
+        };
+        PlantStats: {
+            /** Format: int32 */
+            uniquePlants: number;
+            colourCounts: components["schemas"]["PlantColourCount"][];
         } & {
             [key: string]: unknown;
         };

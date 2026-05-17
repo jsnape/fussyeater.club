@@ -15,12 +15,14 @@
 	type MealPlanResponse = components['schemas']['MealPlanResponse'];
 	type MealPlanEntry = components['schemas']['MealPlanEntry'];
 	type RecipeSummary = components['schemas']['RecipeSummary'];
+	type PlantStats = components['schemas']['PlantStats'];
 
 	let { data }: { data: PlannerPageData } = $props();
 
 	let weekStart = $state(data.plan?.weekStart ?? data.initialWeek);
 	let entries = $state<MealPlanEntry[]>(data.plan?.entries ?? []);
 	let stats = $state(data.plan?.stats ?? { planned: 0, total: 21, withAlerts: 0 });
+	let plantStats = $state<PlantStats>(data.plan?.plantStats ?? { uniquePlants: 0, colourCounts: [] });
 	let allRecipes = $state<RecipeSummary[]>(data.recipes?.items ?? []);
 	let sidebarRecipes = $state<RecipeSummary[]>(data.recipes?.items ?? []);
 	let isLoading = $state(false);
@@ -40,6 +42,7 @@
 			weekStart = plan.weekStart;
 			entries = plan.entries;
 			stats = plan.stats;
+			plantStats = plan.plantStats;
 		} catch {
 			// Keep current state on error
 		} finally {
@@ -169,6 +172,8 @@
 				planned: entries.length,
 				withAlerts: entries.filter((e) => !e.compatibility.safe).length
 			};
+			// Reload to get accurate plant stats
+			await loadWeek(weekStart);
 		} catch {
 			// Silently fail
 		}
@@ -255,6 +260,7 @@
 							planned={stats.planned}
 							total={stats.total}
 							withAlerts={stats.withAlerts}
+							{plantStats}
 						/>
 					</div>
 				{/if}

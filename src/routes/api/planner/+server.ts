@@ -8,7 +8,8 @@ import {
 	getWeekPlanEntries,
 	toEntryResponse,
 	isValidIsoDate,
-	getWeekStartMonday
+	getWeekStartMonday,
+	computePlantStats
 } from '$lib/server/meal-plan';
 import {
 	jsonWithRequestId,
@@ -61,11 +62,13 @@ export const GET: RequestHandler = async (event) => {
 
 		const entries = rawEntries.map((e) => toEntryResponse(e, profiles));
 		const withAlerts = entries.filter((e) => !e.compatibility.safe).length;
+		const plantStats = await computePlantStats(db, rawEntries);
 
 		logInfo('planner.get.success', requestId, {
 			weekStart,
 			entryCount: entries.length,
-			withAlerts
+			withAlerts,
+			uniquePlants: plantStats.uniquePlants
 		});
 
 		return jsonWithRequestId(
@@ -76,7 +79,8 @@ export const GET: RequestHandler = async (event) => {
 					planned: entries.length,
 					total: 21,
 					withAlerts
-				}
+				},
+				plantStats
 			},
 			requestId
 		);

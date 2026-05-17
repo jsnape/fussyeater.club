@@ -308,10 +308,21 @@ model MealPlanStats {
   withAlerts: int32;
 }
 
+model PlantColourCount {
+  colour: string;
+  count: int32;
+}
+
+model PlantStats {
+  uniquePlants: int32;
+  colourCounts: PlantColourCount[];
+}
+
 model MealPlanResponse {
   weekStart: string;
   entries: MealPlanEntry[];
   stats: MealPlanStats;
+  plantStats: PlantStats;
 }
 
 model CreateMealEntryRequest {

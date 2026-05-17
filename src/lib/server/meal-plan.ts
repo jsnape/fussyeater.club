@@ -72,6 +72,101 @@ export type UpsertEntryInput = {
 	notes?: string;
 };
 
+// ── Plant diversity stats ────────────────────────────────
+
+export type PlantColourCount = {
+	colour: string;
+	count: number;
+};
+
+export type PlantStats = {
+	uniquePlants: number;
+	colourCounts: PlantColourCount[];
+};
+
+/**
+ * Compute plant diversity stats for a week's entries by cross-referencing
+ * recipe ingredient names against the canonical ingredients table.
+ */
+export async function computePlantStats(
+	db: DbLike,
+	rawEntries: EntryWithRecipe[]
+): Promise<PlantStats> {
+	// Collect all unique ingredient names across the week's recipes
+	const allIngredientNames = new Set<string>();
+	for (const entry of rawEntries) {
+		if (!entry.recipe_ingredients) continue;
+		const ingredients = parseJsonSafe<IngredientEntry[]>(entry.recipe_ingredients);
+		for (const ing of ingredients) {
+			const name = ing.ingredient?.toLowerCase().trim();
+			if (name) allIngredientNames.add(name);
+		}
+	}
+
+	if (allIngredientNames.size === 0) {
+		return { uniquePlants: 0, colourCounts: [] };
+	}
+
+	// Look up all matching canonical ingredients that are plant food groups
+	const placeholders = [...allIngredientNames].map((_, i) => `?${i + 1}`).join(', ');
+	const query = `
+		SELECT LOWER(name) AS name, plant_colour
+		FROM ingredients
+		WHERE food_group IN ('fruit', 'vegetable', 'herb', 'legume')
+		AND LOWER(name) IN (${placeholders})
+	`;
+
+	const result = await db
+		.prepare(query)
+		.bind(...allIngredientNames)
+		.all<{ name: string; plant_colour: string | null }>();
+
+	const matchedPlants = new Set<string>();
+	const colourMap: Record<string, number> = {};
+
+	for (const row of result.results ?? []) {
+		matchedPlants.add(row.name);
+		const colour = row.plant_colour ?? 'unknown';
+		colourMap[colour] = (colourMap[colour] ?? 0) + 1;
+	}
+
+	// Also check aliases for unmatched ingredient names
+	if (matchedPlants.size < allIngredientNames.size) {
+		const unmatchedNames = [...allIngredientNames].filter((n) => !matchedPlants.has(n));
+		if (unmatchedNames.length > 0) {
+			const aliasResult = await db
+				.prepare(
+					`SELECT LOWER(name) AS name, aliases, plant_colour
+					FROM ingredients
+					WHERE food_group IN ('fruit', 'vegetable', 'herb', 'legume')`
+				)
+				.bind()
+				.all<{ name: string; aliases: string; plant_colour: string | null }>();
+
+			const unmatchedSet = new Set(unmatchedNames);
+			for (const row of aliasResult.results ?? []) {
+				const aliases = parseJsonSafe<string[]>(row.aliases).map((a) => a.toLowerCase().trim());
+				for (const alias of aliases) {
+					if (unmatchedSet.has(alias) && !matchedPlants.has(alias)) {
+						matchedPlants.add(alias);
+						const colour = row.plant_colour ?? 'unknown';
+						colourMap[colour] = (colourMap[colour] ?? 0) + 1;
+					}
+				}
+			}
+		}
+	}
+
+	const colourCounts: PlantColourCount[] = Object.entries(colourMap)
+		.map(([colour, count]) => ({ colour, count }))
+		.sort((a, b) => {
+			const order = ['red', 'orange', 'yellow', 'green', 'blue-purple', 'white-brown', 'multicolour'];
+			return order.indexOf(a.colour) - order.indexOf(b.colour);
+		});
+
+	return { uniquePlants: matchedPlants.size, colourCounts };
+}
+
 // ── Week utilities ───────────────────────────────────────
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;

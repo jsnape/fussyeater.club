@@ -157,6 +157,10 @@ export function canViewRecipe(
         return true;
     }
 
+    if (auth.isAdmin) {
+        return true;
+    }
+
     if (!auth.userId || !recipe.household_id) {
         return false;
     }
@@ -171,6 +175,10 @@ export function canEditRecipe(
 ): boolean {
     if (!auth.userId) {
         return false;
+    }
+
+    if (auth.isAdmin) {
+        return true;
     }
 
     if (recipe.created_by === auth.userId) {

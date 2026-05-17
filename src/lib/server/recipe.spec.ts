@@ -111,14 +111,16 @@ describe('canViewRecipe', () => {
         userId: 'user-1',
         email: 'user@example.com',
         name: 'User',
-        socialProvider: null
+        socialProvider: null,
+        isAdmin: false
     };
 
     const anonymousAuth: AuthContext = {
         userId: null,
         email: null,
         name: null,
-        socialProvider: null
+        socialProvider: null,
+        isAdmin: false
     };
 
     it('should allow anyone to view a public recipe', () => {
@@ -143,6 +145,11 @@ describe('canViewRecipe', () => {
 
     it('should deny authenticated user without household access to a private recipe', () => {
         expect(canViewRecipe(privateRecipe, authenticatedAuth, null)).toBe(false);
+    });
+
+    it('should allow admin to view any private recipe', () => {
+        const adminAuth: AuthContext = { ...authenticatedAuth, isAdmin: true };
+        expect(canViewRecipe(privateRecipe, adminAuth, null)).toBe(true);
     });
 });
 
@@ -171,14 +178,16 @@ describe('canEditRecipe', () => {
         userId: 'user-1',
         email: 'user@example.com',
         name: 'User',
-        socialProvider: null
+        socialProvider: null,
+        isAdmin: false
     };
 
     const anonymousAuth: AuthContext = {
         userId: null,
         email: null,
         name: null,
-        socialProvider: null
+        socialProvider: null,
+        isAdmin: false
     };
 
     it('should allow creator to edit their own recipe', () => {
@@ -226,6 +235,23 @@ describe('canEditRecipe', () => {
 
     it('should deny editing public recipes with no creator and no household', () => {
         expect(canEditRecipe(publicRecipe, authenticatedAuth, null)).toBe(false);
+    });
+
+    it('should allow admin to edit any recipe', () => {
+        const adminAuth: AuthContext = { ...authenticatedAuth, isAdmin: true };
+        expect(canEditRecipe(publicRecipe, adminAuth, null)).toBe(true);
+    });
+
+    it('should allow admin to edit private recipe from another household', () => {
+        const adminAuth: AuthContext = { ...authenticatedAuth, isAdmin: true };
+        const recipe: RecipeRow = {
+            ...publicRecipe,
+            id: 'other-household-recipe',
+            visibility: 'private',
+            household_id: 'other-house',
+            created_by: 'other-user'
+        };
+        expect(canEditRecipe(recipe, adminAuth, 'my-house')).toBe(true);
     });
 });
 

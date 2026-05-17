@@ -6,6 +6,7 @@ export type AuthContext = {
     email: string | null;
     name: string | null;
     socialProvider: 'microsoft' | null;
+    isAdmin: boolean;
 };
 
 function getCookieValue(request: Request, name: string): string | null {
@@ -25,17 +26,17 @@ export async function getAuthContext(
 ): Promise<AuthContext> {
     const sessionId = getCookieValue(request, 'session');
     if (!sessionId) {
-        return { userId: null, email: null, name: null, socialProvider: null };
+        return { userId: null, email: null, name: null, socialProvider: null, isAdmin: false };
     }
 
     const db = platform?.env?.DB;
     if (!db) {
-        return { userId: null, email: null, name: null, socialProvider: null };
+        return { userId: null, email: null, name: null, socialProvider: null, isAdmin: false };
     }
 
     const session = await requireDb(platform)
         .prepare(
-            `SELECT s.user_id as userId, u.email, u.name, u.auth_provider as authProvider
+            `SELECT s.user_id as userId, u.email, u.name, u.auth_provider as authProvider, u.is_admin as isAdmin
 			 FROM user_sessions s
 			 JOIN users u ON u.id = s.user_id
 			 WHERE s.id = ?1
@@ -49,17 +50,19 @@ export async function getAuthContext(
             email: string | null;
             name: string | null;
             authProvider: string;
+            isAdmin: number | null;
         }>();
 
     if (!session) {
-        return { userId: null, email: null, name: null, socialProvider: null };
+        return { userId: null, email: null, name: null, socialProvider: null, isAdmin: false };
     }
 
     return {
         userId: session.userId,
         email: session.email,
         name: session.name,
-        socialProvider: session.authProvider === 'microsoft' ? 'microsoft' : null
+        socialProvider: session.authProvider === 'microsoft' ? 'microsoft' : null,
+        isAdmin: session.isAdmin === 1
     };
 }
 

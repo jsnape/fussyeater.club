@@ -268,7 +268,10 @@
 								<div class="flex items-center gap-2">
 									<span class="font-medium text-slate-900">{ingredient.name}</span>
 									{#if ingredient.aliases.length > 0}
-										<span class="rounded-full bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">
+										<span
+											class="rounded-full bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500"
+											title={ingredient.aliases.join(', ')}
+										>
 											+{ingredient.aliases.length}
 										</span>
 									{/if}

@@ -522,7 +522,7 @@
 									<select
 										value={getStandardAllergenSeverity(value)}
 										onchange={(e) => setStandardAllergenSeverity(value, (e.target as HTMLSelectElement).value as AllergyEntry['severity'])}
-										class="ml-2 rounded-lg border border-slate-200 px-2 py-1 text-xs focus:border-primary-500 focus:ring-primary-500"
+										class="ml-2 min-w-[5.5rem] rounded-lg border border-slate-200 px-2 py-1 text-xs focus:border-primary-500 focus:ring-primary-500"
 									>
 										{#each SEVERITY_OPTIONS as opt (opt.value)}
 											<option value={opt.value}>{opt.label}</option>

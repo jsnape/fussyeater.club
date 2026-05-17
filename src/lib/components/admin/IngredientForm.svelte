@@ -2,6 +2,7 @@
     import { Badge, Button, Input, Label, Radio, Select, Textarea } from 'flowbite-svelte';
     import { untrack } from 'svelte';
     import { mergeDefaultAllergens } from '$lib/food-group-defaults';
+    import { STANDARD_ALLERGEN_OPTIONS } from '$lib/allergens';
 
     type CanonicalIngredient = {
         id: string;
@@ -68,23 +69,7 @@
         { value: 'other', name: 'Other' }
     ];
 
-    const standardAllergens = [
-        { value: 'celery', label: 'Celery' },
-        { value: 'gluten', label: 'Gluten' },
-        { value: 'crustaceans', label: 'Crustaceans' },
-        { value: 'eggs', label: 'Eggs' },
-        { value: 'fish', label: 'Fish' },
-        { value: 'lupin', label: 'Lupin' },
-        { value: 'dairy', label: 'Dairy' },
-        { value: 'molluscs', label: 'Molluscs' },
-        { value: 'mustard', label: 'Mustard' },
-        { value: 'tree-nuts', label: 'Tree nuts' },
-        { value: 'peanuts', label: 'Peanuts' },
-        { value: 'sesame', label: 'Sesame' },
-        { value: 'soya', label: 'Soya' },
-        { value: 'sulphites', label: 'Sulphites' },
-        { value: 'buckwheat', label: 'Buckwheat' }
-    ];
+    const standardAllergens = STANDARD_ALLERGEN_OPTIONS;
 
     const plantFoodGroups = new Set(['fruit', 'vegetable', 'herb', 'legume']);
 

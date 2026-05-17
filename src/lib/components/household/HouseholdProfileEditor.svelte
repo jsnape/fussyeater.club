@@ -11,6 +11,7 @@
 		CloseOutline,
 		CheckOutline
 	} from 'flowbite-svelte-icons';
+	import { STANDARD_ALLERGEN_OPTIONS } from '$lib/allergens';
 
 	type MemberProfile = components['schemas']['MemberProfile'];
 	type AllergyEntry = components['schemas']['AllergyEntry'];
@@ -155,22 +156,53 @@
 		loadProfileIntoEditor(userId);
 	}
 
-	// --- Allergy inline form ---
-	let allergyIngredient = $state('');
-	let allergySeverity = $state<AllergyEntry['severity']>('moderate');
-	let showAllergyForm = $state(false);
+	// --- Allergy logic ---
+	let customAllergyIngredient = $state('');
+	let customAllergySeverity = $state<AllergyEntry['severity']>('moderate');
+	let showCustomAllergyForm = $state(false);
 
-	function addAllergy() {
-		const trimmed = allergyIngredient.trim();
-		if (!trimmed) return;
-		editAllergies = [...editAllergies, { ingredient: trimmed, severity: allergySeverity }];
-		allergyIngredient = '';
-		allergySeverity = 'moderate';
-		showAllergyForm = false;
+	/** Set of standard allergen values for quick lookup */
+	const standardAllergenValues: ReadonlySet<string> = new Set(STANDARD_ALLERGEN_OPTIONS.map((a) => a.value));
+
+	/** Custom (non-standard) allergies from the current list */
+	let customAllergies = $derived(
+		editAllergies.filter((a) => !standardAllergenValues.has(a.ingredient))
+	);
+
+	function isStandardAllergenChecked(value: string): boolean {
+		return editAllergies.some((a) => a.ingredient === value);
 	}
 
-	function removeAllergy(index: number) {
-		editAllergies = editAllergies.filter((_, i) => i !== index);
+	function getStandardAllergenSeverity(value: string): AllergyEntry['severity'] {
+		return editAllergies.find((a) => a.ingredient === value)?.severity ?? 'moderate';
+	}
+
+	function toggleStandardAllergen(value: string): void {
+		if (isStandardAllergenChecked(value)) {
+			editAllergies = editAllergies.filter((a) => a.ingredient !== value);
+		} else {
+			editAllergies = [...editAllergies, { ingredient: value, severity: 'moderate' }];
+		}
+	}
+
+	function setStandardAllergenSeverity(value: string, severity: AllergyEntry['severity']): void {
+		editAllergies = editAllergies.map((a) =>
+			a.ingredient === value ? { ...a, severity } : a
+		);
+	}
+
+	function addCustomAllergy() {
+		const trimmed = customAllergyIngredient.trim();
+		if (!trimmed) return;
+		if (editAllergies.some((a) => a.ingredient.toLowerCase() === trimmed.toLowerCase())) return;
+		editAllergies = [...editAllergies, { ingredient: trimmed, severity: customAllergySeverity }];
+		customAllergyIngredient = '';
+		customAllergySeverity = 'moderate';
+		showCustomAllergyForm = false;
+	}
+
+	function removeCustomAllergy(ingredient: string) {
+		editAllergies = editAllergies.filter((a) => a.ingredient !== ingredient);
 	}
 
 	// --- Custom texture ---
@@ -466,14 +498,48 @@
 				<div class="rounded-2xl bg-white p-6 shadow-sm">
 					<div class="mb-4 flex items-center gap-2">
 						<ExclamationCircleOutline class="h-5 w-5 text-red-500" />
-						<h3 class="text-base font-semibold text-slate-900">Allergies & Intolerances</h3>
+						<h3 class="text-base font-semibold text-slate-900">Allergies & intolerances</h3>
 					</div>
 
-					{#if editAllergies.length > 0}
+					<!-- Standard allergen checklist -->
+					<p class="mb-3 text-sm text-slate-500">Select any common allergens, then set severity.</p>
+					<div class="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+						{#each STANDARD_ALLERGEN_OPTIONS as { value, label } (value)}
+							{@const checked = isStandardAllergenChecked(value)}
+							<div
+								class="flex items-center justify-between rounded-xl border px-3 py-2 transition-colors {checked ? 'border-red-200 bg-red-50' : 'border-slate-100 bg-slate-50'}"
+							>
+								<label class="flex items-center gap-2 text-sm">
+									<input
+										type="checkbox"
+										checked={checked}
+										onchange={() => toggleStandardAllergen(value)}
+										class="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+									/>
+									<span class="font-medium {checked ? 'text-slate-900' : 'text-slate-600'}">{label}</span>
+								</label>
+								{#if checked}
+									<select
+										value={getStandardAllergenSeverity(value)}
+										onchange={(e) => setStandardAllergenSeverity(value, (e.target as HTMLSelectElement).value as AllergyEntry['severity'])}
+										class="ml-2 rounded-lg border border-slate-200 px-2 py-1 text-xs focus:border-primary-500 focus:ring-primary-500"
+									>
+										{#each SEVERITY_OPTIONS as opt (opt.value)}
+											<option value={opt.value}>{opt.label}</option>
+										{/each}
+									</select>
+								{/if}
+							</div>
+						{/each}
+					</div>
+
+					<!-- Custom allergens -->
+					{#if customAllergies.length > 0}
+						<h4 class="mb-2 text-sm font-medium text-slate-700">Custom</h4>
 						<div class="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-							{#each editAllergies as allergy, i (i)}
+							{#each customAllergies as allergy (allergy.ingredient)}
 								<div
-									class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3"
+									class="flex items-center justify-between rounded-xl border border-red-200 bg-red-50 px-4 py-3"
 								>
 									<div class="flex items-center gap-2">
 										<span class="text-sm font-medium text-slate-800">{allergy.ingredient}</span>
@@ -485,7 +551,7 @@
 									</div>
 									<button
 										type="button"
-										onclick={() => removeAllergy(i)}
+										onclick={() => removeCustomAllergy(allergy.ingredient)}
 										class="ml-2 text-slate-400 hover:text-red-500"
 										aria-label="Remove {allergy.ingredient}"
 									>
@@ -494,37 +560,35 @@
 								</div>
 							{/each}
 						</div>
-					{:else}
-						<p class="mb-4 text-sm text-slate-500">No allergies added yet.</p>
 					{/if}
 
-					{#if showAllergyForm}
+					{#if showCustomAllergyForm}
 						<div class="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
 							<div class="flex-1">
-								<label for="allergy-ingredient" class="mb-1 block text-xs font-medium text-slate-600">
-									Ingredient
+								<label for="custom-allergy-ingredient" class="mb-1 block text-xs font-medium text-slate-600">
+									Custom allergen
 								</label>
 								<input
-									id="allergy-ingredient"
+									id="custom-allergy-ingredient"
 									type="text"
-									bind:value={allergyIngredient}
-									placeholder="e.g. Peanuts"
+									bind:value={customAllergyIngredient}
+									placeholder="e.g. Mushroom"
 									class="w-full rounded-xl border border-slate-200 px-4 py-2 text-sm focus:border-primary-500 focus:ring-primary-500"
 									onkeydown={(e: KeyboardEvent) => {
 										if (e.key === 'Enter') {
 											e.preventDefault();
-											addAllergy();
+											addCustomAllergy();
 										}
 									}}
 								/>
 							</div>
 							<div class="w-36">
-								<label for="allergy-severity" class="mb-1 block text-xs font-medium text-slate-600">
+								<label for="custom-allergy-severity" class="mb-1 block text-xs font-medium text-slate-600">
 									Severity
 								</label>
 								<select
-									id="allergy-severity"
-									bind:value={allergySeverity}
+									id="custom-allergy-severity"
+									bind:value={customAllergySeverity}
 									class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-primary-500 focus:ring-primary-500"
 								>
 									{#each SEVERITY_OPTIONS as opt (opt.value)}
@@ -535,15 +599,15 @@
 							<div class="flex gap-2">
 								<button
 									type="button"
-									onclick={addAllergy}
-									disabled={!allergyIngredient.trim()}
+									onclick={addCustomAllergy}
+									disabled={!customAllergyIngredient.trim()}
 									class="rounded-xl bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
 								>
 									Add
 								</button>
 								<button
 									type="button"
-									onclick={() => (showAllergyForm = false)}
+									onclick={() => (showCustomAllergyForm = false)}
 									class="rounded-xl border border-slate-200 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
 								>
 									Cancel
@@ -553,11 +617,11 @@
 					{:else}
 						<button
 							type="button"
-							onclick={() => (showAllergyForm = true)}
+							onclick={() => (showCustomAllergyForm = true)}
 							class="flex items-center gap-1 rounded-xl border border-slate-200 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
 						>
 							<PlusOutline class="h-4 w-4" />
-							Add Allergy
+							Add custom allergen
 						</button>
 					{/if}
 				</div>

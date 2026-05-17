@@ -1,6 +1,11 @@
 import type { DbLike } from './db';
 import { nowIso } from './db';
 import { pluralVariants } from '$lib/plural-variants';
+import { STANDARD_ALLERGENS } from '$lib/allergens';
+import type { StandardAllergen } from '$lib/allergens';
+
+// Re-export shared allergen constants so existing server imports still work
+export { STANDARD_ALLERGENS, type StandardAllergen };
 
 // ── Constants ────────────────────────────────────────────
 
@@ -21,14 +26,6 @@ export const PLANT_COLOURS = [
 ] as const;
 
 export type PlantColour = (typeof PLANT_COLOURS)[number];
-
-export const STANDARD_ALLERGENS = [
-	'celery', 'gluten', 'crustaceans', 'eggs', 'fish', 'lupin',
-	'dairy', 'molluscs', 'mustard', 'tree-nuts', 'peanuts',
-	'sesame', 'soya', 'sulphites', 'buckwheat'
-] as const;
-
-export type StandardAllergen = (typeof STANDARD_ALLERGENS)[number];
 
 // ── Types ────────────────────────────────────────────────
 

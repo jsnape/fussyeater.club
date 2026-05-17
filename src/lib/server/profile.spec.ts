@@ -1,11 +1,15 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { createTestDbPair } from './test-db';
 import {
+	createDependent,
+	deleteDependent,
 	getProfilesForHousehold,
 	getProfileForMember,
-	saveProfile,
 	getHouseholdSettings,
+	saveProfile,
+	updateDependent,
 	updateHouseholdSettings,
+	validateDependentInput,
 	validateProfileInput
 } from './profile';
 
@@ -218,6 +222,271 @@ describe('profile', () => {
 				expect(result.data.safeFoods).toEqual(['Pasta']);
 				expect(result.data.dislikes).toEqual(['Onions']);
 			}
+		});
+	});
+
+	describe('createDependent', () => {
+		it('should create a dependent and return id', async () => {
+			const pair = createTestDbPair();
+			pairs.push(pair);
+			await seedHousehold(pair);
+
+			const dependentId = await createDependent(pair.first, 'hh-1', {
+				name: 'Charlie',
+				allergies: [{ ingredient: 'Dairy', severity: 'mild' }],
+				textures: [],
+				safeFoods: [],
+				dislikes: []
+			});
+
+			expect(dependentId).toEqual(expect.any(String));
+			expect(dependentId).toBeTruthy();
+		});
+
+		it('should include dependent in getProfilesForHousehold', async () => {
+			const pair = createTestDbPair();
+			pairs.push(pair);
+			await seedHousehold(pair);
+
+			await createDependent(pair.first, 'hh-1', {
+				name: 'Charlie',
+				allergies: [{ ingredient: 'Dairy', severity: 'mild' }],
+				textures: ['Soft'],
+				safeFoods: ['Yogurt'],
+				dislikes: ['Spinach']
+			});
+
+			const profiles = await getProfilesForHousehold(pair.first, 'hh-1');
+			expect(profiles).toHaveLength(1);
+			expect(profiles[0]).toMatchObject({
+				name: 'Charlie',
+				role: 'dependent',
+				isDependent: true,
+				allergies: [{ ingredient: 'Dairy', severity: 'mild' }],
+				textures: ['Soft'],
+				safeFoods: ['Yogurt'],
+				dislikes: ['Spinach']
+			});
+			expect(profiles[0].userId.startsWith('dep-')).toBe(true);
+		});
+	});
+
+	describe('updateDependent', () => {
+		it('should update dependent fields', async () => {
+			const pair = createTestDbPair();
+			pairs.push(pair);
+			await seedHousehold(pair);
+
+			const dependentId = await createDependent(pair.first, 'hh-1', {
+				name: 'Charlie',
+				allergies: [{ ingredient: 'Dairy', severity: 'mild' }],
+				textures: ['Soft'],
+				safeFoods: ['Toast'],
+				dislikes: ['Peas']
+			});
+
+			const updated = await updateDependent(pair.first, dependentId, 'hh-1', {
+				name: 'Charlotte',
+				allergies: [{ ingredient: 'Eggs', severity: 'moderate' }],
+				textures: ['Crunchy'],
+				safeFoods: ['Rice'],
+				dislikes: ['Beans']
+			});
+
+			expect(updated).toBe(true);
+
+			const profiles = await getProfilesForHousehold(pair.first, 'hh-1');
+			expect(profiles).toHaveLength(1);
+			expect(profiles[0]).toMatchObject({
+				name: 'Charlotte',
+				allergies: [{ ingredient: 'Eggs', severity: 'moderate' }],
+				textures: ['Crunchy'],
+				safeFoods: ['Rice'],
+				dislikes: ['Beans']
+			});
+		});
+
+		it('should return false for non-existent dependent', async () => {
+			const pair = createTestDbPair();
+			pairs.push(pair);
+			await seedHousehold(pair);
+
+			const updated = await updateDependent(pair.first, 'missing-dependent', 'hh-1', {
+				name: 'Charlotte',
+				allergies: [{ ingredient: 'Eggs', severity: 'moderate' }],
+				textures: [],
+				safeFoods: [],
+				dislikes: []
+			});
+
+			expect(updated).toBe(false);
+		});
+
+		it('should not update dependent in different household', async () => {
+			const pair = createTestDbPair();
+			pairs.push(pair);
+			await seedHousehold(pair);
+
+			const dependentId = await createDependent(pair.first, 'hh-1', {
+				name: 'Charlie',
+				allergies: [{ ingredient: 'Dairy', severity: 'mild' }],
+				textures: ['Soft'],
+				safeFoods: ['Toast'],
+				dislikes: ['Peas']
+			});
+
+			const updated = await updateDependent(pair.first, dependentId, 'hh-2', {
+				name: 'Charlotte',
+				allergies: [{ ingredient: 'Eggs', severity: 'moderate' }],
+				textures: ['Crunchy'],
+				safeFoods: ['Rice'],
+				dislikes: ['Beans']
+			});
+
+			expect(updated).toBe(false);
+
+			const profiles = await getProfilesForHousehold(pair.first, 'hh-1');
+			expect(profiles[0]).toMatchObject({
+				name: 'Charlie',
+				allergies: [{ ingredient: 'Dairy', severity: 'mild' }],
+				textures: ['Soft'],
+				safeFoods: ['Toast'],
+				dislikes: ['Peas']
+			});
+		});
+	});
+
+	describe('deleteDependent', () => {
+		it('should delete a dependent', async () => {
+			const pair = createTestDbPair();
+			pairs.push(pair);
+			await seedHousehold(pair);
+
+			const dependentId = await createDependent(pair.first, 'hh-1', {
+				name: 'Charlie',
+				allergies: [{ ingredient: 'Dairy', severity: 'mild' }],
+				textures: ['Soft'],
+				safeFoods: ['Toast'],
+				dislikes: ['Peas']
+			});
+
+			const deleted = await deleteDependent(pair.first, dependentId, 'hh-1');
+			expect(deleted).toBe(true);
+
+			const profiles = await getProfilesForHousehold(pair.first, 'hh-1');
+			expect(profiles).toEqual([]);
+		});
+
+		it('should return false for non-existent dependent', async () => {
+			const pair = createTestDbPair();
+			pairs.push(pair);
+			await seedHousehold(pair);
+
+			const deleted = await deleteDependent(pair.first, 'missing-dependent', 'hh-1');
+			expect(deleted).toBe(false);
+		});
+	});
+
+	describe('validateDependentInput', () => {
+		it('should accept valid input with name', () => {
+			const result = validateDependentInput({
+				name: 'Charlie',
+				allergies: [],
+				textures: [],
+				safeFoods: [],
+				dislikes: []
+			});
+			expect(result.valid).toBe(true);
+		});
+
+		it('should reject missing name', () => {
+			const result = validateDependentInput({
+				allergies: [],
+				textures: [],
+				safeFoods: [],
+				dislikes: []
+			});
+			expect(result.valid).toBe(false);
+		});
+
+		it('should reject empty name', () => {
+			const result = validateDependentInput({
+				name: '   ',
+				allergies: [],
+				textures: [],
+				safeFoods: [],
+				dislikes: []
+			});
+			expect(result.valid).toBe(false);
+		});
+
+		it('should reject invalid allergy in dependent input', () => {
+			const result = validateDependentInput({
+				name: 'Charlie',
+				allergies: [{ ingredient: 'Peanuts', severity: 'extreme' }],
+				textures: [],
+				safeFoods: [],
+				dislikes: []
+			});
+			expect(result.valid).toBe(false);
+		});
+
+		it('should trim name', () => {
+			const result = validateDependentInput({
+				name: '  Charlie  ',
+				allergies: [],
+				textures: [],
+				safeFoods: [],
+				dislikes: []
+			});
+			expect(result.valid).toBe(true);
+			if (result.valid) {
+				expect(result.data.name).toBe('Charlie');
+			}
+		});
+	});
+
+	describe('getProfilesForHousehold with dependents', () => {
+		it('should return both member and dependent profiles', async () => {
+			const pair = createTestDbPair();
+			pairs.push(pair);
+			await seedHousehold(pair);
+
+			await saveProfile(pair.first, 'user-1', 'hh-1', {
+				allergies: [{ ingredient: 'Peanuts', severity: 'severe' }],
+				textures: ['Mushy'],
+				safeFoods: ['Pasta'],
+				dislikes: ['Broccoli']
+			});
+			await createDependent(pair.first, 'hh-1', {
+				name: 'Charlie',
+				allergies: [{ ingredient: 'Dairy', severity: 'mild' }],
+				textures: ['Soft'],
+				safeFoods: ['Yogurt'],
+				dislikes: ['Spinach']
+			});
+
+			const profiles = await getProfilesForHousehold(pair.first, 'hh-1');
+			expect(profiles).toHaveLength(2);
+			expect(profiles[0]).toMatchObject({
+				userId: 'user-1',
+				name: 'Alice',
+				role: 'owner',
+				allergies: [{ ingredient: 'Peanuts', severity: 'severe' }],
+				textures: ['Mushy'],
+				safeFoods: ['Pasta'],
+				dislikes: ['Broccoli']
+			});
+			expect(profiles[1]).toMatchObject({
+				name: 'Charlie',
+				role: 'dependent',
+				isDependent: true,
+				allergies: [{ ingredient: 'Dairy', severity: 'mild' }],
+				textures: ['Soft'],
+				safeFoods: ['Yogurt'],
+				dislikes: ['Spinach']
+			});
+			expect(profiles[1].userId.startsWith('dep-')).toBe(true);
 		});
 	});
 });

@@ -42,19 +42,84 @@
 
 	let selectedUserId = $state('');
 
+	// --- Dependent creation ---
+	let addingDependent = $state(false);
+	let newDependentName = $state('');
+	let addingDependentSaving = $state(false);
+
+	type SelectableProfile = { userId: string; name: string; isDependent: boolean };
+
+	let selectableProfiles = $derived.by(() => {
+		const registered: SelectableProfile[] = members.map((m) => ({
+			userId: m.userId,
+			name: m.name,
+			isDependent: false
+		}));
+		const dependents: SelectableProfile[] = profiles
+			.filter((p) => p.isDependent)
+			.map((p) => ({ userId: p.userId, name: p.name, isDependent: true }));
+		return [...registered, ...dependents];
+	});
+
 	// Sync from props when they change (e.g. after navigation or re-fetch)
 	$effect(() => {
 		syncOn = syncEnabled;
 	});
 
 	$effect(() => {
-		if (members.length > 0 && !members.some((m) => m.userId === selectedUserId)) {
-			selectedUserId = members[0].userId;
-			loadProfileIntoEditor(members[0].userId);
+		if (
+			selectableProfiles.length > 0 &&
+			!selectableProfiles.some((m) => m.userId === selectedUserId)
+		) {
+			selectedUserId = selectableProfiles[0].userId;
+			loadProfileIntoEditor(selectableProfiles[0].userId);
 		}
 	});
 
-	let selectedMember = $derived(members.find((m) => m.userId === selectedUserId));
+	let selectedMember = $derived(selectableProfiles.find((m) => m.userId === selectedUserId));
+
+	function startAddingDependent() {
+		addingDependent = true;
+		newDependentName = '';
+	}
+
+	async function createDependentProfile() {
+		if (!newDependentName.trim()) return;
+		addingDependentSaving = true;
+		try {
+			const res = await apiFetch('/api/households/dependents', {
+				method: 'POST',
+				headers: { 'x-csrf-token': getCookieValue('csrf-token') ?? '' },
+				body: JSON.stringify({
+					name: newDependentName.trim(),
+					allergies: [],
+					textures: [],
+					safeFoods: [],
+					dislikes: []
+				})
+			});
+			const { id } = res as { ok: boolean; id: string };
+			const newUserId = `dep-${id}`;
+			const newProfile: MemberProfile = {
+				userId: newUserId,
+				name: newDependentName.trim(),
+				role: 'dependent',
+				isDependent: true,
+				allergies: [],
+				textures: [],
+				safeFoods: [],
+				dislikes: []
+			};
+			profiles = [...profiles, newProfile];
+			selectedUserId = newUserId;
+			loadProfileIntoEditor(newUserId);
+			addingDependent = false;
+		} catch (err) {
+			saveError = err instanceof ApiError ? err.message : 'Failed to add family member.';
+		} finally {
+			addingDependentSaving = false;
+		}
+	}
 
 	// --- Build editable profile state from props ---
 	function getProfileForUser(userId: string): MemberProfile | undefined {
@@ -168,26 +233,47 @@
 		saveSuccess = false;
 		saveError = '';
 
-		const body: SaveProfileRequest = {
-			allergies: editAllergies,
-			textures: editTextures,
-			safeFoods: editSafeFoods,
-			dislikes: editDislikes
-		};
+		const isDependent = selectedUserId.startsWith('dep-');
+		const dependentId = isDependent ? selectedUserId.slice(4) : null;
 
 		try {
-			await apiFetch(`/api/households/profiles/${selectedUserId}`, {
-				method: 'PUT',
-				headers: { 'x-csrf-token': getCookieValue('csrf-token') ?? '' },
-				body: JSON.stringify(body)
-			});
+			if (isDependent) {
+				const dependentProfile = profiles.find((p) => p.userId === selectedUserId);
+				await apiFetch(`/api/households/dependents/${dependentId}`, {
+					method: 'PUT',
+					headers: { 'x-csrf-token': getCookieValue('csrf-token') ?? '' },
+					body: JSON.stringify({
+						name: dependentProfile?.name ?? '',
+						allergies: editAllergies,
+						textures: editTextures,
+						safeFoods: editSafeFoods,
+						dislikes: editDislikes
+					})
+				});
+			} else {
+				const body: SaveProfileRequest = {
+					allergies: editAllergies,
+					textures: editTextures,
+					safeFoods: editSafeFoods,
+					dislikes: editDislikes
+				};
+
+				await apiFetch(`/api/households/profiles/${selectedUserId}`, {
+					method: 'PUT',
+					headers: { 'x-csrf-token': getCookieValue('csrf-token') ?? '' },
+					body: JSON.stringify(body)
+				});
+			}
 
 			// Update local profiles array
 			const existingIndex = profiles.findIndex((p) => p.userId === selectedUserId);
+			const existingProfile = profiles[existingIndex];
+			const member = members.find((m) => m.userId === selectedUserId);
 			const updatedProfile: MemberProfile = {
 				userId: selectedUserId,
 				name: selectedMember?.name ?? '',
-				role: selectedMember?.role ?? '',
+				role: existingProfile?.role ?? member?.role ?? (isDependent ? 'dependent' : ''),
+				isDependent: isDependent,
 				allergies: [...editAllergies],
 				textures: [...editTextures],
 				safeFoods: [...editSafeFoods],
@@ -208,6 +294,24 @@
 			} else {
 				saveError = 'Failed to save profile. Please try again.';
 			}
+		} finally {
+			saving = false;
+		}
+	}
+
+	async function deleteSelectedDependent() {
+		const dependentId = selectedUserId.slice(4);
+		saving = true;
+		try {
+			await apiFetch(`/api/households/dependents/${dependentId}`, {
+				method: 'DELETE',
+				headers: { 'x-csrf-token': getCookieValue('csrf-token') ?? '' }
+			});
+			profiles = profiles.filter((p) => p.userId !== selectedUserId);
+			// Auto-select first remaining profile
+			selectedUserId = '';
+		} catch (err) {
+			saveError = err instanceof ApiError ? err.message : 'Failed to remove family member.';
 		} finally {
 			saving = false;
 		}
@@ -249,7 +353,7 @@
 	}
 </script>
 
-{#if members.length === 0}
+{#if selectableProfiles.length === 0 && members.length === 0}
 	<EmptyState
 		heading="No family members"
 		description="Add members to your household before setting up dietary profiles."
@@ -289,7 +393,7 @@
 
 		<!-- Family Member Selector -->
 		<div class="flex gap-3 overflow-x-auto pb-2">
-			{#each members as member (member.userId)}
+			{#each selectableProfiles as member (member.userId)}
 				<button
 					type="button"
 					onclick={() => selectMember(member.userId)}
@@ -309,6 +413,50 @@
 					{member.name}
 				</button>
 			{/each}
+
+			{#if addingDependent}
+				<div class="flex shrink-0 items-center gap-2">
+					<input
+						type="text"
+						bind:value={newDependentName}
+						placeholder="Name"
+						class="w-32 rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-primary-500 focus:ring-primary-500"
+						onkeydown={(e: KeyboardEvent) => {
+							if (e.key === 'Enter') {
+								e.preventDefault();
+								createDependentProfile();
+							}
+							if (e.key === 'Escape') {
+								addingDependent = false;
+							}
+						}}
+					/>
+					<button
+						type="button"
+						onclick={createDependentProfile}
+						disabled={addingDependentSaving || !newDependentName.trim()}
+						class="rounded-xl bg-primary-600 px-3 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+					>
+						Add
+					</button>
+					<button
+						type="button"
+						onclick={() => (addingDependent = false)}
+						class="text-slate-400 hover:text-slate-600"
+					>
+						<CloseOutline class="h-4 w-4" />
+					</button>
+				</div>
+			{:else}
+				<button
+					type="button"
+					onclick={startAddingDependent}
+					class="flex shrink-0 items-center gap-2 rounded-full border-2 border-dashed border-slate-300 px-4 py-2 text-sm font-medium text-slate-500 transition-all hover:border-primary-400 hover:text-primary-600"
+				>
+					<PlusOutline class="h-4 w-4" />
+					Add Family Member
+				</button>
+			{/if}
 		</div>
 
 		<!-- Profile Editor -->
@@ -623,6 +771,17 @@
 						<span class="text-sm font-medium text-red-600">{saveError}</span>
 					{/if}
 				</div>
+
+				{#if selectedUserId.startsWith('dep-')}
+					<button
+						type="button"
+						onclick={deleteSelectedDependent}
+						disabled={saving}
+						class="rounded-xl border border-red-200 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+					>
+						Remove Family Member
+					</button>
+				{/if}
 			</div>
 		{/if}
 	</div>

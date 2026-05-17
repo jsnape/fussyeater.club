@@ -205,6 +205,7 @@ model MemberProfile {
   userId: string;
   name: string;
   role: string;
+  isDependent?: boolean;
   allergies: AllergyEntry[];
   textures: string[];
   safeFoods: string[];
@@ -225,6 +226,19 @@ model SaveProfileRequest {
 
 model SaveProfileResponse {
   ok: boolean;
+}
+
+model SaveDependentRequest {
+  name: string;
+  allergies: AllergyEntry[];
+  textures: string[];
+  safeFoods: string[];
+  dislikes: string[];
+}
+
+model SaveDependentResponse {
+  ok: boolean;
+  id?: string;
 }
 
 model HouseholdSettingsRequest {

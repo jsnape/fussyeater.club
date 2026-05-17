@@ -14,6 +14,7 @@
 	} from 'flowbite-svelte';
 	import { apiFetch } from '$lib/api';
 	import { getCookieValue } from '$lib/browser/cookies';
+	import { defaultAllergensForFoodGroup } from '$lib/food-group-defaults';
 
 	let { data } = $props();
 
@@ -40,13 +41,6 @@
 		{ value: 'sweetener', name: 'Sweetener' },
 		{ value: 'other', name: 'Other' }
 	];
-
-	const foodGroupDefaultAllergens: Record<string, string[]> = {
-		dairy: ['dairy'],
-		fish: ['fish'],
-		shellfish: ['crustaceans'],
-		nut: ['tree-nuts']
-	};
 
 	const plantFoodGroups = new Set(['fruit', 'vegetable', 'herb', 'legume']);
 
@@ -99,7 +93,7 @@
 					body: JSON.stringify({
 						name: item.name,
 						foodGroup: group,
-						allergens: foodGroupDefaultAllergens[group] ?? [],
+						allergens: [...defaultAllergensForFoodGroup(group)],
 						aliases: [],
 						plantColour: plantFoodGroups.has(group) ? selectedColours[item.name] : null,
 						description: null

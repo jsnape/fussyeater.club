@@ -1,5 +1,7 @@
 <script lang="ts">
     import { Badge, Button, Input, Label, Radio, Select, Textarea } from 'flowbite-svelte';
+    import { untrack } from 'svelte';
+    import { mergeDefaultAllergens } from '$lib/food-group-defaults';
 
     type CanonicalIngredient = {
         id: string;
@@ -110,6 +112,17 @@
         if (!isPlant) {
             plantColour = '';
         }
+    });
+
+    // --- Auto-select default allergens when food group changes ---
+    let lastFoodGroup = ingredient?.foodGroup ?? '';
+    $effect(() => {
+        const fg = foodGroup;
+        if (fg && fg !== lastFoodGroup) {
+            const current = untrack(() => allergens);
+            allergens = mergeDefaultAllergens(fg, current);
+        }
+        lastFoodGroup = fg;
     });
 
     // --- Allergen toggle ---

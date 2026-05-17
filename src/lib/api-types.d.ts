@@ -396,7 +396,7 @@ export interface components {
             foodGroup: "dairy" | "meat" | "poultry" | "fish" | "shellfish" | "grain" | "fruit" | "vegetable" | "herb" | "spice" | "legume" | "nut" | "seed" | "oil" | "condiment" | "sweetener" | "other";
             allergens: string[];
             /** @enum {string} */
-            plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown";
+            plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown" | "multicolour";
             aliases: string[];
             description?: string;
             /** Format: date-time */
@@ -448,7 +448,7 @@ export interface components {
             foodGroup: "dairy" | "meat" | "poultry" | "fish" | "shellfish" | "grain" | "fruit" | "vegetable" | "herb" | "spice" | "legume" | "nut" | "seed" | "oil" | "condiment" | "sweetener" | "other";
             allergens?: string[];
             /** @enum {string} */
-            plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown";
+            plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown" | "multicolour";
             aliases?: string[];
             description?: string;
         } & {
@@ -832,7 +832,7 @@ export interface components {
             foodGroup: "dairy" | "meat" | "poultry" | "fish" | "shellfish" | "grain" | "fruit" | "vegetable" | "herb" | "spice" | "legume" | "nut" | "seed" | "oil" | "condiment" | "sweetener" | "other";
             allergens?: string[];
             /** @enum {string} */
-            plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown";
+            plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown" | "multicolour";
             aliases?: string[];
             description?: string;
         } & {

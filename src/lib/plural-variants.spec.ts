@@ -1,5 +1,40 @@
 import { describe, it, expect } from 'vitest';
-import { pluralVariants } from './plural-variants';
+import { pluralVariants, stripAdjectives } from './plural-variants';
+
+describe('stripAdjectives', () => {
+	it('should strip a single leading adjective', () => {
+		expect(stripAdjectives('large eggs')).toBe('eggs');
+	});
+
+	it('should strip multiple leading adjectives', () => {
+		expect(stripAdjectives('fresh whole milk')).toBe('milk');
+	});
+
+	it('should not strip the only word', () => {
+		expect(stripAdjectives('large')).toBe('large');
+	});
+
+	it('should return the name unchanged if no adjectives', () => {
+		expect(stripAdjectives('chicken breast')).toBe('chicken breast');
+	});
+
+	it('should be case insensitive', () => {
+		expect(stripAdjectives('Large Onion')).toBe('onion');
+	});
+
+	it('should handle cooking adjectives', () => {
+		expect(stripAdjectives('chopped tomatoes')).toBe('tomatoes');
+		expect(stripAdjectives('dried basil')).toBe('basil');
+		expect(stripAdjectives('frozen peas')).toBe('peas');
+		expect(stripAdjectives('ground cumin')).toBe('cumin');
+	});
+
+	it('should handle size adjectives', () => {
+		expect(stripAdjectives('small onion')).toBe('onion');
+		expect(stripAdjectives('medium potato')).toBe('potato');
+		expect(stripAdjectives('thin slices')).toBe('slices');
+	});
+});
 
 describe('pluralVariants', () => {
 	it('should always include the original (lowercased)', () => {
@@ -59,5 +94,26 @@ describe('pluralVariants', () => {
 			const overlap = [...sVars].some((v) => pVars.has(v));
 			expect(overlap, `${singular} and ${plural} should have overlapping variants`).toBe(true);
 		}
+	});
+
+	it('should generate adjective-stripped variants', () => {
+		const variants = pluralVariants('large eggs');
+		expect(variants).toContain('large eggs');
+		expect(variants).toContain('eggs');
+		expect(variants).toContain('egg');
+	});
+
+	it('should match "chopped tomatoes" to "tomato"', () => {
+		const recipe = pluralVariants('chopped tomatoes');
+		const canonical = pluralVariants('tomato');
+		const overlap = [...recipe].some((v) => canonical.has(v));
+		expect(overlap).toBe(true);
+	});
+
+	it('should match "frozen peas" to "pea"', () => {
+		const recipe = pluralVariants('frozen peas');
+		const canonical = pluralVariants('pea');
+		const overlap = [...recipe].some((v) => canonical.has(v));
+		expect(overlap).toBe(true);
 	});
 });

@@ -94,7 +94,8 @@
         { value: 'yellow', label: 'Yellow', dot: 'bg-yellow-400' },
         { value: 'green', label: 'Green', dot: 'bg-green-500' },
         { value: 'blue-purple', label: 'Blue / purple', dot: 'bg-purple-500' },
-        { value: 'white-brown', label: 'White / brown', dot: 'bg-amber-200' }
+        { value: 'white-brown', label: 'White / brown', dot: 'bg-amber-200' },
+        { value: 'multicolour', label: 'Multicolour', dot: 'bg-gradient-to-r from-red-500 via-yellow-400 to-green-500' }
     ];
 
     // --- Derived state ---

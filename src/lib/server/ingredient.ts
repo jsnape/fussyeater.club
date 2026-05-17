@@ -17,7 +17,7 @@ export const PLANT_FOOD_GROUPS: ReadonlySet<string> = new Set([
 ]);
 
 export const PLANT_COLOURS = [
-	'red', 'orange', 'yellow', 'green', 'blue-purple', 'white-brown'
+	'red', 'orange', 'yellow', 'green', 'blue-purple', 'white-brown', 'multicolour'
 ] as const;
 
 export type PlantColour = (typeof PLANT_COLOURS)[number];

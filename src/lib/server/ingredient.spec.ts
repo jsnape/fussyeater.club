@@ -105,8 +105,8 @@ describe('validation helpers', () => {
 		expect(FOOD_GROUPS).toHaveLength(17);
 	});
 
-	it('should have 6 plant colours', () => {
-		expect(PLANT_COLOURS).toHaveLength(6);
+	it('should have 7 plant colours', () => {
+		expect(PLANT_COLOURS).toHaveLength(7);
 	});
 
 	it('should have 15 standard allergens', () => {

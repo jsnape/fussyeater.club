@@ -51,7 +51,8 @@
 		{ value: 'yellow', name: 'Yellow' },
 		{ value: 'green', name: 'Green' },
 		{ value: 'blue-purple', name: 'Blue / purple' },
-		{ value: 'white-brown', name: 'White / brown' }
+		{ value: 'white-brown', name: 'White / brown' },
+		{ value: 'multicolour', name: 'Multicolour' }
 	];
 
 	let selectedGroups = $state<Record<string, string>>({});

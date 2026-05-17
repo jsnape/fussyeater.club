@@ -72,7 +72,8 @@
 		{ value: 'yellow', label: 'Yellow', dotClass: 'bg-yellow-400' },
 		{ value: 'green', label: 'Green', dotClass: 'bg-green-500' },
 		{ value: 'blue-purple', label: 'Blue/purple', dotClass: 'bg-purple-500' },
-		{ value: 'white-brown', label: 'White/brown', dotClass: 'bg-amber-200 border border-amber-400' }
+		{ value: 'white-brown', label: 'White/brown', dotClass: 'bg-amber-200 border border-amber-400' },
+		{ value: 'multicolour', label: 'Multicolour', dotClass: 'bg-gradient-to-r from-red-500 via-yellow-400 to-green-500' }
 	];
 
 	const severeAllergens = new Set(['peanuts', 'tree-nuts', 'shellfish', 'fish', 'milk', 'eggs']);

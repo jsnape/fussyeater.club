@@ -266,3 +266,78 @@ model HouseholdSettingsRequest {
 model HouseholdSettingsResponse {
   syncProfilesEnabled: boolean;
 }
+
+// ── Meal Planner ─────────────────────────────────────────
+
+model CompatibilityAlert {
+  memberName: string;
+  ingredient: string;
+  reason: "allergy" | "dislike";
+  severity?: AllergySeverity;
+}
+
+model CompatibilityResult {
+  safe: boolean;
+  alerts: CompatibilityAlert[];
+}
+
+model MealEntryRecipeSummary {
+  id: string;
+  title: string;
+  imageUrl?: string;
+  timings?: RecipeTimings;
+  tags: string[];
+}
+
+model MealPlanEntry {
+  id: string;
+  entryDate: string;
+  mealType: "breakfast" | "lunch" | "dinner";
+  recipe?: MealEntryRecipeSummary;
+  customNote?: string;
+  servings: int32;
+  notes?: string;
+  compatibility: CompatibilityResult;
+}
+
+model MealPlanStats {
+  planned: int32;
+  total: int32;
+  withAlerts: int32;
+}
+
+model MealPlanResponse {
+  weekStart: string;
+  entries: MealPlanEntry[];
+  stats: MealPlanStats;
+}
+
+model CreateMealEntryRequest {
+  weekStart: string;
+  entryDate: string;
+  mealType: "breakfast" | "lunch" | "dinner";
+  recipeId?: string;
+  customNote?: string;
+  servings?: int32;
+  notes?: string;
+}
+
+model CreateMealEntryResponse {
+  id: string;
+  entryDate: string;
+  mealType: "breakfast" | "lunch" | "dinner";
+  recipe?: MealEntryRecipeSummary;
+  customNote?: string;
+  servings: int32;
+  notes?: string;
+  compatibility: CompatibilityResult;
+}
+
+model RepeatWeekRequest {
+  targetWeekStart: string;
+}
+
+model RepeatWeekResponse {
+  copied: int32;
+  weekStart: string;
+}

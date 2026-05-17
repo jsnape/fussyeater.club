@@ -8,6 +8,7 @@ import "./routes/register.tsp";
 import "./routes/invites.tsp";
 import "./routes/auth.tsp";
 import "./routes/recipes.tsp";
+import "./routes/planner.tsp";
 import "./models.tsp";
 
 using TypeSpec.Http;

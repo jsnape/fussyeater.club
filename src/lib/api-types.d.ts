@@ -196,6 +196,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/planner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MealPlanner_getWeekPlan"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/planner/entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Entries_upsertEntry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/planner/entries/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["Entries_removeEntry"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/planner/repeat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Repeat_repeatWeek"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/recipes": {
         parameters: {
             query?: never;
@@ -276,6 +340,21 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        CompatibilityAlert: {
+            memberName: string;
+            ingredient: string;
+            /** @enum {string} */
+            reason: "allergy" | "dislike";
+            severity?: components["schemas"]["AllergySeverity"];
+        } & {
+            [key: string]: unknown;
+        };
+        CompatibilityResult: {
+            safe: boolean;
+            alerts: components["schemas"]["CompatibilityAlert"][];
+        } & {
+            [key: string]: unknown;
+        };
         CreateHouseholdInviteRequest: {
             /** Format: int32 */
             maxUses: number;
@@ -294,6 +373,33 @@ export interface components {
             remainingUses: number;
             /** Format: date-time */
             expiresAt: string;
+        } & {
+            [key: string]: unknown;
+        };
+        CreateMealEntryRequest: {
+            weekStart: string;
+            entryDate: string;
+            /** @enum {string} */
+            mealType: "breakfast" | "lunch" | "dinner";
+            recipeId?: string;
+            customNote?: string;
+            /** Format: int32 */
+            servings?: number;
+            notes?: string;
+        } & {
+            [key: string]: unknown;
+        };
+        CreateMealEntryResponse: {
+            id: string;
+            entryDate: string;
+            /** @enum {string} */
+            mealType: "breakfast" | "lunch" | "dinner";
+            recipe?: components["schemas"]["MealEntryRecipeSummary"];
+            customNote?: string;
+            /** Format: int32 */
+            servings: number;
+            notes?: string;
+            compatibility: components["schemas"]["CompatibilityResult"];
         } & {
             [key: string]: unknown;
         };
@@ -423,6 +529,46 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        MealEntryRecipeSummary: {
+            id: string;
+            title: string;
+            imageUrl?: string;
+            timings?: components["schemas"]["RecipeTimings"];
+            tags: string[];
+        } & {
+            [key: string]: unknown;
+        };
+        MealPlanEntry: {
+            id: string;
+            entryDate: string;
+            /** @enum {string} */
+            mealType: "breakfast" | "lunch" | "dinner";
+            recipe?: components["schemas"]["MealEntryRecipeSummary"];
+            customNote?: string;
+            /** Format: int32 */
+            servings: number;
+            notes?: string;
+            compatibility: components["schemas"]["CompatibilityResult"];
+        } & {
+            [key: string]: unknown;
+        };
+        MealPlanResponse: {
+            weekStart: string;
+            entries: components["schemas"]["MealPlanEntry"][];
+            stats: components["schemas"]["MealPlanStats"];
+        } & {
+            [key: string]: unknown;
+        };
+        MealPlanStats: {
+            /** Format: int32 */
+            planned: number;
+            /** Format: int32 */
+            total: number;
+            /** Format: int32 */
+            withAlerts: number;
+        } & {
+            [key: string]: unknown;
+        };
         MemberProfile: {
             userId: string;
             name: string;
@@ -534,6 +680,18 @@ export interface components {
             householdId: string;
             /** @enum {string} */
             actionApplied: "create" | "join";
+        } & {
+            [key: string]: unknown;
+        };
+        RepeatWeekRequest: {
+            targetWeekStart: string;
+        } & {
+            [key: string]: unknown;
+        };
+        RepeatWeekResponse: {
+            /** Format: int32 */
+            copied: number;
+            weekStart: string;
         } & {
             [key: string]: unknown;
         };
@@ -1316,6 +1474,231 @@ export interface operations {
             };
             /** @description Client error */
             429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    MealPlanner_getWeekPlan: {
+        parameters: {
+            query?: {
+                week?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MealPlanResponse"];
+                };
+            };
+            /** @description The server could not understand the request due to invalid syntax. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    Entries_upsertEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMealEntryRequest"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateMealEntryResponse"];
+                };
+            };
+            /** @description The server could not understand the request due to invalid syntax. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    Entries_removeEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description There is no content to send for this request, but the headers may be useful. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The server cannot find the requested resource. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service unavailable. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    Repeat_repeatWeek: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RepeatWeekRequest"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RepeatWeekResponse"];
+                };
+            };
+            /** @description The server could not understand the request due to invalid syntax. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };

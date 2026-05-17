@@ -1,18 +1,285 @@
 <script lang="ts">
-    import { CalendarWeekOutline } from 'flowbite-svelte-icons';
-    import EmptyState from '$lib/components/ui/EmptyState.svelte';
+	import type { components } from '$lib/api-types';
+	import type { PlannerPageData } from './+page';
+	import { apiFetch } from '$lib/api';
+	import { getCookieValue } from '$lib/browser/cookies';
+	import PlannerUtilityBar from '$lib/components/planner/PlannerUtilityBar.svelte';
+	import PlannerGrid from '$lib/components/planner/PlannerGrid.svelte';
+	import PlannerAddModal from '$lib/components/planner/PlannerAddModal.svelte';
+	import PlannerSidebar from '$lib/components/planner/PlannerSidebar.svelte';
+	import PlannerProgress from '$lib/components/planner/PlannerProgress.svelte';
+	import EmptyState from '$lib/components/ui/EmptyState.svelte';
+	import { CalendarWeekOutline } from 'flowbite-svelte-icons';
+	import { resolve } from '$app/paths';
+
+	type MealPlanResponse = components['schemas']['MealPlanResponse'];
+	type MealPlanEntry = components['schemas']['MealPlanEntry'];
+	type RecipeSummary = components['schemas']['RecipeSummary'];
+
+	let { data }: { data: PlannerPageData } = $props();
+
+	let weekStart = $state(data.plan?.weekStart ?? data.initialWeek);
+	let entries = $state<MealPlanEntry[]>(data.plan?.entries ?? []);
+	let stats = $state(data.plan?.stats ?? { planned: 0, total: 21, withAlerts: 0 });
+	let allRecipes = $state<RecipeSummary[]>(data.recipes?.items ?? []);
+	let sidebarRecipes = $state<RecipeSummary[]>(data.recipes?.items ?? []);
+	let isLoading = $state(false);
+	let isRepeating = $state(false);
+
+	// Modal state
+	let modalOpen = $state(false);
+	let modalDate = $state('');
+	let modalMealType = $state('');
+	let modalRecipes = $state<RecipeSummary[]>([]);
+	let modalLoading = $state(false);
+
+	async function loadWeek(week: string) {
+		isLoading = true;
+		try {
+			const plan = await apiFetch<MealPlanResponse>(`/api/planner?week=${week}`);
+			weekStart = plan.weekStart;
+			entries = plan.entries;
+			stats = plan.stats;
+		} catch {
+			// Keep current state on error
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	function navigatePreviousWeek() {
+		const d = new Date(weekStart + 'T00:00:00Z');
+		d.setUTCDate(d.getUTCDate() - 7);
+		loadWeek(d.toISOString().slice(0, 10));
+	}
+
+	function navigateNextWeek() {
+		const d = new Date(weekStart + 'T00:00:00Z');
+		d.setUTCDate(d.getUTCDate() + 7);
+		loadWeek(d.toISOString().slice(0, 10));
+	}
+
+	function navigateToday() {
+		const now = new Date();
+		const day = now.getDay();
+		const diff = day === 0 ? -6 : 1 - day;
+		const monday = new Date(now);
+		monday.setDate(now.getDate() + diff);
+		loadWeek(monday.toISOString().slice(0, 10));
+	}
+
+	async function handleRepeatLastWeek() {
+		isRepeating = true;
+		try {
+			const csrf = getCookieValue('csrf-token');
+			await apiFetch<{ copied: number; weekStart: string }>('/api/planner/repeat', {
+				method: 'POST',
+				headers: csrf ? { 'x-csrf-token': csrf } : {},
+				body: JSON.stringify({ targetWeekStart: weekStart })
+			});
+			await loadWeek(weekStart);
+		} catch {
+			// Silently fail for now
+		} finally {
+			isRepeating = false;
+		}
+	}
+
+	function handleAddClick(date: string, mealType: string) {
+		modalDate = date;
+		modalMealType = mealType;
+		modalRecipes = allRecipes;
+		modalOpen = true;
+	}
+
+	function handleModalSearch(query: string) {
+		const q = query.toLowerCase().trim();
+		if (!q) {
+			modalRecipes = allRecipes;
+			return;
+		}
+		modalRecipes = allRecipes.filter(
+			(r) =>
+				r.title.toLowerCase().includes(q) ||
+				r.tags.some((t) => t.toLowerCase().includes(q))
+		);
+	}
+
+	function handleSidebarSearch(query: string) {
+		const q = query.toLowerCase().trim();
+		if (!q) {
+			sidebarRecipes = allRecipes;
+			return;
+		}
+		sidebarRecipes = allRecipes.filter(
+			(r) =>
+				r.title.toLowerCase().includes(q) ||
+				r.tags.some((t) => t.toLowerCase().includes(q))
+		);
+	}
+
+	async function handleSelectRecipe(recipeId: string) {
+		const csrf = getCookieValue('csrf-token');
+		try {
+			await apiFetch<MealPlanEntry>('/api/planner/entries', {
+				method: 'POST',
+				headers: csrf ? { 'x-csrf-token': csrf } : {},
+				body: JSON.stringify({
+					weekStart,
+					entryDate: modalDate,
+					mealType: modalMealType,
+					recipeId
+				})
+			});
+			await loadWeek(weekStart);
+		} catch {
+			// Silently fail
+		}
+	}
+
+	async function handleCustomNote(note: string) {
+		const csrf = getCookieValue('csrf-token');
+		try {
+			await apiFetch<MealPlanEntry>('/api/planner/entries', {
+				method: 'POST',
+				headers: csrf ? { 'x-csrf-token': csrf } : {},
+				body: JSON.stringify({
+					weekStart,
+					entryDate: modalDate,
+					mealType: modalMealType,
+					customNote: note
+				})
+			});
+			await loadWeek(weekStart);
+		} catch {
+			// Silently fail
+		}
+	}
+
+	async function handleRemoveEntry(entryId: string) {
+		const csrf = getCookieValue('csrf-token');
+		try {
+			await apiFetch<undefined>(`/api/planner/entries/${entryId}`, {
+				method: 'DELETE',
+				headers: csrf ? { 'x-csrf-token': csrf } : {}
+			});
+			entries = entries.filter((e) => e.id !== entryId);
+			stats = {
+				...stats,
+				planned: entries.length,
+				withAlerts: entries.filter((e) => !e.compatibility.safe).length
+			};
+		} catch {
+			// Silently fail
+		}
+	}
+
+	function handleEditEntry(entry: MealPlanEntry) {
+		// Re-open modal for the same cell to replace
+		modalDate = entry.entryDate;
+		modalMealType = entry.mealType;
+		modalRecipes = allRecipes;
+		modalOpen = true;
+	}
 </script>
 
-<main class="mx-auto max-w-6xl px-6 py-12 md:px-10 md:py-16">
-    <h1 class="text-3xl font-bold text-slate-900">Meal Planner</h1>
-    <div class="mt-10">
-        <EmptyState
-            heading="Your weekly plan starts here"
-            description="Drag and drop recipes into your weekly calendar. We'll check every meal against your family's dietary profiles."
-        >
-            {#snippet icon()}
-                <CalendarWeekOutline class="h-12 w-12 text-primary-400" />
-            {/snippet}
-        </EmptyState>
-    </div>
-</main>
+<svelte:head>
+	<title>Meal Planner | FussyEater.club</title>
+</svelte:head>
+
+{#if data.error === 'unauthenticated'}
+	<main class="mx-auto max-w-6xl px-6 py-12 md:px-10 md:py-16">
+		<EmptyState
+			heading="Sign in to plan meals"
+			description="Log in to start planning your family's weekly meals."
+			actionLabel="Log in"
+			actionHref={resolve('/login')}
+		>
+			{#snippet icon()}
+				<CalendarWeekOutline class="h-12 w-12 text-primary-400" />
+			{/snippet}
+		</EmptyState>
+	</main>
+{:else if data.error === 'no-household'}
+	<main class="mx-auto max-w-6xl px-6 py-12 md:px-10 md:py-16">
+		<EmptyState
+			heading="Join a household first"
+			description="You need to be part of a household to use the meal planner. Create or join one from your household settings."
+			actionLabel="Go to Household"
+			actionHref={resolve('/household')}
+		>
+			{#snippet icon()}
+				<CalendarWeekOutline class="h-12 w-12 text-primary-400" />
+			{/snippet}
+		</EmptyState>
+	</main>
+{:else if data.error}
+	<main class="mx-auto max-w-6xl px-6 py-12 md:px-10 md:py-16">
+		<EmptyState
+			heading="Something went wrong"
+			description="We couldn't load the meal planner. Please try again."
+		>
+			{#snippet icon()}
+				<CalendarWeekOutline class="h-12 w-12 text-slate-400" />
+			{/snippet}
+		</EmptyState>
+	</main>
+{:else}
+	<PlannerUtilityBar
+		{weekStart}
+		onPreviousWeek={navigatePreviousWeek}
+		onNextWeek={navigateNextWeek}
+		onToday={navigateToday}
+		onRepeatLastWeek={handleRepeatLastWeek}
+		{isRepeating}
+	/>
+
+	<main class="mx-auto max-w-7xl px-4 py-6 md:px-6">
+		<div class="flex gap-6">
+			<!-- Main grid area -->
+			<div class="min-w-0 flex-1">
+				{#if isLoading}
+					<div class="py-12 text-center text-slate-400">Loading week plan…</div>
+				{:else}
+					<PlannerGrid
+						{weekStart}
+						{entries}
+						onAddClick={handleAddClick}
+						onRemoveEntry={handleRemoveEntry}
+						onEditEntry={handleEditEntry}
+					/>
+
+					<!-- Progress section -->
+					<div class="mt-6">
+						<PlannerProgress
+							planned={stats.planned}
+							total={stats.total}
+							withAlerts={stats.withAlerts}
+						/>
+					</div>
+				{/if}
+			</div>
+
+			<!-- Desktop sidebar -->
+			<div class="hidden lg:block">
+				<PlannerSidebar
+					recipes={sidebarRecipes}
+					onSearch={handleSidebarSearch}
+					onSelectRecipe={() => {}}
+				/>
+			</div>
+		</div>
+	</main>
+
+	<!-- Add/Edit modal -->
+	<PlannerAddModal
+		bind:open={modalOpen}
+		date={modalDate}
+		mealType={modalMealType}
+		recipes={modalRecipes}
+		loading={modalLoading}
+		onSelect={handleSelectRecipe}
+		onCustomNote={handleCustomNote}
+		onSearch={handleModalSearch}
+	/>
+{/if}

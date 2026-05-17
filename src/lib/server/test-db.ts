@@ -82,6 +82,8 @@ export function createTestDbPair(): TestDbPair {
     const migration8 = readFileSync(migrationPath8, 'utf8');
     const migrationPath9 = join(process.cwd(), 'migrations/0009_meal_plans.sql');
     const migration9 = readFileSync(migrationPath9, 'utf8');
+    const migrationPath10 = join(process.cwd(), 'migrations/0010_ingredients_admin.sql');
+    const migration10 = readFileSync(migrationPath10, 'utf8');
 
     const firstRaw = new DatabaseSync(databasePath);
     const secondRaw = new DatabaseSync(databasePath);
@@ -94,6 +96,7 @@ export function createTestDbPair(): TestDbPair {
     firstRaw.exec(migration7);
     firstRaw.exec(migration8);
     firstRaw.exec(migration9);
+    firstRaw.exec(migration10);
 
     return {
         first: new SqliteDbAdapter(firstRaw),

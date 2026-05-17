@@ -8,6 +8,7 @@ import {
     resolveEventRequestId
 } from '$lib/server/observability';
 import { requireOwnerHouseholdId } from '$lib/server/household';
+import { hasAdminFlag } from '$lib/server/admin';
 
 function getSessionCookie(request: Request): string | null {
     const cookie = request.headers.get('cookie') ?? '';
@@ -82,6 +83,8 @@ export const GET: RequestHandler = async (event) => {
             }
         }
 
+        const adminFlag = await hasAdminFlag(db, session.id);
+
         return jsonWithRequestId(
             {
                 user: {
@@ -91,7 +94,8 @@ export const GET: RequestHandler = async (event) => {
                     authProvider: session.authProvider
                 },
                 featureFlags: { microsoftOAuthEnabled },
-                canManageHousehold
+                canManageHousehold,
+                isAdmin: adminFlag
             },
             requestId
         );

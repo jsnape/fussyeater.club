@@ -9,6 +9,7 @@
     let isAuthenticated = $derived(Boolean(data.sessionUser));
     let signedInLabel = $derived(data.sessionUser?.name ?? data.sessionUser?.email ?? null);
     let canManageHousehold = $derived(Boolean(data.canManageHousehold));
+    let isAdmin = $derived(Boolean(data.isAdmin));
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
@@ -17,6 +18,7 @@
         {isAuthenticated}
         userLabel={signedInLabel}
         {canManageHousehold}
+        {isAdmin}
     />
 
     <main>

@@ -4,6 +4,54 @@
  */
 
 export interface paths {
+    "/api/admin/ingredients": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminIngredients_list"];
+        put?: never;
+        post: operations["AdminIngredients_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/ingredients/unmapped": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminIngredients_unmapped"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/ingredients/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AdminIngredients_get"];
+        put: operations["AdminIngredients_update"];
+        post?: never;
+        delete: operations["AdminIngredients_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/login": {
         parameters: {
             query?: never;
@@ -329,6 +377,7 @@ export interface components {
             user: components["schemas"]["AuthSessionUser"] | null;
             featureFlags: components["schemas"]["AuthSessionFeatureFlags"];
             canManageHousehold: boolean;
+            isAdmin?: boolean;
         } & {
             [key: string]: unknown;
         };
@@ -337,6 +386,23 @@ export interface components {
             email?: string;
             name?: string;
             authProvider: string;
+        } & {
+            [key: string]: unknown;
+        };
+        CanonicalIngredient: {
+            id: string;
+            name: string;
+            /** @enum {string} */
+            foodGroup: "dairy" | "meat" | "poultry" | "fish" | "shellfish" | "grain" | "fruit" | "vegetable" | "herb" | "spice" | "legume" | "nut" | "seed" | "oil" | "condiment" | "sweetener" | "other";
+            allergens: string[];
+            /** @enum {string} */
+            plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown";
+            aliases: string[];
+            description?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
         } & {
             [key: string]: unknown;
         };
@@ -373,6 +439,18 @@ export interface components {
             remainingUses: number;
             /** Format: date-time */
             expiresAt: string;
+        } & {
+            [key: string]: unknown;
+        };
+        CreateIngredientRequest: {
+            name: string;
+            /** @enum {string} */
+            foodGroup: "dairy" | "meat" | "poultry" | "fish" | "shellfish" | "grain" | "fruit" | "vegetable" | "herb" | "spice" | "legume" | "nut" | "seed" | "oil" | "condiment" | "sweetener" | "other";
+            allergens?: string[];
+            /** @enum {string} */
+            plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown";
+            aliases?: string[];
+            description?: string;
         } & {
             [key: string]: unknown;
         };
@@ -460,6 +538,17 @@ export interface components {
         HouseholdSummary: {
             id: string;
             name: string;
+        } & {
+            [key: string]: unknown;
+        };
+        IngredientListResponse: {
+            items: components["schemas"]["CanonicalIngredient"][];
+            /** Format: int32 */
+            page: number;
+            /** Format: int32 */
+            pageSize: number;
+            /** Format: int32 */
+            total: number;
         } & {
             [key: string]: unknown;
         };
@@ -723,6 +812,32 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        UnmappedIngredientItem: {
+            name: string;
+            /** Format: int32 */
+            recipeCount: number;
+        } & {
+            [key: string]: unknown;
+        };
+        UnmappedIngredientsResponse: {
+            items: components["schemas"]["UnmappedIngredientItem"][];
+            /** Format: int32 */
+            total: number;
+        } & {
+            [key: string]: unknown;
+        };
+        UpdateIngredientRequest: {
+            name: string;
+            /** @enum {string} */
+            foodGroup: "dairy" | "meat" | "poultry" | "fish" | "shellfish" | "grain" | "fruit" | "vegetable" | "herb" | "spice" | "legume" | "nut" | "seed" | "oil" | "condiment" | "sweetener" | "other";
+            allergens?: string[];
+            /** @enum {string} */
+            plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown";
+            aliases?: string[];
+            description?: string;
+        } & {
+            [key: string]: unknown;
+        };
         UpdateRecipeRequest: {
             title: string;
             description?: string;
@@ -755,6 +870,317 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    AdminIngredients_list: {
+        parameters: {
+            query?: {
+                search?: string;
+                foodGroup?: string;
+                allergen?: string;
+                plantColour?: string;
+                sort?: "name" | "name-desc" | "updated" | "food-group";
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IngredientListResponse"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    AdminIngredients_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateIngredientRequest"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded and a new resource has been created as a result. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CanonicalIngredient"];
+                };
+            };
+            /** @description The server could not understand the request due to invalid syntax. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request conflicts with the current state of the server. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    AdminIngredients_unmapped: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnmappedIngredientsResponse"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    AdminIngredients_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CanonicalIngredient"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The server cannot find the requested resource. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    AdminIngredients_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateIngredientRequest"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CanonicalIngredient"];
+                };
+            };
+            /** @description The server could not understand the request due to invalid syntax. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The server cannot find the requested resource. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The request conflicts with the current state of the server. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    AdminIngredients_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description There is no content to send for this request, but the headers may be useful. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Access is unauthorized. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Access is forbidden. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The server cannot find the requested resource. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     Auth_login: {
         parameters: {
             query?: never;

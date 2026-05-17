@@ -66,7 +66,8 @@ describe('GET /api/auth/session', () => {
                 authProvider: 'password'
             },
             featureFlags: { microsoftOAuthEnabled: true },
-            canManageHousehold: true
+            canManageHousehold: true,
+            isAdmin: false
         });
     });
 
@@ -107,7 +108,8 @@ describe('GET /api/auth/session', () => {
                 authProvider: 'password'
             },
             featureFlags: { microsoftOAuthEnabled: false },
-            canManageHousehold: false
+            canManageHousehold: false,
+            isAdmin: false
         });
     });
 });

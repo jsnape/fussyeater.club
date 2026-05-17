@@ -32,6 +32,7 @@ describe('register page ui', () => {
         render(RegisterPage, {
             data: {
                 canManageHousehold: false,
+                isAdmin: false,
                 sessionUser: null,
                 inviteCode: '',
                 socialContinuation: false,
@@ -56,6 +57,7 @@ describe('register page ui', () => {
         render(RegisterPage, {
             data: {
                 canManageHousehold: false,
+                isAdmin: false,
                 sessionUser: null,
                 inviteCode: 'ABC12345',
                 socialContinuation: false,
@@ -81,6 +83,7 @@ describe('register page ui', () => {
         render(RegisterPage, {
             data: {
                 canManageHousehold: false,
+                isAdmin: false,
                 sessionUser: null,
                 inviteCode: 'ABC12345',
                 socialContinuation: false,
@@ -108,6 +111,7 @@ describe('register page ui', () => {
         render(RegisterPage, {
             data: {
                 canManageHousehold: false,
+                isAdmin: false,
                 sessionUser: null,
                 inviteCode: '',
                 socialContinuation: true,
@@ -135,6 +139,7 @@ describe('register page ui', () => {
         render(RegisterPage, {
             data: {
                 canManageHousehold: false,
+                isAdmin: false,
                 sessionUser: null,
                 inviteCode: '',
                 socialContinuation: false,
@@ -178,6 +183,7 @@ describe('register page ui', () => {
         render(RegisterPage, {
             data: {
                 canManageHousehold: false,
+                isAdmin: false,
                 sessionUser: null,
                 inviteCode: '',
                 socialContinuation: false,

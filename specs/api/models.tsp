@@ -55,6 +55,7 @@ model AuthSessionResponse {
 user: AuthSessionUser | null;
 featureFlags: AuthSessionFeatureFlags;
 canManageHousehold: boolean;
+isAdmin?: boolean;
 }
 
 model RegisterCompleteRequest {
@@ -340,4 +341,53 @@ model RepeatWeekRequest {
 model RepeatWeekResponse {
   copied: int32;
   weekStart: string;
+}
+
+// ── Admin: Canonical Ingredients ─────────────────────────────
+
+model CanonicalIngredient {
+  id: string;
+  name: string;
+  foodGroup: "dairy" | "meat" | "poultry" | "fish" | "shellfish" | "grain" | "fruit" | "vegetable" | "herb" | "spice" | "legume" | "nut" | "seed" | "oil" | "condiment" | "sweetener" | "other";
+  allergens: string[];
+  plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown";
+  aliases: string[];
+  description?: string;
+  createdAt?: utcDateTime;
+  updatedAt?: utcDateTime;
+}
+
+model CreateIngredientRequest {
+  name: string;
+  foodGroup: "dairy" | "meat" | "poultry" | "fish" | "shellfish" | "grain" | "fruit" | "vegetable" | "herb" | "spice" | "legume" | "nut" | "seed" | "oil" | "condiment" | "sweetener" | "other";
+  allergens?: string[];
+  plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown";
+  aliases?: string[];
+  description?: string;
+}
+
+model UpdateIngredientRequest {
+  name: string;
+  foodGroup: "dairy" | "meat" | "poultry" | "fish" | "shellfish" | "grain" | "fruit" | "vegetable" | "herb" | "spice" | "legume" | "nut" | "seed" | "oil" | "condiment" | "sweetener" | "other";
+  allergens?: string[];
+  plantColour?: "red" | "orange" | "yellow" | "green" | "blue-purple" | "white-brown";
+  aliases?: string[];
+  description?: string;
+}
+
+model IngredientListResponse {
+  items: CanonicalIngredient[];
+  page: int32;
+  pageSize: int32;
+  total: int32;
+}
+
+model UnmappedIngredientItem {
+  name: string;
+  recipeCount: int32;
+}
+
+model UnmappedIngredientsResponse {
+  items: UnmappedIngredientItem[];
+  total: int32;
 }

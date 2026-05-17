@@ -41,6 +41,7 @@ describe('household page ui', () => {
         render(HouseholdPage, {
             data: {
                 canManageHousehold: true,
+                isAdmin: false,
                 sessionUser: null,
                 members: [
                     {
@@ -96,6 +97,7 @@ describe('household page ui', () => {
         render(HouseholdPage, {
             data: {
                 canManageHousehold: true,
+                isAdmin: false,
                 sessionUser: null,
                 members: [],
                 invites: [],
@@ -120,6 +122,7 @@ describe('household page ui', () => {
         render(HouseholdPage, {
             data: {
                 canManageHousehold: true,
+                isAdmin: false,
                 sessionUser: null,
                 members: [],
                 invites: [
@@ -168,6 +171,7 @@ describe('household page ui', () => {
         render(HouseholdPage, {
             data: {
                 canManageHousehold: true,
+                isAdmin: false,
                 sessionUser: null,
                 members: [],
                 invites: [],
@@ -189,6 +193,7 @@ describe('household page ui', () => {
         render(HouseholdPage, {
             data: {
                 canManageHousehold: true,
+                isAdmin: false,
                 sessionUser: null,
                 members: [],
                 invites: [
@@ -213,6 +218,7 @@ describe('household page ui', () => {
         render(HouseholdPage, {
             data: {
                 canManageHousehold: true,
+                isAdmin: false,
                 sessionUser: null,
                 members: [],
                 invites: [
@@ -236,6 +242,7 @@ describe('household page ui', () => {
         render(HouseholdPage, {
             data: {
                 canManageHousehold: true,
+                isAdmin: false,
                 sessionUser: null,
                 members: [],
                 invites: [

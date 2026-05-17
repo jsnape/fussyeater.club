@@ -7,9 +7,9 @@
     import { getCookieValue } from '$lib/browser/cookies';
     import { getSiteNavLinks } from '$lib/components/layout/nav-links';
 
-    let { isAuthenticated = false, userLabel = null, canManageHousehold = false } = $props();
+    let { isAuthenticated = false, userLabel = null, canManageHousehold = false, isAdmin = false } = $props();
     let activeUrl = $derived(page.url.pathname);
-    let navLinks = $derived(getSiteNavLinks({ isAuthenticated, canManageHousehold }));
+    let navLinks = $derived(getSiteNavLinks({ isAuthenticated, canManageHousehold, isAdmin }));
 
     async function logout(): Promise<void> {
         const csrfToken = getCookieValue('csrf-token');

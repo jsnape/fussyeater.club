@@ -15,16 +15,18 @@ export const load: LayoutLoad = async ({ fetch, depends }) => {
         const session = await apiFetchWith<{
             user?: SessionUser | null;
             canManageHousehold?: boolean;
+            isAdmin?: boolean;
         }>(fetch, '/api/auth/session');
         const sessionUser = session.user ?? null;
         const canManageHousehold = Boolean(session.canManageHousehold);
+        const isAdmin = Boolean(session.isAdmin);
 
         if (!sessionUser) {
-            return { sessionUser, canManageHousehold: false };
+            return { sessionUser, canManageHousehold: false, isAdmin: false };
         }
 
-        return { sessionUser, canManageHousehold };
+        return { sessionUser, canManageHousehold, isAdmin };
     } catch {
-        return { sessionUser: null as SessionUser | null, canManageHousehold: false };
+        return { sessionUser: null as SessionUser | null, canManageHousehold: false, isAdmin: false };
     }
 };

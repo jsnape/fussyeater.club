@@ -6,6 +6,7 @@ export type SiteNavLink = {
 export function getSiteNavLinks(args: {
     isAuthenticated: boolean;
     canManageHousehold: boolean;
+    isAdmin?: boolean;
 }): SiteNavLink[] {
     if (!args.isAuthenticated) {
         return [
@@ -22,6 +23,10 @@ export function getSiteNavLinks(args: {
 
     if (args.canManageHousehold) {
         links.push({ label: 'Household', href: '/household' });
+    }
+
+    if (args.isAdmin) {
+        links.push({ label: 'Admin', href: '/admin' });
     }
 
     return links;

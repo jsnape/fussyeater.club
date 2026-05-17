@@ -47,7 +47,7 @@
 <div class="overflow-x-auto">
 	<div class="min-w-[700px]">
 		<!-- Day headers -->
-		<div class="mb-1 grid grid-cols-[60px_repeat(7,1fr)] gap-1">
+		<div class="mb-1 grid grid-cols-[80px_repeat(7,1fr)] gap-1">
 			<div></div>
 			{#each weekDates as date, i}
 				<div
@@ -66,7 +66,7 @@
 
 		<!-- Meal rows -->
 		{#each MEAL_TYPES as mealType}
-			<div class="mb-1 grid grid-cols-[60px_repeat(7,1fr)] gap-1">
+			<div class="mb-1 grid grid-cols-[80px_repeat(7,1fr)] gap-1">
 				<!-- Row label -->
 				<div class="flex items-center justify-center">
 					<span class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">

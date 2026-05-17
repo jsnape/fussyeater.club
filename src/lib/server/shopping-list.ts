@@ -85,6 +85,18 @@ function aggKey(name: string, unit?: string): string {
 	return `${normalise(name)}::${(unit ?? '').trim().toLowerCase() || '_'}`;
 }
 
+/** Check if two terms share a whole-word match (avoids "nut" matching "coconut"). */
+function hasWordMatch(ingredientName: string, term: string): boolean {
+	if (ingredientName === term) return true;
+	const termWords = term.split(/\s+/);
+	const ingredientWords = new Set(ingredientName.split(/\s+/));
+	// Any word in the term appears as a whole word in the ingredient, or vice versa
+	return (
+		termWords.some((w) => ingredientWords.has(w)) ||
+		[...ingredientWords].some((w) => new Set(termWords).has(w))
+	);
+}
+
 // ── Core logic ───────────────────────────────────────────
 
 type AggregatedItem = {
@@ -146,12 +158,16 @@ async function lookupFoodGroups(
 		foodGroupMap.set(row.name, row.food_group);
 	}
 
-	// Alias fallback for unmatched names
+	// Alias fallback for unmatched names — filter to rows with aliases, use LIKE to narrow
 	const unmatched = ingredientNames.filter((n) => !foodGroupMap.has(n));
 	if (unmatched.length > 0) {
+		const likeConditions = unmatched.map(() => `LOWER(aliases) LIKE ?`).join(' OR ');
+		const likeParams = unmatched.map((n) => `%"${n}"%`);
 		const aliasResult = await db
-			.prepare('SELECT LOWER(name) AS name, aliases, food_group FROM ingredients')
-			.bind()
+			.prepare(
+				`SELECT LOWER(name) AS name, aliases, food_group FROM ingredients WHERE aliases IS NOT NULL AND aliases != '[]' AND (${likeConditions})`
+			)
+			.bind(...likeParams)
 			.all<{ name: string; aliases: string; food_group: string }>();
 
 		const unmatchedSet = new Set(unmatched);
@@ -178,7 +194,7 @@ function buildAllergenAlerts(
 	for (const profile of profiles) {
 		for (const allergy of profile.allergies) {
 			const allergyLower = allergy.ingredient.toLowerCase().trim();
-			if (nameLower.includes(allergyLower) || allergyLower.includes(nameLower)) {
+			if (hasWordMatch(nameLower, allergyLower)) {
 				alerts.push({
 					memberName: profile.name,
 					reason: 'allergy',
@@ -189,7 +205,7 @@ function buildAllergenAlerts(
 
 		for (const dislike of profile.dislikes) {
 			const dislikeLower = dislike.toLowerCase().trim();
-			if (nameLower.includes(dislikeLower) || dislikeLower.includes(nameLower)) {
+			if (hasWordMatch(nameLower, dislikeLower)) {
 				alerts.push({
 					memberName: profile.name,
 					reason: 'dislike'

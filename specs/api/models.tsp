@@ -357,6 +357,35 @@ model RepeatWeekResponse {
   weekStart: string;
 }
 
+// ── Shopping List ────────────────────────────────────────────
+
+model ShoppingAllergenAlert {
+  memberName: string;
+  reason: "allergy" | "dislike";
+  severity?: "severe" | "moderate" | "mild";
+}
+
+model ShoppingListItem {
+  ingredient: string;
+  totalAmount?: float64;
+  unit?: string;
+  recipeSources: string[];
+  allergenAlerts: ShoppingAllergenAlert[];
+  foodGroup?: string;
+}
+
+model ShoppingListCategory {
+  category: string;
+  emoji: string;
+  items: ShoppingListItem[];
+}
+
+model ShoppingListResponse {
+  weekStart: string;
+  categories: ShoppingListCategory[];
+  totalItems: int32;
+}
+
 // ── Admin: Canonical Ingredients ─────────────────────────────
 
 model CanonicalIngredient {

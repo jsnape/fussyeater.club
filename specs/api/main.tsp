@@ -9,6 +9,7 @@ import "./routes/invites.tsp";
 import "./routes/auth.tsp";
 import "./routes/recipes.tsp";
 import "./routes/planner.tsp";
+import "./routes/shopping.tsp";
 import "./routes/admin.tsp";
 import "./models.tsp";
 

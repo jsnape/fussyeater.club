@@ -6,22 +6,31 @@
 
 ## Purpose
 
-Convert first-time visitors (parents/caregivers of fussy eaters) into registered users. Communicate the emotional value — calmer, safer mealtimes — and build trust quickly.
+Convert first-time visitors (parents/caregivers of fussy eaters) into registered users. Communicate the emotional value — calmer, safer mealtimes — with a warm, approachable tone and build trust quickly.
 
 ---
 
 ## Layout
 
+- Optional full-width announcement bar above navigation
 - Sticky top navigation (landing variant)
 - Full-width vertical scroll of content sections
 - No sidebar
 
 ---
 
+## Announcement Bar
+
+- Full-width bar above navigation
+- Single line of welcome/promotional copy
+- Dismissible (optional)
+
+---
+
 ## Navigation (Landing Variant)
 
 - Logo/wordmark (left)
-- Anchor links: "How It Works", "Recipes", "Stories" (scroll to sections)
+- Anchor links: "How It Works", "Sample Recipes", "Stories" (scroll to sections)
 - Right side: "Log In" text link + "Get Started" primary button
 - Becomes sticky on scroll past hero
 
@@ -35,18 +44,27 @@ Convert first-time visitors (parents/caregivers of fussy eaters) into registered
 
 - Two-column layout on desktop (text left, image right); stacks on mobile
 - **Left column:**
+  - Optional category badge/pill (e.g. "For Caregivers")
   - Headline — emotional, outcome-focused (e.g. "Mealtimes, made happy.")
   - Supporting paragraph — briefly explain allergy-aware planning, sensory preferences, and stress-free shopping
   - Two CTAs: primary "Join the Club" + secondary "See How It Works"
   - Social proof line: avatar stack + "Joined by X+ relieved parents"
 - **Right column:**
-  - Large rounded hero image (family meal scene)
+  - Large rounded hero image (family meal scene) with a subtle rotated background shape behind it
   - Floating overlay badge reinforcing a "win" moment (e.g. "Broccoli eaten! 🎉")
   - Two smaller floating badges: "Sensory-Friendly" (texture/colour filters) + "Allergy-Aware" (ingredient tracking)
 
 ### Current implementation
 
 `HomeHeroSection` exists with hero image and CTA buttons. Needs: floating badges, social proof line, richer copy.
+
+---
+
+## Social Proof / Trust Quote
+
+- Centred editorial-style quote or testimonial
+- Row of publication/media logos below the quote
+- Logos are greyscale by default and shift to colour on hover
 
 ---
 
@@ -57,7 +75,7 @@ Convert first-time visitors (parents/caregivers of fussy eaters) into registered
   1. **Granular Filtering** — icon, heading, description about texture/colour/temperature filters
   2. **Stress-Free Planning** — icon, heading, description about drag-and-drop weekly calendar
   3. **Smart Shopping Lists** — icon, heading, description about auto-generated, allergen-aware, categorised lists
-- Each card: icon in circular container, heading, body text
+- Each card: icon in circular container, heading, body text, rounded container, subtle hover border effect
 
 ### Current implementation
 
@@ -67,7 +85,7 @@ Convert first-time visitors (parents/caregivers of fussy eaters) into registered
 
 ## Sample Recipe Gallery
 
-- Section label (small caps) + heading (e.g. "Popular This Week")
+- Section label (small caps, e.g. "Tested by Kids") + heading (e.g. "Popular This Week")
 - "Browse all recipes →" link (right-aligned on desktop)
 - 4-column responsive grid (2-col tablet, 1-col mobile) of recipe preview cards
 - Each card:
@@ -75,7 +93,7 @@ Convert first-time visitors (parents/caregivers of fussy eaters) into registered
   - Time badge overlay (top-right)
   - Recipe title
   - Tag pills (dietary info: "Dairy-Free", "Nut-Free", etc.)
-  - Texture descriptor (e.g. "Smooth", "Crunchy")
+  - Texture descriptor or serving-style subtitle
 
 ### Current implementation
 
@@ -98,14 +116,19 @@ Not implemented. New section needed.
 
 ---
 
-## Final CTA Section
+## Final CTA / Registration
 
-- Full-width container with heading + subtitle + social proof text
+- Full-width rounded container with heading + subtitle + social proof text
 - Two CTAs: primary "Join the Club" + secondary "Try a Free Week"
+- Centred inline registration form card:
+  - Email input
+  - Password input
+  - "Sign Up" submit button
+  - "Already have an account? Log in" link
 
 ### Current implementation
 
-`HomeCtaPanel` exists with conditional Register button. Needs enhancement with dual CTAs and social proof.
+`HomeCtaPanel` exists with conditional Register button. Needs enhancement with dual CTAs, social proof, and inline registration form.
 
 ---
 
@@ -123,9 +146,11 @@ Not implemented as a dedicated component. Needed site-wide.
 
 ## Key Interactions
 
+- Announcement bar can be dismissed
 - Navigation becomes sticky when scrolled past hero
-- Recipe cards navigate to `/recipes/[id]` on click
+- Recipe cards navigate to `/recipes/[id]` on click and use hover zoom on the image
+- Primary hero CTA links to `/register`
 - "See How It Works" smooth-scrolls to value props section
 - "Browse all recipes" navigates to `/recipes`
-- Hero CTAs link to `/register`
+- Trust logos transition from greyscale to colour on hover
 - Signed-in users see a different CTA (e.g. "Go to Planner") instead of registration prompts

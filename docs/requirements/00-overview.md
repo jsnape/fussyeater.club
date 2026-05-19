@@ -64,16 +64,18 @@ Combine UX Pilot's **dietary-safety-first data model** (the app's USP) with Stit
 
 | # | Page | Route | Status |
 |---|------|-------|--------|
-| 01 | [Landing Page](01-landing-page.md) | `/` | Implemented (basic) |
-| 02 | [Login](02-login.md) | `/login` | Implemented |
-| 03 | [Register](03-register.md) | `/register` | Implemented |
-| 04 | [Household & Profiles](04-household-profiles.md) | `/household` | Partially implemented (invites only) |
-| 05 | [Browse Recipes](05-browse-recipes.md) | `/recipes` | Implemented (basic) |
-| 06 | [Recipe Detail](06-recipe-detail.md) | `/recipes/[id]` | Implemented |
-| 07 | [Create / Edit Recipe](07-create-edit-recipe.md) | `/recipes/new`, `/recipes/[id]/edit` | Implemented (create only) |
-| 08 | [Meal Planner](08-meal-planner.md) | `/planner` | Not started |
-| 09 | [Shopping List](09-shopping-list.md) | `/shopping` | Not started |
-| 10 | [Account Settings](10-account-settings.md) | `/account` | Not started |
+| 01 | [Landing Page](requirements/01-landing-page.md) | `/` | Implemented (basic) |
+| 02 | [Login](requirements/02-login.md) | `/login` | Implemented |
+| 03 | [Register](requirements/03-register.md) | `/register` | Implemented |
+| 04 | [Household & Profiles](requirements/04-household-profiles.md) | `/household` | Partially implemented (invites only) |
+| 05 | [Browse Recipes](requirements/05-browse-recipes.md) | `/recipes` | Implemented (basic) |
+| 06 | [Recipe Detail](requirements/06-recipe-detail.md) | `/recipes/[id]` | Implemented |
+| 07 | [Create / Edit Recipe](requirements/07-create-edit-recipe.md) | `/recipes/new`, `/recipes/[id]/edit` | Implemented (create only) |
+| 08 | [Meal Planner](requirements/08-meal-planner.md) | `/planner`, `/meals` | Not started |
+| 09 | [Shopping List](requirements/09-shopping-list.md) | `/shopping` | Not started |
+| 10 | [Account Settings](requirements/10-account-settings.md) | `/account` | Not started |
+| — | Status | `/status` | — |
+| — | Store Cupboard | `/store-cupboard` | — |
 
 ---
 

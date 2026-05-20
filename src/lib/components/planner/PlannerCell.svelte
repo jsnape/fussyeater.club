@@ -1,21 +1,34 @@
 <script lang="ts">
 	import type { components } from '$lib/api-types';
 	import CompatibilityBadge from './CompatibilityBadge.svelte';
+	import AttendanceIndicator from './AttendanceIndicator.svelte';
+	import AttendancePopover from './AttendancePopover.svelte';
 	import { resolve } from '$app/paths';
 
 	type MealPlanEntry = components['schemas']['MealPlanEntry'];
+	type MealAttendee = components['schemas']['MealAttendee'];
+	type HouseholdMemberSummary = components['schemas']['HouseholdMemberSummary'];
 
 	let {
 		entry,
+		members,
 		onRemove,
-		onEdit
+		onEdit,
+		onAttendanceUpdate
 	}: {
 		entry: MealPlanEntry;
+		members: HouseholdMemberSummary[];
 		onRemove: (id: string) => void;
 		onEdit: (entry: MealPlanEntry) => void;
+		onAttendanceUpdate: (entryId: string, attendees: MealAttendee[], guestCovers: number) => void;
 	} = $props();
 
 	let menuOpen = $state(false);
+	let popoverOpen = $state(false);
+
+	function handleAttendanceSave(attendees: MealAttendee[], guestCovers: number) {
+		onAttendanceUpdate(entry.id, attendees, guestCovers);
+	}
 </script>
 
 {#if entry.recipe}
@@ -57,6 +70,15 @@
 						}}
 					>
 						Edit entry
+					</button>
+					<button
+						class="w-full px-3 py-1.5 text-left text-xs text-slate-700 hover:bg-slate-50"
+						onclick={() => {
+							popoverOpen = true;
+							menuOpen = false;
+						}}
+					>
+						Manage attendance
 					</button>
 					<a
 						href={resolve(`/recipes/${entry.recipe.id}`)}
@@ -104,6 +126,23 @@
 				{entry.notes}
 			</p>
 		{/if}
+		<!-- Attendance indicator -->
+		<div class="relative">
+			<AttendanceIndicator
+				attendees={entry.attendees}
+				guestCovers={entry.guestCovers}
+				onclick={() => (popoverOpen = !popoverOpen)}
+			/>
+			{#if popoverOpen}
+				<AttendancePopover
+					attendees={entry.attendees}
+					guestCovers={entry.guestCovers}
+					{members}
+					onSave={handleAttendanceSave}
+					onClose={() => (popoverOpen = false)}
+				/>
+			{/if}
+		</div>
 	</div>
 {:else if entry.customNote}
 	<div
@@ -138,6 +177,15 @@
 						Edit note
 					</button>
 					<button
+						class="w-full px-3 py-1.5 text-left text-xs text-slate-700 hover:bg-slate-50"
+						onclick={() => {
+							popoverOpen = true;
+							menuOpen = false;
+						}}
+					>
+						Manage attendance
+					</button>
+					<button
 						class="w-full px-3 py-1.5 text-left text-xs text-red-600 hover:bg-red-50"
 						onclick={() => {
 							onRemove(entry.id);
@@ -153,5 +201,22 @@
 		<p class="line-clamp-2 text-xs text-slate-600" title={entry.customNote}>
 			📝 {entry.customNote}
 		</p>
+		<!-- Attendance indicator -->
+		<div class="relative">
+			<AttendanceIndicator
+				attendees={entry.attendees}
+				guestCovers={entry.guestCovers}
+				onclick={() => (popoverOpen = !popoverOpen)}
+			/>
+			{#if popoverOpen}
+				<AttendancePopover
+					attendees={entry.attendees}
+					guestCovers={entry.guestCovers}
+					{members}
+					onSave={handleAttendanceSave}
+					onClose={() => (popoverOpen = false)}
+				/>
+			{/if}
+		</div>
 	</div>
 {/if}

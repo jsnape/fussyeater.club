@@ -283,6 +283,18 @@ model CompatibilityResult {
   alerts: CompatibilityAlert[];
 }
 
+model MealAttendee {
+  memberId: string;
+  memberName: string;
+  isAttending: boolean;
+}
+
+model HouseholdMemberSummary {
+  memberId: string;
+  name: string;
+  isDependent: boolean;
+}
+
 model MealEntryRecipeSummary {
   id: string;
   title: string;
@@ -300,6 +312,8 @@ model MealPlanEntry {
   servings: int32;
   notes?: string;
   compatibility: CompatibilityResult;
+  attendees: MealAttendee[];
+  guestCovers: int32;
 }
 
 model MealPlanStats {
@@ -325,6 +339,7 @@ model MealPlanResponse {
   entries: MealPlanEntry[];
   stats: MealPlanStats;
   plantStats: PlantStats;
+  members: HouseholdMemberSummary[];
 }
 
 model CreateMealEntryRequest {
@@ -335,6 +350,8 @@ model CreateMealEntryRequest {
   customNote?: string;
   servings?: int32;
   notes?: string;
+  absentMemberIds?: string[];
+  guestCovers?: int32;
 }
 
 model CreateMealEntryResponse {
@@ -346,6 +363,8 @@ model CreateMealEntryResponse {
   servings: int32;
   notes?: string;
   compatibility: CompatibilityResult;
+  attendees: MealAttendee[];
+  guestCovers: int32;
 }
 
 model RepeatWeekRequest {

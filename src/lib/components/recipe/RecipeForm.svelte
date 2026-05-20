@@ -13,6 +13,7 @@
     import RecipeMethodOrSource from '$lib/components/recipe/RecipeMethodOrSource.svelte';
     import RecipeNotes from '$lib/components/recipe/RecipeNotes.svelte';
     import RecipeVisibility from '$lib/components/recipe/RecipeVisibility.svelte';
+    import { untrack } from 'svelte';
 
     type RecipeDetail = components['schemas']['RecipeDetail'];
     type RecipeIngredientType = components['schemas']['RecipeIngredient'];
@@ -25,41 +26,41 @@
 
     let { mode, recipe }: Props = $props();
 
-    // --- Form state ---
-    let title = $state(recipe?.title ?? '');
-    let description = $state(recipe?.description ?? '');
-    let imageUrl = $state(recipe?.imageUrl ?? '');
-    let recipeType = $state<'full' | 'reference'>(recipe?.type ?? 'full');
-    let visibility = $state<'public' | 'private'>(recipe?.visibility ?? 'private');
-    let servings = $state(recipe?.servings != null ? String(recipe.servings) : '');
-    let yieldText = $state(recipe?.yield ?? '');
+    // --- Form state (snapshot initial prop values) ---
+    let title = $state(untrack(() => recipe?.title ?? ''));
+    let description = $state(untrack(() => recipe?.description ?? ''));
+    let imageUrl = $state(untrack(() => recipe?.imageUrl ?? ''));
+    let recipeType = $state<'full' | 'reference'>(untrack(() => recipe?.type ?? 'full'));
+    let visibility = $state<'public' | 'private'>(untrack(() => recipe?.visibility ?? 'private'));
+    let servings = $state(untrack(() => recipe?.servings != null ? String(recipe.servings) : ''));
+    let yieldText = $state(untrack(() => recipe?.yield ?? ''));
     let prepMinutes = $state(
-        recipe?.timings?.prepMinutes != null ? String(recipe.timings.prepMinutes) : ''
+        untrack(() => recipe?.timings?.prepMinutes != null ? String(recipe.timings.prepMinutes) : '')
     );
     let cookMinutes = $state(
-        recipe?.timings?.cookMinutes != null ? String(recipe.timings.cookMinutes) : ''
+        untrack(() => recipe?.timings?.cookMinutes != null ? String(recipe.timings.cookMinutes) : '')
     );
-    let notes = $state(recipe?.notes ?? '');
+    let notes = $state(untrack(() => recipe?.notes ?? ''));
 
     // Ingredients
-    let ingredients = $state<RecipeIngredientType[]>(recipe?.ingredients ?? []);
+    let ingredients = $state<RecipeIngredientType[]>(untrack(() => recipe?.ingredients ?? []));
 
     // Method steps (full recipes)
-    let methodSteps = $state<string[]>(recipe?.method ?? []);
+    let methodSteps = $state<string[]>(untrack(() => recipe?.method ?? []));
 
     // Source reference (reference recipes)
-    const existingSource = recipe?.sourceReference;
-    let sourceKind = $state<'url' | 'book'>(existingSource?.kind ?? 'url');
-    let sourceLabel = $state(existingSource?.label ?? '');
-    let sourceUrl = $state(existingSource?.url ?? '');
-    let sourceBookTitle = $state(existingSource?.bookTitle ?? '');
+    const existingSource = untrack(() => recipe?.sourceReference);
+    let sourceKind = $state<'url' | 'book'>(untrack(() => existingSource?.kind ?? 'url'));
+    let sourceLabel = $state(untrack(() => existingSource?.label ?? ''));
+    let sourceUrl = $state(untrack(() => existingSource?.url ?? ''));
+    let sourceBookTitle = $state(untrack(() => existingSource?.bookTitle ?? ''));
     let sourcePageNumber = $state(
-        existingSource?.pageNumber != null ? String(existingSource.pageNumber) : ''
+        untrack(() => existingSource?.pageNumber != null ? String(existingSource.pageNumber) : '')
     );
-    let sourceIsbn = $state(existingSource?.isbn ?? '');
+    let sourceIsbn = $state(untrack(() => existingSource?.isbn ?? ''));
 
     // Tags
-    let tags = $state<string[]>(recipe?.tags ?? []);
+    let tags = $state<string[]>(untrack(() => recipe?.tags ?? []));
 
     // Submission
     let isSubmitting = $state(false);

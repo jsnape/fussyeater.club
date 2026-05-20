@@ -4,19 +4,25 @@
 	import { PlusOutline } from 'flowbite-svelte-icons';
 
 	type MealPlanEntry = components['schemas']['MealPlanEntry'];
+	type MealAttendee = components['schemas']['MealAttendee'];
+	type HouseholdMemberSummary = components['schemas']['HouseholdMemberSummary'];
 
 	let {
 		weekStart,
 		entries,
+		members,
 		onAddClick,
 		onRemoveEntry,
-		onEditEntry
+		onEditEntry,
+		onAttendanceUpdate
 	}: {
 		weekStart: string;
 		entries: MealPlanEntry[];
+		members: HouseholdMemberSummary[];
 		onAddClick: (date: string, mealType: string) => void;
 		onRemoveEntry: (id: string) => void;
 		onEditEntry: (entry: MealPlanEntry) => void;
+		onAttendanceUpdate: (entryId: string, attendees: MealAttendee[], guestCovers: number) => void;
 	} = $props();
 
 	const MEAL_TYPES = ['breakfast', 'lunch', 'dinner'] as const;
@@ -81,8 +87,10 @@
 						{#if entry}
 							<PlannerCell
 								{entry}
+								{members}
 								onRemove={onRemoveEntry}
 								onEdit={onEditEntry}
+								{onAttendanceUpdate}
 							/>
 						{:else}
 							<button

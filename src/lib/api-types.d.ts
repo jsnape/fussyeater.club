@@ -481,6 +481,9 @@ export interface components {
             /** Format: int32 */
             servings?: number;
             notes?: string;
+            absentMemberIds?: string[];
+            /** Format: int32 */
+            guestCovers?: number;
         } & {
             [key: string]: unknown;
         };
@@ -495,6 +498,9 @@ export interface components {
             servings: number;
             notes?: string;
             compatibility: components["schemas"]["CompatibilityResult"];
+            attendees: components["schemas"]["MealAttendee"][];
+            /** Format: int32 */
+            guestCovers: number;
         } & {
             [key: string]: unknown;
         };
@@ -539,6 +545,13 @@ export interface components {
             role: string;
             /** Format: date-time */
             joinedAt: string;
+        } & {
+            [key: string]: unknown;
+        };
+        HouseholdMemberSummary: {
+            memberId: string;
+            name: string;
+            isDependent: boolean;
         } & {
             [key: string]: unknown;
         };
@@ -635,6 +648,13 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        MealAttendee: {
+            memberId: string;
+            memberName: string;
+            isAttending: boolean;
+        } & {
+            [key: string]: unknown;
+        };
         MealEntryRecipeSummary: {
             id: string;
             title: string;
@@ -655,6 +675,9 @@ export interface components {
             servings: number;
             notes?: string;
             compatibility: components["schemas"]["CompatibilityResult"];
+            attendees: components["schemas"]["MealAttendee"][];
+            /** Format: int32 */
+            guestCovers: number;
         } & {
             [key: string]: unknown;
         };
@@ -663,6 +686,7 @@ export interface components {
             entries: components["schemas"]["MealPlanEntry"][];
             stats: components["schemas"]["MealPlanStats"];
             plantStats: components["schemas"]["PlantStats"];
+            members: components["schemas"]["HouseholdMemberSummary"][];
         } & {
             [key: string]: unknown;
         };

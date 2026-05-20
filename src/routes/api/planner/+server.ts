@@ -9,7 +9,8 @@ import {
 	toEntryResponse,
 	isValidIsoDate,
 	getWeekStartMonday,
-	computePlantStats
+	computePlantStats,
+	type HouseholdMemberSummary
 } from '$lib/server/meal-plan';
 import {
 	jsonWithRequestId,
@@ -64,6 +65,12 @@ export const GET: RequestHandler = async (event) => {
 		const withAlerts = entries.filter((e) => !e.compatibility.safe).length;
 		const plantStats = await computePlantStats(db, rawEntries);
 
+		const members: HouseholdMemberSummary[] = profiles.map((p) => ({
+			memberId: p.userId,
+			name: p.name,
+			isDependent: p.isDependent ?? false
+		}));
+
 		logInfo('planner.get.success', requestId, {
 			weekStart,
 			entryCount: entries.length,
@@ -80,7 +87,8 @@ export const GET: RequestHandler = async (event) => {
 					total: 21,
 					withAlerts
 				},
-				plantStats
+				plantStats,
+				members
 			},
 			requestId
 		);

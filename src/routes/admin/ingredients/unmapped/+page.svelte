@@ -199,8 +199,8 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-<div onclick={handleDropdownClick}>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div role="presentation" onclick={handleDropdownClick}>
 
 <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
 	<!-- Header -->

@@ -29,6 +29,8 @@ type CreateEntryBody = {
 	customNote?: unknown;
 	servings?: unknown;
 	notes?: unknown;
+	absentMemberIds?: unknown;
+	guestCovers?: unknown;
 };
 
 export const POST: RequestHandler = async (event) => {
@@ -117,6 +119,29 @@ export const POST: RequestHandler = async (event) => {
 		}
 	}
 
+	if (body.absentMemberIds !== undefined) {
+		if (
+			!Array.isArray(body.absentMemberIds) ||
+			!body.absentMemberIds.every((id: unknown) => typeof id === 'string')
+		) {
+			return jsonWithRequestId(
+				{ message: 'absentMemberIds must be an array of strings' },
+				requestId,
+				{ status: 400 }
+			);
+		}
+	}
+
+	if (body.guestCovers !== undefined && body.guestCovers !== null) {
+		if (typeof body.guestCovers !== 'number' || !Number.isInteger(body.guestCovers) || body.guestCovers < 0) {
+			return jsonWithRequestId(
+				{ message: 'guestCovers must be a non-negative integer' },
+				requestId,
+				{ status: 400 }
+			);
+		}
+	}
+
 	try {
 		const db = requireDb(platform);
 		const membership = await getMembership(db, auth.userId);
@@ -154,6 +179,17 @@ export const POST: RequestHandler = async (event) => {
 		}
 
 		const plan = await getOrCreateWeekPlan(db, membership.householdId, weekStart);
+		const profiles = await getProfilesForHousehold(db, membership.householdId);
+
+		const absentMemberIds = (body.absentMemberIds as string[] | undefined) ?? [];
+		const guestCovers = (body.guestCovers as number | undefined) ?? 0;
+
+		// Auto-calculate servings from attendance unless explicitly provided
+		let servings = body.servings as number | undefined;
+		if (servings === undefined) {
+			const attendingCount = profiles.length - absentMemberIds.length;
+			servings = Math.max(1, attendingCount + guestCovers);
+		}
 
 		await upsertEntry(db, plan.id, {
 			weekStart,
@@ -161,13 +197,14 @@ export const POST: RequestHandler = async (event) => {
 			mealType: body.mealType,
 			recipeId: body.recipeId as string | undefined,
 			customNote: body.customNote as string | undefined,
-			servings: body.servings as number | undefined,
-			notes: body.notes as string | undefined
+			servings,
+			notes: body.notes as string | undefined,
+			absentMemberIds,
+			guestCovers
 		});
 
 		// Re-fetch with recipe join for response
 		const entries = await getWeekPlanEntries(db, plan.id);
-		const profiles = await getProfilesForHousehold(db, membership.householdId);
 		const entry = entries.find(
 			(e) => e.entry_date === body.entryDate && e.meal_type === body.mealType
 		);

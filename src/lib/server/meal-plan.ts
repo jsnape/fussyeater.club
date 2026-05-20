@@ -21,6 +21,8 @@ export type MealPlanEntryRow = {
 	custom_note: string | null;
 	servings: number;
 	notes: string | null;
+	absent_member_ids: string;
+	guest_covers: number;
 };
 
 export type EntryWithRecipe = MealPlanEntryRow & {
@@ -45,6 +47,18 @@ export type CompatibilityResult = {
 	alerts: CompatibilityAlert[];
 };
 
+export type MealAttendee = {
+	memberId: string;
+	memberName: string;
+	isAttending: boolean;
+};
+
+export type HouseholdMemberSummary = {
+	memberId: string;
+	name: string;
+	isDependent: boolean;
+};
+
 export type MealEntryResponse = {
 	id: string;
 	entryDate: string;
@@ -60,6 +74,8 @@ export type MealEntryResponse = {
 	servings: number;
 	notes?: string;
 	compatibility: CompatibilityResult;
+	attendees: MealAttendee[];
+	guestCovers: number;
 };
 
 export type UpsertEntryInput = {
@@ -70,6 +86,8 @@ export type UpsertEntryInput = {
 	customNote?: string;
 	servings?: number;
 	notes?: string;
+	absentMemberIds?: string[];
+	guestCovers?: number;
 };
 
 // ── Plant diversity stats ────────────────────────────────
@@ -308,6 +326,7 @@ export async function getWeekPlanEntries(
 			`SELECT
 				e.id, e.plan_id, e.entry_date, e.meal_type, e.recipe_id,
 				e.custom_note, e.servings, e.notes,
+				e.absent_member_ids, e.guest_covers,
 				r.title AS recipe_title,
 				r.image_url AS recipe_image_url,
 				r.prep_minutes AS recipe_prep_minutes,
@@ -333,8 +352,19 @@ export function toEntryResponse(
 	entry: EntryWithRecipe,
 	profiles: MemberProfile[]
 ): MealEntryResponse {
+	const absentIds = new Set(parseJsonSafe<string[]>(entry.absent_member_ids));
+	const guestCovers = entry.guest_covers ?? 0;
+
+	const attendees: MealAttendee[] = profiles.map((p) => ({
+		memberId: p.userId,
+		memberName: p.name,
+		isAttending: !absentIds.has(p.userId)
+	}));
+
+	// Only check compatibility for members who are actually eating
+	const attendingProfiles = profiles.filter((p) => !absentIds.has(p.userId));
 	const compatibility = entry.recipe_id
-		? checkCompatibility(entry.recipe_ingredients, profiles)
+		? checkCompatibility(entry.recipe_ingredients, attendingProfiles)
 		: { safe: true, hasAllergyAlert: false, alerts: [] };
 
 	const response: MealEntryResponse = {
@@ -342,7 +372,9 @@ export function toEntryResponse(
 		entryDate: entry.entry_date,
 		mealType: entry.meal_type as MealType,
 		servings: entry.servings,
-		compatibility
+		compatibility,
+		attendees,
+		guestCovers
 	};
 
 	if (entry.recipe_id && entry.recipe_title) {
@@ -379,16 +411,20 @@ export async function upsertEntry(
 	const now = nowIso();
 	const id = crypto.randomUUID();
 	const servings = input.servings ?? 4;
+	const absentMemberIds = JSON.stringify(input.absentMemberIds ?? []);
+	const guestCovers = input.guestCovers ?? 0;
 
 	await db
 		.prepare(
-			`INSERT INTO meal_plan_entries (id, plan_id, entry_date, meal_type, recipe_id, custom_note, servings, notes, created_at, updated_at)
-			VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?9)
+			`INSERT INTO meal_plan_entries (id, plan_id, entry_date, meal_type, recipe_id, custom_note, servings, notes, absent_member_ids, guest_covers, created_at, updated_at)
+			VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?11)
 			ON CONFLICT(plan_id, entry_date, meal_type) DO UPDATE SET
 				recipe_id = excluded.recipe_id,
 				custom_note = excluded.custom_note,
 				servings = excluded.servings,
 				notes = excluded.notes,
+				absent_member_ids = excluded.absent_member_ids,
+				guest_covers = excluded.guest_covers,
 				updated_at = excluded.updated_at`
 		)
 		.bind(
@@ -400,6 +436,8 @@ export async function upsertEntry(
 			input.customNote ?? null,
 			servings,
 			input.notes ?? null,
+			absentMemberIds,
+			guestCovers,
 			now
 		)
 		.run();
@@ -407,7 +445,7 @@ export async function upsertEntry(
 	// Fetch the actual entry (may have existing id if upserted)
 	const entry = await db
 		.prepare(
-			'SELECT id, plan_id, entry_date, meal_type, recipe_id, custom_note, servings, notes FROM meal_plan_entries WHERE plan_id = ?1 AND entry_date = ?2 AND meal_type = ?3'
+			'SELECT id, plan_id, entry_date, meal_type, recipe_id, custom_note, servings, notes, absent_member_ids, guest_covers FROM meal_plan_entries WHERE plan_id = ?1 AND entry_date = ?2 AND meal_type = ?3'
 		)
 		.bind(planId, input.entryDate, input.mealType)
 		.first<MealPlanEntryRow>();
@@ -445,7 +483,7 @@ export async function copyPreviousWeek(
 
 	const previousEntries = await db
 		.prepare(
-			'SELECT entry_date, meal_type, recipe_id, custom_note, servings, notes FROM meal_plan_entries WHERE plan_id = ?1'
+			'SELECT entry_date, meal_type, recipe_id, custom_note, servings, notes, absent_member_ids, guest_covers FROM meal_plan_entries WHERE plan_id = ?1'
 		)
 		.bind(previousPlan.id)
 		.all<{
@@ -455,6 +493,8 @@ export async function copyPreviousWeek(
 			custom_note: string | null;
 			servings: number;
 			notes: string | null;
+			absent_member_ids: string;
+			guest_covers: number;
 		}>();
 
 	const entries = previousEntries.results ?? [];
@@ -473,13 +513,15 @@ export async function copyPreviousWeek(
 
 		await db
 			.prepare(
-				`INSERT INTO meal_plan_entries (id, plan_id, entry_date, meal_type, recipe_id, custom_note, servings, notes, created_at, updated_at)
-				VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?9)
+				`INSERT INTO meal_plan_entries (id, plan_id, entry_date, meal_type, recipe_id, custom_note, servings, notes, absent_member_ids, guest_covers, created_at, updated_at)
+				VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?11)
 				ON CONFLICT(plan_id, entry_date, meal_type) DO UPDATE SET
 					recipe_id = excluded.recipe_id,
 					custom_note = excluded.custom_note,
 					servings = excluded.servings,
 					notes = excluded.notes,
+					absent_member_ids = excluded.absent_member_ids,
+					guest_covers = excluded.guest_covers,
 					updated_at = excluded.updated_at`
 			)
 			.bind(
@@ -491,6 +533,8 @@ export async function copyPreviousWeek(
 				entry.custom_note,
 				entry.servings,
 				entry.notes,
+				entry.absent_member_ids ?? '[]',
+				entry.guest_covers ?? 0,
 				now
 			)
 			.run();

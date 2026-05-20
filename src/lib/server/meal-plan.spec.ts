@@ -218,6 +218,79 @@ describe('upsertEntry', () => {
 
 		expect(entry.servings).toBe(4);
 	});
+
+	it('should persist absent member IDs', async () => {
+		const { first: db } = setup();
+		await seedHousehold(db);
+		const plan = await getOrCreateWeekPlan(db, 'h1', '2026-05-18');
+
+		const entry = await upsertEntry(db, plan.id, {
+			weekStart: '2026-05-18',
+			entryDate: '2026-05-18',
+			mealType: 'dinner',
+			customNote: 'Pizza',
+			absentMemberIds: ['u2', 'dep-1']
+		});
+
+		expect(JSON.parse(entry.absent_member_ids)).toEqual(['u2', 'dep-1']);
+	});
+
+	it('should persist guest covers', async () => {
+		const { first: db } = setup();
+		await seedHousehold(db);
+		const plan = await getOrCreateWeekPlan(db, 'h1', '2026-05-18');
+
+		const entry = await upsertEntry(db, plan.id, {
+			weekStart: '2026-05-18',
+			entryDate: '2026-05-18',
+			mealType: 'dinner',
+			customNote: 'BBQ',
+			guestCovers: 3
+		});
+
+		expect(entry.guest_covers).toBe(3);
+	});
+
+	it('should default attendance to all attending with 0 guests', async () => {
+		const { first: db } = setup();
+		await seedHousehold(db);
+		const plan = await getOrCreateWeekPlan(db, 'h1', '2026-05-18');
+
+		const entry = await upsertEntry(db, plan.id, {
+			weekStart: '2026-05-18',
+			entryDate: '2026-05-18',
+			mealType: 'lunch',
+			customNote: 'Sandwiches'
+		});
+
+		expect(JSON.parse(entry.absent_member_ids)).toEqual([]);
+		expect(entry.guest_covers).toBe(0);
+	});
+
+	it('should update attendance on upsert of same cell', async () => {
+		const { first: db } = setup();
+		await seedHousehold(db);
+		const plan = await getOrCreateWeekPlan(db, 'h1', '2026-05-18');
+
+		await upsertEntry(db, plan.id, {
+			weekStart: '2026-05-18',
+			entryDate: '2026-05-18',
+			mealType: 'dinner',
+			customNote: 'Pizza'
+		});
+
+		const updated = await upsertEntry(db, plan.id, {
+			weekStart: '2026-05-18',
+			entryDate: '2026-05-18',
+			mealType: 'dinner',
+			customNote: 'Pizza',
+			absentMemberIds: ['u1'],
+			guestCovers: 2
+		});
+
+		expect(JSON.parse(updated.absent_member_ids)).toEqual(['u1']);
+		expect(updated.guest_covers).toBe(2);
+	});
 });
 
 describe('removeEntry', () => {
@@ -372,6 +445,29 @@ describe('copyPreviousWeek', () => {
 		const copied = await copyPreviousWeek(db, 'h1', '2026-05-18');
 		expect(copied).toBe(0);
 	});
+
+	it('should copy attendance data from previous week', async () => {
+		const { first: db } = setup();
+		await seedHousehold(db);
+		const prevPlan = await getOrCreateWeekPlan(db, 'h1', '2026-05-11');
+
+		await upsertEntry(db, prevPlan.id, {
+			weekStart: '2026-05-11',
+			entryDate: '2026-05-11',
+			mealType: 'dinner',
+			customNote: 'Pizza',
+			absentMemberIds: ['u2'],
+			guestCovers: 2
+		});
+
+		await copyPreviousWeek(db, 'h1', '2026-05-18');
+
+		const targetPlan = await getOrCreateWeekPlan(db, 'h1', '2026-05-18');
+		const entries = await getWeekPlanEntries(db, targetPlan.id);
+		expect(entries).toHaveLength(1);
+		expect(JSON.parse(entries[0].absent_member_ids)).toEqual(['u2']);
+		expect(entries[0].guest_covers).toBe(2);
+	});
 });
 
 // ── Compatibility checking ──────────────────────────────
@@ -475,6 +571,8 @@ describe('toEntryResponse', () => {
 				custom_note: null,
 				servings: 4,
 				notes: 'Extra spicy',
+				absent_member_ids: '[]',
+				guest_covers: 0,
 				recipe_title: 'Pad Thai',
 				recipe_image_url: '/images/pad-thai.jpg',
 				recipe_prep_minutes: 15,
@@ -507,6 +605,8 @@ describe('toEntryResponse', () => {
 				custom_note: 'Eat out',
 				servings: 4,
 				notes: null,
+				absent_member_ids: '[]',
+				guest_covers: 0,
 				recipe_title: null,
 				recipe_image_url: null,
 				recipe_prep_minutes: null,
@@ -520,6 +620,115 @@ describe('toEntryResponse', () => {
 		expect(response.recipe).toBeUndefined();
 		expect(response.customNote).toBe('Eat out');
 		expect(response.compatibility.safe).toBe(true);
+	});
+
+	it('should mark absent members from absent_member_ids', () => {
+		const profiles: MemberProfile[] = [
+			{ userId: 'u1', name: 'Alex', role: 'member', allergies: [], textures: [], safeFoods: [], dislikes: [] },
+			{ userId: 'u2', name: 'Sam', role: 'member', allergies: [], textures: [], safeFoods: [], dislikes: [] }
+		];
+
+		const response = toEntryResponse(
+			{
+				id: 'e3',
+				plan_id: 'p1',
+				entry_date: '2026-05-18',
+				meal_type: 'dinner',
+				recipe_id: null,
+				custom_note: 'Pizza',
+				servings: 1,
+				notes: null,
+				absent_member_ids: '["u2"]',
+				guest_covers: 0,
+				recipe_title: null,
+				recipe_image_url: null,
+				recipe_prep_minutes: null,
+				recipe_cook_minutes: null,
+				recipe_tags: null,
+				recipe_ingredients: null
+			},
+			profiles
+		);
+
+		expect(response.attendees).toHaveLength(2);
+		expect(response.attendees.find((a) => a.memberId === 'u1')?.isAttending).toBe(true);
+		expect(response.attendees.find((a) => a.memberId === 'u2')?.isAttending).toBe(false);
+		expect(response.guestCovers).toBe(0);
+	});
+
+	it('should return guest covers from entry', () => {
+		const response = toEntryResponse(
+			{
+				id: 'e4',
+				plan_id: 'p1',
+				entry_date: '2026-05-18',
+				meal_type: 'dinner',
+				recipe_id: null,
+				custom_note: 'BBQ',
+				servings: 6,
+				notes: null,
+				absent_member_ids: '[]',
+				guest_covers: 3,
+				recipe_title: null,
+				recipe_image_url: null,
+				recipe_prep_minutes: null,
+				recipe_cook_minutes: null,
+				recipe_tags: null,
+				recipe_ingredients: null
+			},
+			[]
+		);
+
+		expect(response.guestCovers).toBe(3);
+	});
+
+	it('should only check compatibility for attending members', () => {
+		const profiles: MemberProfile[] = [
+			{
+				userId: 'u1',
+				name: 'Alex',
+				role: 'member',
+				allergies: [{ ingredient: 'nuts', severity: 'severe' }],
+				textures: [],
+				safeFoods: [],
+				dislikes: []
+			},
+			{
+				userId: 'u2',
+				name: 'Sam',
+				role: 'member',
+				allergies: [],
+				textures: [],
+				safeFoods: [],
+				dislikes: []
+			}
+		];
+
+		// Alex (allergic to nuts) is absent — should be safe
+		const response = toEntryResponse(
+			{
+				id: 'e5',
+				plan_id: 'p1',
+				entry_date: '2026-05-18',
+				meal_type: 'dinner',
+				recipe_id: 'pad-thai',
+				custom_note: null,
+				servings: 1,
+				notes: null,
+				absent_member_ids: '["u1"]',
+				guest_covers: 0,
+				recipe_title: 'Pad Thai',
+				recipe_image_url: null,
+				recipe_prep_minutes: null,
+				recipe_cook_minutes: null,
+				recipe_tags: null,
+				recipe_ingredients: JSON.stringify([{ ingredient: 'peanuts' }])
+			},
+			profiles
+		);
+
+		expect(response.compatibility.safe).toBe(true);
+		expect(response.compatibility.alerts).toHaveLength(0);
 	});
 });
 

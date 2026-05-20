@@ -35,13 +35,13 @@
         onCancel: () => void;
     } = $props();
 
-    // --- Form state ---
-    let name = $state(ingredient?.name ?? '');
-    let foodGroup = $state(ingredient?.foodGroup ?? '');
-    let allergens = $state<string[]>(ingredient?.allergens ?? []);
-    let plantColour = $state(ingredient?.plantColour ?? '');
-    let aliases = $state<string[]>(ingredient?.aliases ?? []);
-    let description = $state(ingredient?.description ?? '');
+    // --- Form state (snapshot initial prop values) ---
+    let name = $state(untrack(() => ingredient?.name ?? ''));
+    let foodGroup = $state(untrack(() => ingredient?.foodGroup ?? ''));
+    let allergens = $state<string[]>(untrack(() => ingredient?.allergens ?? []));
+    let plantColour = $state(untrack(() => ingredient?.plantColour ?? ''));
+    let aliases = $state<string[]>(untrack(() => ingredient?.aliases ?? []));
+    let description = $state(untrack(() => ingredient?.description ?? ''));
 
     let aliasDraft = $state('');
     let isSubmitting = $state(false);
@@ -101,7 +101,7 @@
     });
 
     // --- Auto-select default allergens when food group changes ---
-    let lastFoodGroup = ingredient?.foodGroup ?? '';
+    let lastFoodGroup = untrack(() => ingredient?.foodGroup ?? '');
     $effect(() => {
         const fg = foodGroup;
         if (fg && fg !== lastFoodGroup) {

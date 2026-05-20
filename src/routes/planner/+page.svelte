@@ -11,20 +11,24 @@
 	import EmptyState from '$lib/components/ui/EmptyState.svelte';
 	import { CalendarWeekOutline } from 'flowbite-svelte-icons';
 	import { resolve } from '$app/paths';
+	import { untrack } from 'svelte';
 
 	type MealPlanResponse = components['schemas']['MealPlanResponse'];
 	type MealPlanEntry = components['schemas']['MealPlanEntry'];
+	type MealAttendee = components['schemas']['MealAttendee'];
 	type RecipeSummary = components['schemas']['RecipeSummary'];
 	type PlantStats = components['schemas']['PlantStats'];
+	type HouseholdMemberSummary = components['schemas']['HouseholdMemberSummary'];
 
 	let { data }: { data: PlannerPageData } = $props();
 
-	let weekStart = $state(data.plan?.weekStart ?? data.initialWeek);
-	let entries = $state<MealPlanEntry[]>(data.plan?.entries ?? []);
-	let stats = $state(data.plan?.stats ?? { planned: 0, total: 21, withAlerts: 0 });
-	let plantStats = $state<PlantStats>(data.plan?.plantStats ?? { uniquePlants: 0, plantNames: [], colourCounts: [] });
-	let allRecipes = $state<RecipeSummary[]>(data.recipes?.items ?? []);
-	let sidebarRecipes = $state<RecipeSummary[]>(data.recipes?.items ?? []);
+	let weekStart = $state(untrack(() => data.plan?.weekStart ?? data.initialWeek));
+	let entries = $state<MealPlanEntry[]>(untrack(() => data.plan?.entries ?? []));
+	let stats = $state(untrack(() => data.plan?.stats ?? { planned: 0, total: 21, withAlerts: 0 }));
+	let plantStats = $state<PlantStats>(untrack(() => data.plan?.plantStats ?? { uniquePlants: 0, plantNames: [], colourCounts: [] }));
+	let members = $state<HouseholdMemberSummary[]>(untrack(() => data.plan?.members ?? []));
+	let allRecipes = $state<RecipeSummary[]>(untrack(() => data.recipes?.items ?? []));
+	let sidebarRecipes = $state<RecipeSummary[]>(untrack(() => data.recipes?.items ?? []));
 	let isLoading = $state(false);
 	let isRepeating = $state(false);
 
@@ -43,6 +47,7 @@
 			entries = plan.entries;
 			stats = plan.stats;
 			plantStats = plan.plantStats;
+			members = plan.members;
 		} catch {
 			// Keep current state on error
 		} finally {
@@ -179,6 +184,43 @@
 		}
 	}
 
+	async function handleAttendanceUpdate(entryId: string, attendees: MealAttendee[], guestCovers: number) {
+		// Optimistic update
+		entries = entries.map((e) =>
+			e.id === entryId
+				? { ...e, attendees, guestCovers, servings: attendees.filter((a) => a.isAttending).length + guestCovers }
+				: e
+		);
+
+		const csrf = getCookieValue('csrf-token');
+		try {
+			const entry = entries.find((e) => e.id === entryId);
+			if (!entry) return;
+
+			const absentMemberIds = attendees
+				.filter((a) => !a.isAttending)
+				.map((a) => a.memberId);
+
+			await apiFetch<MealPlanEntry>('/api/planner/entries', {
+				method: 'POST',
+				headers: csrf ? { 'x-csrf-token': csrf } : {},
+				body: JSON.stringify({
+					weekStart,
+					entryDate: entry.entryDate,
+					mealType: entry.mealType,
+					recipeId: entry.recipe?.id,
+					customNote: entry.customNote,
+					absentMemberIds,
+					guestCovers
+				})
+			});
+			await loadWeek(weekStart);
+		} catch {
+			// Revert on failure by reloading
+			await loadWeek(weekStart);
+		}
+	}
+
 	function handleEditEntry(entry: MealPlanEntry) {
 		// Re-open modal for the same cell to replace
 		modalDate = entry.entryDate;
@@ -249,9 +291,11 @@
 					<PlannerGrid
 						{weekStart}
 						{entries}
+						{members}
 						onAddClick={handleAddClick}
 						onRemoveEntry={handleRemoveEntry}
 						onEditEntry={handleEditEntry}
+						onAttendanceUpdate={handleAttendanceUpdate}
 					/>
 
 					<!-- Progress section -->

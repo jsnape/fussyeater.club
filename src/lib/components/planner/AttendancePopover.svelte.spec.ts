@@ -61,12 +61,6 @@ describe('AttendancePopover.svelte', () => {
 		await expect.element(page.getByText('Lily')).toBeInTheDocument();
 	});
 
-	it('should show (child) label for dependents', async () => {
-		renderPopover();
-
-		await expect.element(page.getByText('(child)')).toBeInTheDocument();
-	});
-
 	it('should show servings count matching attendee count', async () => {
 		renderPopover();
 

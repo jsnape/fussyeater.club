@@ -28,6 +28,26 @@
 		localAttendees.filter((a) => a.isAttending).length + localGuestCovers
 	);
 
+	// Position the popover using fixed coordinates to escape overflow clipping
+	let anchorEl: HTMLElement | undefined = $state(undefined);
+	let popoverStyle = $state('');
+
+	$effect(() => {
+		if (anchorEl) {
+			const rect = anchorEl.getBoundingClientRect();
+			const popoverWidth = 224;
+			const estimatedHeight = 300;
+			const left = Math.max(8, rect.right - popoverWidth);
+			const spaceBelow = window.innerHeight - rect.bottom;
+
+			if (spaceBelow >= estimatedHeight) {
+				popoverStyle = `top: ${rect.bottom + 8}px; left: ${left}px;`;
+			} else {
+				popoverStyle = `bottom: ${window.innerHeight - rect.top + 8}px; left: ${left}px;`;
+			}
+		}
+	});
+
 	function toggleMember(memberId: string) {
 		localAttendees = localAttendees.map((a) =>
 			a.memberId === memberId ? { ...a, isAttending: !a.isAttending } : a
@@ -59,12 +79,13 @@
 		}
 	}
 
-	function isDependent(memberId: string): boolean {
-		return members.some((m) => m.memberId === memberId && m.isDependent);
-	}
+
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
+
+<span bind:this={anchorEl} class="absolute bottom-0 right-0"></span>
+
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
@@ -72,7 +93,7 @@
 	onclick={handleClickOutside}
 ></div>
 
-<div class="absolute right-0 bottom-full z-50 mb-2 w-56 rounded-xl bg-white p-3 shadow-lg ring-1 ring-slate-200">
+<div class="fixed z-50 w-56 rounded-xl bg-white p-3 shadow-lg ring-1 ring-slate-200" style={popoverStyle}>
 	<h4 class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
 		Who's eating?
 	</h4>
@@ -89,9 +110,6 @@
 				<span class="text-sm text-slate-700">
 					{attendee.memberName}
 				</span>
-				{#if isDependent(attendee.memberId)}
-					<span class="text-[10px] text-slate-400">(child)</span>
-				{/if}
 			</label>
 		{/each}
 	</div>
@@ -104,7 +122,7 @@
 					type="button"
 					onclick={decrementGuests}
 					disabled={localGuestCovers === 0}
-					class="flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 text-xs text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent"
+					class="flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 text-xs text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-30"
 					aria-label="Decrease guests"
 				>
 					−

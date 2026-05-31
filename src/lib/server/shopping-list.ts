@@ -115,19 +115,22 @@ function aggregateIngredients(entries: EntryWithRecipe[]): AggregatedItem[] {
 		const recipeTitle = entry.recipe_title ?? 'Unknown recipe';
 		const ingredients = parseJsonSafe<RecipeIngredient[]>(entry.recipe_ingredients);
 
+		const recipeServings = entry.recipe_servings ?? entry.servings;
+		const scaleFactor = recipeServings > 0 ? entry.servings / recipeServings : 1;
+
 		for (const ing of ingredients) {
 			if (!ing.ingredient) continue;
 			const key = aggKey(ing.ingredient, ing.unit);
 			const existing = map.get(key);
 
 			if (existing) {
-				if (ing.amount) existing.totalAmount += ing.amount;
+				if (ing.amount) existing.totalAmount += ing.amount * scaleFactor;
 				existing.recipeSources.add(recipeTitle);
 			} else {
 				map.set(key, {
 					ingredient: normalise(ing.ingredient),
 					displayName: ing.ingredient.trim(),
-					totalAmount: ing.amount ?? 0,
+					totalAmount: ing.amount ? ing.amount * scaleFactor : 0,
 					unit: (ing.unit ?? '').trim(),
 					recipeSources: new Set([recipeTitle])
 				});

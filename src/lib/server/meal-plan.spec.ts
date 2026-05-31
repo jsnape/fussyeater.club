@@ -581,7 +581,8 @@ describe('toEntryResponse', () => {
 				recipe_ingredients: JSON.stringify([
 					{ ingredient: 'peanuts' },
 					{ ingredient: 'noodles' }
-				])
+				]),
+				recipe_servings: null
 			},
 			profiles
 		);
@@ -612,7 +613,8 @@ describe('toEntryResponse', () => {
 				recipe_prep_minutes: null,
 				recipe_cook_minutes: null,
 				recipe_tags: null,
-				recipe_ingredients: null
+				recipe_ingredients: null,
+				recipe_servings: null
 			},
 			[]
 		);
@@ -645,7 +647,8 @@ describe('toEntryResponse', () => {
 				recipe_prep_minutes: null,
 				recipe_cook_minutes: null,
 				recipe_tags: null,
-				recipe_ingredients: null
+				recipe_ingredients: null,
+				recipe_servings: null
 			},
 			profiles
 		);
@@ -674,7 +677,8 @@ describe('toEntryResponse', () => {
 				recipe_prep_minutes: null,
 				recipe_cook_minutes: null,
 				recipe_tags: null,
-				recipe_ingredients: null
+				recipe_ingredients: null,
+				recipe_servings: null
 			},
 			[]
 		);
@@ -722,7 +726,8 @@ describe('toEntryResponse', () => {
 				recipe_prep_minutes: null,
 				recipe_cook_minutes: null,
 				recipe_tags: null,
-				recipe_ingredients: JSON.stringify([{ ingredient: 'peanuts' }])
+				recipe_ingredients: JSON.stringify([{ ingredient: 'peanuts' }]),
+				recipe_servings: null
 			},
 			profiles
 		);

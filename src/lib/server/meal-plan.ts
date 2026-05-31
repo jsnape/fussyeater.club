@@ -32,6 +32,7 @@ export type EntryWithRecipe = MealPlanEntryRow & {
 	recipe_cook_minutes: number | null;
 	recipe_tags: string | null;
 	recipe_ingredients: string | null;
+	recipe_servings: number | null;
 };
 
 export type CompatibilityAlert = {
@@ -332,7 +333,8 @@ export async function getWeekPlanEntries(
 				r.prep_minutes AS recipe_prep_minutes,
 				r.cook_minutes AS recipe_cook_minutes,
 				r.tags AS recipe_tags,
-				r.ingredients AS recipe_ingredients
+				r.ingredients AS recipe_ingredients,
+				r.servings AS recipe_servings
 			FROM meal_plan_entries e
 			LEFT JOIN recipes r ON r.id = e.recipe_id
 			WHERE e.plan_id = ?1

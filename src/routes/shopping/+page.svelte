@@ -219,7 +219,7 @@
                     <!-- Item list -->
                     {#if !isCollapsed}
                         <ul class="divide-y divide-slate-50 px-5 pb-3">
-                            {#each items as item (item.ingredient)}
+                            {#each items as item (`${item.ingredient}::${item.unit ?? ''}`)}
                                 <li class="flex items-start gap-3 py-3">
                                     <!-- Checkbox -->
                                     <button
@@ -252,7 +252,7 @@
                                                 {formatQuantity(item.totalAmount, item.unit)}
                                             </span>
                                         {/if}
-                                        {#each item.allergenAlerts as alert (`${alert.memberName}-${alert.reason}`)}
+                                        {#each item.allergenAlerts as alert, i (`${alert.memberName}-${alert.reason}-${i}`)}
                                             <span
                                                 class="inline-flex items-center rounded-full border px-1.5 py-0.5 text-xs font-medium {alertColour(alert)}"
                                                 title={alertTooltip(alert)}
@@ -298,7 +298,7 @@
                             Clear all
                         </button>
                         <ul class="divide-y divide-slate-50">
-                            {#each allCheckedItems as item (item.ingredient)}
+                            {#each allCheckedItems as item (`${item.ingredient}::${item.unit ?? ''}`)}
                                 <li class="flex items-start gap-3 py-3 opacity-50">
                                     <!-- Checked checkbox -->
                                     <button

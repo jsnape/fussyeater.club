@@ -217,7 +217,14 @@ function buildAllergenAlerts(
 		}
 	}
 
-	return alerts;
+	// Deduplicate: keep one alert per member per reason
+	const seen = new Set<string>();
+	return alerts.filter((alert) => {
+		const key = `${alert.memberName}::${alert.reason}`;
+		if (seen.has(key)) return false;
+		seen.add(key);
+		return true;
+	});
 }
 
 function groupIntoCategories(
@@ -226,7 +233,7 @@ function groupIntoCategories(
 	const groups = new Map<string, ShoppingListItem[]>();
 
 	for (const item of items) {
-		const group = item.foodGroup ?? 'other';
+		const group = item.foodGroup && CATEGORY_CONFIG[item.foodGroup] ? item.foodGroup : 'other';
 		const existing = groups.get(group);
 		if (existing) {
 			existing.push(item);
